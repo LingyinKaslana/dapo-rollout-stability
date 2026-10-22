@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
   "title": "Qwen3-1.7B Base DAPO 训练进度",
-  "updated_beijing": "2026-10-22T23:40:31+08:00",
+  "updated_beijing": "2026-10-22T23:41:32+08:00",
   "profile": "deepmath20k",
   "validation_protocol": {
     "profile": "deepmath20k",
@@ -22,33 +22,23 @@
   "timezone": "Asia/Shanghai",
   "state": "running",
   "state_label": "训练中",
-  "completed_steps": 928,
+  "completed_steps": 929,
   "target_steps": null,
   "step_guard": 5000,
   "time_budget_seconds": 86400,
-  "elapsed_seconds": 32065.248435258865,
-  "remaining_seconds": 54334.751564741135,
-  "observed_update_count": 928,
+  "elapsed_seconds": 32125.799334049225,
+  "remaining_seconds": 54274.200665950775,
+  "observed_update_count": 929,
   "current_step": 930,
-  "current_phase": "generation",
-  "current_phase_label": "生成回答",
+  "current_phase": "evaluation",
+  "current_phase_label": "验证集评估",
   "phase_event": "start",
-  "phase_updated_beijing": "2026-10-22T23:40:36+08:00",
-  "fresh_observation_age_seconds": 0,
+  "phase_updated_beijing": "2026-10-22T23:41:18+08:00",
+  "fresh_observation_age_seconds": 13.5,
   "ledger_status": "running",
   "guard_status": "running",
   "deadline_beijing": "2026-10-23T14:46:06+08:00",
   "recent_steps": [
-    {
-      "step": 919,
-      "duration_seconds_including_validation": 36.94547418699949,
-      "generation_seconds": 28.38488148500619,
-      "actor_update_seconds": 4.042339633990196,
-      "validation_seconds": 0,
-      "checkpoint_seconds": null,
-      "generation_batches": 2,
-      "refill_batches": 1
-    },
     {
       "step": 920,
       "duration_seconds_including_validation": 115.01277902600123,
@@ -138,15 +128,25 @@
       "checkpoint_seconds": null,
       "generation_batches": 1,
       "refill_batches": 0
+    },
+    {
+      "step": 929,
+      "duration_seconds_including_validation": 34.68067690299358,
+      "generation_seconds": 25.95267849099764,
+      "actor_update_seconds": 3.908609059988521,
+      "validation_seconds": 0,
+      "checkpoint_seconds": null,
+      "generation_batches": 2,
+      "refill_batches": 1
     }
   ],
-  "recent_mean_step_seconds_including_validation": 39.341183096900934,
+  "recent_mean_step_seconds_including_validation": 39.114703368500344,
   "checkpoint": {
-    "step": 925,
+    "step": 930,
     "file_presence_complete": true,
     "nonempty_files": 22,
     "expected_files": 22,
-    "marked_beijing": "2026-10-22T23:38:30+08:00"
+    "marked_beijing": "2026-10-22T23:41:16+08:00"
   },
   "validation": [
     {
@@ -11386,59 +11386,59 @@
   ],
   "gpu_latest": [
     {
-      "time_beijing": "2026-10-22T23:40:40.578+08:00",
+      "time_beijing": "2026-10-22T23:41:41.578+08:00",
       "gpu_index": 0,
       "query_status": "ok",
-      "gpu_utilization_percent": 96.0,
-      "memory_used_gib": 181.4595947265625,
+      "gpu_utilization_percent": 92.0,
+      "memory_used_gib": 181.4869384765625,
       "memory_total_gib": 268.59375
     },
     {
-      "time_beijing": "2026-10-22T23:40:40.578+08:00",
+      "time_beijing": "2026-10-22T23:41:41.578+08:00",
       "gpu_index": 1,
       "query_status": "ok",
-      "gpu_utilization_percent": 95.0,
-      "memory_used_gib": 181.4537353515625,
+      "gpu_utilization_percent": 92.0,
+      "memory_used_gib": 181.5435791015625,
       "memory_total_gib": 268.59375
     },
     {
-      "time_beijing": "2026-10-22T23:40:40.578+08:00",
+      "time_beijing": "2026-10-22T23:41:41.578+08:00",
       "gpu_index": 2,
       "query_status": "ok",
-      "gpu_utilization_percent": 96.0,
-      "memory_used_gib": 181.4322509765625,
+      "gpu_utilization_percent": 88.0,
+      "memory_used_gib": 181.5494384765625,
       "memory_total_gib": 268.59375
     },
     {
-      "time_beijing": "2026-10-22T23:40:40.578+08:00",
+      "time_beijing": "2026-10-22T23:41:41.578+08:00",
       "gpu_index": 3,
       "query_status": "ok",
-      "gpu_utilization_percent": 95.0,
-      "memory_used_gib": 181.4517822265625,
+      "gpu_utilization_percent": 96.0,
+      "memory_used_gib": 181.5474853515625,
       "memory_total_gib": 268.59375
     },
     {
-      "time_beijing": "2026-10-22T23:40:40.578+08:00",
+      "time_beijing": "2026-10-22T23:41:41.578+08:00",
       "gpu_index": 4,
       "query_status": "ok",
-      "gpu_utilization_percent": 100.0,
-      "memory_used_gib": 181.4459228515625,
+      "gpu_utilization_percent": 90.0,
+      "memory_used_gib": 181.5084228515625,
       "memory_total_gib": 268.59375
     },
     {
-      "time_beijing": "2026-10-22T23:40:40.578+08:00",
+      "time_beijing": "2026-10-22T23:41:41.578+08:00",
       "gpu_index": 5,
       "query_status": "ok",
-      "gpu_utilization_percent": 90.0,
-      "memory_used_gib": 181.4615478515625,
+      "gpu_utilization_percent": 97.0,
+      "memory_used_gib": 181.5240478515625,
       "memory_total_gib": 268.59375
     },
     {
-      "time_beijing": "2026-10-22T23:40:40.578+08:00",
+      "time_beijing": "2026-10-22T23:41:41.578+08:00",
       "gpu_index": 6,
       "query_status": "ok",
-      "gpu_utilization_percent": 100.0,
-      "memory_used_gib": 181.4888916015625,
+      "gpu_utilization_percent": 97.0,
+      "memory_used_gib": 181.4947509765625,
       "memory_total_gib": 268.59375
     }
   ],
@@ -11447,12 +11447,12 @@
     "available": true,
     "interval_seconds": 1,
     "requested_window_seconds": 600,
-    "snapshot_generated_beijing": "2026-10-22T23:40:40+08:00",
+    "snapshot_generated_beijing": "2026-10-22T23:41:41+08:00",
     "snapshot_age_seconds": 0,
     "fresh": true,
     "actual_coverage_seconds": 599.0,
-    "window_start_beijing": "2026-10-22T23:30:41+08:00",
-    "window_end_beijing": "2026-10-22T23:40:40+08:00",
+    "window_start_beijing": "2026-10-22T23:31:42+08:00",
+    "window_end_beijing": "2026-10-22T23:41:41+08:00",
     "partial_window": false,
     "sample_count": 598,
     "row_count": 4186,
@@ -11464,5 +11464,5 @@
     "missing_documents": 1
   },
   "validation_content_version": "920-a5a0a4afe407",
-  "gpu_10m_content_version": "b674da61f57a"
+  "gpu_10m_content_version": "86c315d2c271"
 }
