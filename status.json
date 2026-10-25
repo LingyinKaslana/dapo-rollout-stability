@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
   "title": "Qwen3-1.7B Base RollPacker-DAPO · 短轮窗口 70 · 全新 24 小时实验",
-  "updated_beijing": "2026-10-25T08:46:22+08:00",
+  "updated_beijing": "2026-10-25T08:47:22+08:00",
   "profile": "deepmath20k",
   "method": "rollpacker",
   "method_label": "RollPacker + DAPO",
@@ -42,48 +42,23 @@
   "timezone": "Asia/Shanghai",
   "state": "running",
   "state_label": "训练中",
-  "completed_steps": 748,
+  "completed_steps": 749,
   "target_steps": null,
   "step_guard": 100000,
   "time_budget_seconds": 86400,
-  "elapsed_seconds": 23008.26961874962,
-  "remaining_seconds": 63391.73038125038,
-  "observed_update_count": 748,
-  "current_step": 749,
-  "current_phase": "generation",
-  "current_phase_label": "生成回答",
+  "elapsed_seconds": 23068.266828536987,
+  "remaining_seconds": 63331.73317146301,
+  "observed_update_count": 749,
+  "current_step": 750,
+  "current_phase": "evaluation",
+  "current_phase_label": "验证集评估",
   "phase_event": "start",
-  "phase_updated_beijing": "2026-10-25T08:46:14+08:00",
-  "fresh_observation_age_seconds": 7.5,
+  "phase_updated_beijing": "2026-10-25T08:47:06+08:00",
+  "fresh_observation_age_seconds": 15.7,
   "ledger_status": "running",
   "guard_status": "running",
   "deadline_beijing": "2026-10-26T02:22:53+08:00",
   "recent_steps": [
-    {
-      "step": 739,
-      "duration_seconds_including_validation": 21.846648321996327,
-      "generation_seconds": 12.546026869000343,
-      "actor_update_seconds": 4.343916789002833,
-      "validation_seconds": 0,
-      "checkpoint_seconds": null,
-      "generation_batches": null,
-      "refill_batches": null,
-      "rollpacker": {
-        "waves": 1,
-        "new_candidate_groups": 117,
-        "queue_candidate_groups": 0,
-        "completed_candidate_groups": 104,
-        "selected_groups": 56,
-        "filtered_groups": 47,
-        "queue_groups_before": 30,
-        "queue_groups_after": 44,
-        "new_response_tokens": 1102804,
-        "discarded_generated_tokens": 521274,
-        "mode": "short",
-        "selected_stale_token_fraction": 0.0,
-        "selected_cross_version_response_fraction": 0.0
-      }
-    },
     {
       "step": 740,
       "duration_seconds_including_validation": 109.32769728099811,
@@ -308,15 +283,40 @@
         "selected_stale_token_fraction": 0.0,
         "selected_cross_version_response_fraction": 0.0
       }
+    },
+    {
+      "step": 749,
+      "duration_seconds_including_validation": 26.292656760000682,
+      "generation_seconds": 15.941200870998728,
+      "actor_update_seconds": 5.291691518003063,
+      "validation_seconds": 0,
+      "checkpoint_seconds": null,
+      "generation_batches": null,
+      "refill_batches": null,
+      "rollpacker": {
+        "waves": 1,
+        "new_candidate_groups": 127,
+        "queue_candidate_groups": 0,
+        "completed_candidate_groups": 113,
+        "selected_groups": 56,
+        "filtered_groups": 57,
+        "queue_groups_before": 55,
+        "queue_groups_after": 69,
+        "new_response_tokens": 1327936,
+        "discarded_generated_tokens": 745461,
+        "mode": "short",
+        "selected_stale_token_fraction": 0.0,
+        "selected_cross_version_response_fraction": 0.0
+      }
     }
   ],
-  "recent_mean_step_seconds_including_validation": 33.87063412669886,
+  "recent_mean_step_seconds_including_validation": 34.3152349704993,
   "checkpoint": {
-    "step": 745,
+    "step": 750,
     "file_presence_complete": true,
     "nonempty_files": 22,
     "expected_files": 22,
-    "marked_beijing": "2026-10-25T08:45:02+08:00"
+    "marked_beijing": "2026-10-25T08:47:04+08:00"
   },
   "validation": [
     {
@@ -9396,59 +9396,59 @@
   ],
   "gpu_latest": [
     {
-      "time_beijing": "2026-10-25T08:46:28.001+08:00",
+      "time_beijing": "2026-10-25T08:47:28.001+08:00",
       "gpu_index": 0,
       "query_status": "ok",
-      "gpu_utilization_percent": 100.0,
-      "memory_used_gib": 180.3170166015625,
+      "gpu_utilization_percent": 98.0,
+      "memory_used_gib": 180.4283447265625,
       "memory_total_gib": 268.59375
     },
     {
-      "time_beijing": "2026-10-25T08:46:28.001+08:00",
+      "time_beijing": "2026-10-25T08:47:28.001+08:00",
       "gpu_index": 1,
       "query_status": "ok",
-      "gpu_utilization_percent": 99.0,
-      "memory_used_gib": 180.3365478515625,
+      "gpu_utilization_percent": 92.0,
+      "memory_used_gib": 180.4517822265625,
       "memory_total_gib": 268.59375
     },
     {
-      "time_beijing": "2026-10-25T08:46:28.001+08:00",
+      "time_beijing": "2026-10-25T08:47:28.001+08:00",
       "gpu_index": 2,
       "query_status": "ok",
-      "gpu_utilization_percent": 100.0,
-      "memory_used_gib": 180.3365478515625,
+      "gpu_utilization_percent": 96.0,
+      "memory_used_gib": 180.4459228515625,
       "memory_total_gib": 268.59375
     },
     {
-      "time_beijing": "2026-10-25T08:46:28.001+08:00",
+      "time_beijing": "2026-10-25T08:47:28.001+08:00",
       "gpu_index": 3,
       "query_status": "ok",
-      "gpu_utilization_percent": 94.0,
-      "memory_used_gib": 180.3365478515625,
+      "gpu_utilization_percent": 93.0,
+      "memory_used_gib": 180.4791259765625,
       "memory_total_gib": 268.59375
     },
     {
-      "time_beijing": "2026-10-25T08:46:28.001+08:00",
+      "time_beijing": "2026-10-25T08:47:28.001+08:00",
       "gpu_index": 4,
       "query_status": "ok",
-      "gpu_utilization_percent": 100.0,
-      "memory_used_gib": 180.3365478515625,
+      "gpu_utilization_percent": 96.0,
+      "memory_used_gib": 180.4595947265625,
       "memory_total_gib": 268.59375
     },
     {
-      "time_beijing": "2026-10-25T08:46:28.001+08:00",
+      "time_beijing": "2026-10-25T08:47:28.001+08:00",
       "gpu_index": 5,
       "query_status": "ok",
-      "gpu_utilization_percent": 100.0,
-      "memory_used_gib": 180.3365478515625,
+      "gpu_utilization_percent": 97.0,
+      "memory_used_gib": 180.4791259765625,
       "memory_total_gib": 268.59375
     },
     {
-      "time_beijing": "2026-10-25T08:46:28.001+08:00",
+      "time_beijing": "2026-10-25T08:47:28.001+08:00",
       "gpu_index": 6,
       "query_status": "ok",
       "gpu_utilization_percent": 100.0,
-      "memory_used_gib": 180.2935791015625,
+      "memory_used_gib": 180.4713134765625,
       "memory_total_gib": 268.59375
     }
   ],
@@ -9457,12 +9457,12 @@
     "available": true,
     "interval_seconds": 1,
     "requested_window_seconds": 600,
-    "snapshot_generated_beijing": "2026-10-25T08:46:28+08:00",
+    "snapshot_generated_beijing": "2026-10-25T08:47:28+08:00",
     "snapshot_age_seconds": 0,
     "fresh": true,
     "actual_coverage_seconds": 599.0,
-    "window_start_beijing": "2026-10-25T08:36:29+08:00",
-    "window_end_beijing": "2026-10-25T08:46:28+08:00",
+    "window_start_beijing": "2026-10-25T08:37:29+08:00",
+    "window_end_beijing": "2026-10-25T08:47:28+08:00",
     "partial_window": false,
     "sample_count": 598,
     "row_count": 4186,
@@ -9474,5 +9474,5 @@
     "missing_documents": 1
   },
   "validation_content_version": "740-80876b8d7d8e",
-  "gpu_10m_content_version": "5c6a41f5b53b"
+  "gpu_10m_content_version": "1f9506b32349"
 }
