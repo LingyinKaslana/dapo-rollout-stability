@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
   "title": "Qwen3-1.7B Base TailSieve + DAPO 训练进度",
-  "updated_beijing": "2026-10-27T13:16:28+08:00",
+  "updated_beijing": "2026-10-27T13:17:28+08:00",
   "profile": "deepmath20k",
   "method": "tailsieve",
   "method_label": "TailSieve + DAPO",
@@ -25,33 +25,23 @@
   "timezone": "Asia/Shanghai",
   "state": "running",
   "state_label": "训练中",
-  "completed_steps": 2298,
+  "completed_steps": 2299,
   "target_steps": null,
   "step_guard": 100000,
   "time_budget_seconds": 86400,
-  "elapsed_seconds": 79500.99181175232,
-  "remaining_seconds": 6899.008188247681,
-  "observed_update_count": 2298,
+  "elapsed_seconds": 79560.9936466217,
+  "remaining_seconds": 6839.006353378296,
+  "observed_update_count": 2299,
   "current_step": 2300,
-  "current_phase": "generation",
-  "current_phase_label": "生成回答",
+  "current_phase": "evaluation",
+  "current_phase_label": "验证集评估",
   "phase_event": "start",
-  "phase_updated_beijing": "2026-10-27T13:16:34+08:00",
-  "fresh_observation_age_seconds": 0,
+  "phase_updated_beijing": "2026-10-27T13:17:06+08:00",
+  "fresh_observation_age_seconds": 22.1,
   "ledger_status": "running",
   "guard_status": "running",
   "deadline_beijing": "2026-10-27T15:11:27+08:00",
   "recent_steps": [
-    {
-      "step": 2289,
-      "duration_seconds_including_validation": 26.033921577996807,
-      "generation_seconds": 16.78461253500427,
-      "actor_update_seconds": 4.134286489002989,
-      "validation_seconds": 0,
-      "checkpoint_seconds": null,
-      "generation_batches": null,
-      "refill_batches": null
-    },
     {
       "step": 2290,
       "duration_seconds_including_validation": 105.22601703800319,
@@ -141,15 +131,25 @@
       "checkpoint_seconds": null,
       "generation_batches": null,
       "refill_batches": null
+    },
+    {
+      "step": 2299,
+      "duration_seconds_including_validation": 35.62842252101109,
+      "generation_seconds": 26.986100640991936,
+      "actor_update_seconds": 3.761467745003756,
+      "validation_seconds": 0,
+      "checkpoint_seconds": null,
+      "generation_batches": null,
+      "refill_batches": null
     }
   ],
-  "recent_mean_step_seconds_including_validation": 35.900236238398065,
+  "recent_mean_step_seconds_including_validation": 36.859686332699496,
   "checkpoint": {
-    "step": 2295,
+    "step": 2300,
     "file_presence_complete": true,
     "nonempty_files": 22,
     "expected_files": 22,
-    "marked_beijing": "2026-10-27T13:14:27+08:00"
+    "marked_beijing": "2026-10-27T13:17:03+08:00"
   },
   "validation": [
     {
@@ -27829,59 +27829,59 @@
   ],
   "gpu_latest": [
     {
-      "time_beijing": "2026-10-27T13:16:51.237+08:00",
+      "time_beijing": "2026-10-27T13:17:51.237+08:00",
       "gpu_index": 0,
       "query_status": "ok",
-      "gpu_utilization_percent": 0.0,
-      "memory_used_gib": 180.33660888671875,
+      "gpu_utilization_percent": 87.0,
+      "memory_used_gib": 180.49285888671875,
       "memory_total_gib": 268.59375
     },
     {
-      "time_beijing": "2026-10-27T13:16:51.237+08:00",
+      "time_beijing": "2026-10-27T13:17:51.237+08:00",
       "gpu_index": 1,
       "query_status": "ok",
-      "gpu_utilization_percent": 93.0,
-      "memory_used_gib": 180.3365478515625,
+      "gpu_utilization_percent": 96.0,
+      "memory_used_gib": 180.4986572265625,
       "memory_total_gib": 268.59375
     },
     {
-      "time_beijing": "2026-10-27T13:16:51.237+08:00",
+      "time_beijing": "2026-10-27T13:17:51.237+08:00",
       "gpu_index": 2,
       "query_status": "ok",
-      "gpu_utilization_percent": 100.0,
-      "memory_used_gib": 180.3365478515625,
+      "gpu_utilization_percent": 96.0,
+      "memory_used_gib": 180.5533447265625,
       "memory_total_gib": 268.59375
     },
     {
-      "time_beijing": "2026-10-27T13:16:51.237+08:00",
+      "time_beijing": "2026-10-27T13:17:51.237+08:00",
       "gpu_index": 3,
       "query_status": "ok",
       "gpu_utilization_percent": 100.0,
-      "memory_used_gib": 180.33660888671875,
+      "memory_used_gib": 180.54168701171875,
       "memory_total_gib": 268.59375
     },
     {
-      "time_beijing": "2026-10-27T13:16:51.237+08:00",
+      "time_beijing": "2026-10-27T13:17:51.237+08:00",
       "gpu_index": 4,
       "query_status": "ok",
-      "gpu_utilization_percent": 100.0,
-      "memory_used_gib": 180.3560791015625,
+      "gpu_utilization_percent": 96.0,
+      "memory_used_gib": 180.5318603515625,
       "memory_total_gib": 268.59375
     },
     {
-      "time_beijing": "2026-10-27T13:16:51.237+08:00",
+      "time_beijing": "2026-10-27T13:17:51.237+08:00",
       "gpu_index": 5,
       "query_status": "ok",
-      "gpu_utilization_percent": 100.0,
-      "memory_used_gib": 180.3365478515625,
+      "gpu_utilization_percent": 92.0,
+      "memory_used_gib": 180.5572509765625,
       "memory_total_gib": 268.59375
     },
     {
-      "time_beijing": "2026-10-27T13:16:51.237+08:00",
+      "time_beijing": "2026-10-27T13:17:51.237+08:00",
       "gpu_index": 6,
       "query_status": "ok",
-      "gpu_utilization_percent": 100.0,
-      "memory_used_gib": 180.2935791015625,
+      "gpu_utilization_percent": 96.0,
+      "memory_used_gib": 180.4927978515625,
       "memory_total_gib": 268.59375
     }
   ],
@@ -27890,12 +27890,12 @@
     "available": true,
     "interval_seconds": 1,
     "requested_window_seconds": 600,
-    "snapshot_generated_beijing": "2026-10-27T13:16:51+08:00",
+    "snapshot_generated_beijing": "2026-10-27T13:17:51+08:00",
     "snapshot_age_seconds": 0,
     "fresh": true,
     "actual_coverage_seconds": 599.0,
-    "window_start_beijing": "2026-10-27T13:06:52+08:00",
-    "window_end_beijing": "2026-10-27T13:16:51+08:00",
+    "window_start_beijing": "2026-10-27T13:07:52+08:00",
+    "window_end_beijing": "2026-10-27T13:17:51+08:00",
     "partial_window": false,
     "sample_count": 600,
     "row_count": 4200,
@@ -27931,5 +27931,5 @@
     }
   ],
   "validation_content_version": "2290-0f8b262c5ec1",
-  "gpu_10m_content_version": "c8b7317b17a3"
+  "gpu_10m_content_version": "dba632eddde4"
 }
