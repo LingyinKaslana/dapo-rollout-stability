@@ -22,7 +22,7 @@ Qwen3-1.7B-Base · DeepMath train 20,000 · 回答上限 4,096 tokens。
 
 ## 验证集
 
-[上一轮独立实验完整归档](history/april-cpuopt-discard8-w256-g64-eval50-from0-24h-20261030/README.md)。上一轮 4+4 舍弃实验的终态、训练和验证曲线完整独立保留，不并入本轮序列。
+[上一轮独立实验完整归档](history/20261030-april-cpuopt-discard8-w256-g64-eval50-from0-24h/README.md)。上一轮 4+4 舍弃实验的终态、训练和验证曲线完整独立保留，不并入本轮序列。
 
 DeepMath 固定 dev 1,024 题；MATH transfer 固定 dev 512 题。每题采样 4 次，报告 **mean@4**（4 个回答正确率的均值），unknown 计错。
 

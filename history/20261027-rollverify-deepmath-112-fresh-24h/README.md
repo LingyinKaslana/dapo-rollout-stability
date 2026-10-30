@@ -24,7 +24,7 @@ Qwen3-1.7B-Base · DeepMath train 20,000 · 回答上限 4,096 tokens。
 
 ## 验证集
 
-历史实验：[april-deepmath-20k-24h-20261023](history/april-deepmath-20k-24h-20261023/README.md) · [base-deepmath-20k-24h-20261022](history/base-deepmath-20k-24h-20261022/README.md) · [dapo-deepmath7-scalar-400-20261021](history/dapo-deepmath7-scalar-400-20261021/README.md) · [rollpacker-deepmath-20k-24h-20261025](history/rollpacker-deepmath-20k-24h-20261025/README.md) · [rollpacker-deepmath-70-fresh-24h-20261025](history/rollpacker-deepmath-70-fresh-24h-20261025/README.md) · [tailsieve-deepmath-64-fresh-24h-20261026](history/tailsieve-deepmath-64-fresh-24h-20261026/README.md)
+历史实验：[20261023-april-deepmath-20k-24h](../20261023-april-deepmath-20k-24h/README.md) · [20261022-base-deepmath-20k-24h](../20261022-base-deepmath-20k-24h/README.md) · [20261021-dapo-deepmath7-scalar-400](../20261021-dapo-deepmath7-scalar-400/README.md) · [20261025-rollpacker-deepmath-20k-24h](../20261025-rollpacker-deepmath-20k-24h/README.md) · [20261025-rollpacker-deepmath-70-fresh-24h](../20261025-rollpacker-deepmath-70-fresh-24h/README.md) · [20261026-tailsieve-deepmath-64-fresh-24h](../20261026-tailsieve-deepmath-64-fresh-24h/README.md)
 
 8 项 mean@4 指标分别保留最佳完整原生检查点；权重、优化器、采样器及已验证前缀状态保存在训练机器上，面板只公开对应轮次和分数。
 

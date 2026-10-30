@@ -18,7 +18,7 @@ Qwen3-1.7B-Base · DeepMath train 20,000 · 回答上限 4,096 tokens。
 
 ## 验证集
 
-历史实验：[april-deepmath-20k-24h-20261023](history/april-deepmath-20k-24h-20261023/README.md) · [base-deepmath-20k-24h-20261022](history/base-deepmath-20k-24h-20261022/README.md) · [dapo-deepmath7-scalar-400-20261021](history/dapo-deepmath7-scalar-400-20261021/README.md) · [rollpacker-deepmath-20k-24h-20261025](history/rollpacker-deepmath-20k-24h-20261025/README.md) · [rollpacker-deepmath-70-fresh-24h-20261025](history/rollpacker-deepmath-70-fresh-24h-20261025/README.md)
+历史实验：[20261023-april-deepmath-20k-24h](../20261023-april-deepmath-20k-24h/README.md) · [20261022-base-deepmath-20k-24h](../20261022-base-deepmath-20k-24h/README.md) · [20261021-dapo-deepmath7-scalar-400](../20261021-dapo-deepmath7-scalar-400/README.md) · [20261025-rollpacker-deepmath-20k-24h](../20261025-rollpacker-deepmath-20k-24h/README.md) · [20261025-rollpacker-deepmath-70-fresh-24h](../20261025-rollpacker-deepmath-70-fresh-24h/README.md)
 
 DeepMath 固定 dev 1,024 题；MATH transfer 固定 dev 512 题。每题采样 4 次，报告 **mean@4**（4 个回答正确率的均值），unknown 计错。
 
