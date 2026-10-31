@@ -1,91 +1,55 @@
-# Qwen3-1.7B Base APRIL full G8 concurrent + DAPO 训练进度
+# Qwen3-8B-Base · APRIL 8 同发 + DAPO · 12h
 
-更新时间：2026-10-31T18:21:30+08:00（北京时间，每约 60 秒同步）
+更新时间：2026-10-31T22:46:04+08:00（北京时间，约每 60 秒同步）。
 
-方法：**APRIL 普通 8 同发 + DAPO**；独立实验，从 Base 重新开始。每题一次提交全部 8 条回答，无 4+4 门控，不提前舍弃；完成完整 G8 后，才按原 DAPO 规则过滤全对或全错组。无 IPW 修正。
+状态：**not_started**；已记录完成更新 **0**；GPU 分配累计 **0.00 / 12 小时**。
+计时从本次独立 GPU allocation ledger 开始，包含初始化、初评、训练、评估与收尾；不按首条训练日志计时。
 
-**8 张 GPU · pending 窗口 256 组 · 每次更新 64 个完整有效组（512 条回答）· PPO mini-batch 16 组**。ready 池独立，不占 pending 窗口；任一完整组退出 pending 后补新题。未完成回答仍可跨权重续写。
+配置：Qwen3-8B-Base 从 Base 开始；8×B300；APRIL pending W=256；每轮选64个完整有效组；每题8答同发，无4+4提前舍弃。
+回答上限8192 tokens，prompt上限2048；每50轮评估、每50轮保存，保留2个checkpoint。学习率5e-7。
 
-保留 CPU 状态处理优化；启动时做初始评估，之后每 **50 轮评估**，每 **5 轮保存检查点**。20 小时从真实 GPU 分配开始计时，20,000 步仅为保护上限。不是旧 7 卡 / 56 组配置。
+训练：DeepMath-103K派生 open-v4 **40,299题**，uniform shuffle。验证：hard-dev **1,021题** + 完整公共 **600题**；每题4答。
+独立calibration508题不进入训练。训练池仍有1,629条review-only题保留；规则修订不代表全部题意或金标已被证明无误。
 
-累计用时 **19.99 / 20 小时**；剩余 **0.00 小时**。包含初始化、生成、CPU 判分、验证、保存及停机观察，不补回空档。
+质量指标为 **mean@4（4条回答平均正确率）**，不是pass@4；hard-dev总体按五个难度桶的实际题数加权。公共四项分别报告。
+正式初始分数只从本run已完成的step0评估读取；初评完成前显示待测。
 
-Qwen3-1.7B-Base · DeepMath train 20,000 · 回答上限 4,096 tokens。
+| 指标 | 题数 | 最新 mean@4 | 历史最佳 mean@4 |
+|---|---:|---:|---:|
+| DeepMath hard-dev | 1021 | 待测% | 待测% |
+| DeepMath D5-6 | 128 | 待测% | 待测% |
+| DeepMath D6-7 | 255 | 待测% | 待测% |
+| DeepMath D7-8 | 319 | 待测% | 待测% |
+| DeepMath D8-9 | 272 | 待测% | 待测% |
+| DeepMath D9-10 | 47 | 待测% | 待测% |
+| AIME24 | 30 | 待测% | 待测% |
+| AIME25 | 30 | 待测% | 待测% |
+| AMC23 | 40 | 待测% | 待测% |
+| MATH500 | 500 | 待测% | 待测% |
 
-**已到时间上限 · 已完成 2482 步 · 20 小时硬上限**
+![Validation](validation.svg)
 
-当前第 2483 轮，阶段：训练生命周期。
-计划截止：**2026-10-31T18:21:12+08:00**。
+![GPU utilization](gpu_utilization_10m.svg)
 
-最近 10 轮平均耗时：**31.73 秒/轮**（含各轮验证；不含启动及停机空档）。
-最新检查点：第 **2480** 轮；必需文件非空检查 **25/25**（仅文件存在性检查）。
+![GPU memory](gpu_memory_10m.svg)
 
-## 验证集
+GPU图只使用本次独立1秒遥测；SVG可能降采样显示，CSV保留窗口内数值。缺测不填成0。
 
-[上一轮独立实验完整归档](history/20261030-april-cpuopt-discard8-w256-g64-eval50-from0-24h/README.md)。上一轮 4+4 舍弃实验的终态、训练和验证曲线完整独立保留，不并入本轮序列。
+[验证汇总CSV](validation.csv) · [训练速度汇总CSV](training.csv) · [GPU窗口CSV](gpu_10m.csv) · [状态JSON](status.json)
 
-DeepMath 固定 dev 1,024 题；MATH transfer 固定 dev 512 题。每题采样 4 次，报告 **mean@4**（4 个回答正确率的均值），unknown 计错。
+只发布允许的配置、聚合数值和图；不发布题目、回答、CoT、题目ID、权重或私有文件路径。
 
-最新验证：第 **2450** 步。
+## 历史实验
 
-| 验证分组 | 题数 × 回答数 | mean@4 |
-|---|---:|---:|
-| DeepMath overall | 1024 × 4 | 52.6611% |
-| DeepMath D5 | 317 × 4 | 59.5426% |
-| DeepMath D5.5 | 355 × 4 | 48.1690% |
-| DeepMath D6 | 352 × 4 | 50.9943% |
-| MATH transfer overall | 512 × 4 | 64.2578% |
-| MATH L3 | 146 × 4 | 85.2740% |
-| MATH L4 | 154 × 4 | 73.2143% |
-| MATH L5 | 212 × 4 | 43.2783% |
-
-![验证 mean@4](validation.svg?v=2450-8ebd6cf85399)
-
-两个面板分别展示 DeepMath 与 MATH transfer，总体按各档固定 dev 题数加权。仅连接实测检查点，无平滑。训练主目标是 20 小时硬上限，20000 步仅为防提前结束的保护上限。
-
-## 最近十轮
-
-| 轮次 | 总秒数（含验证） | 采集秒数 | 更新秒数 | 验证秒数 | 新候选组 / 完成组 | carry / 选中组 | pending / surplus |
-|---:|---:|---:|---:|---:|---:|---:|---:|
-| 2473 | 28.35 | 17.99 | 5.34 | 0.00 | 173 / 173 | 52 / 64 | 256 / 51 |
-| 2474 | 28.58 | 19.13 | 3.57 | 0.00 | 163 / 163 | 51 / 64 | 256 / 59 |
-| 2475 | 40.78 | 17.20 | 3.76 | 0.00 | 149 / 149 | 59 / 64 | 256 / 53 |
-| 2476 | 30.11 | 19.39 | 5.24 | 0.00 | 164 / 164 | 53 / 64 | 256 / 57 |
-| 2477 | 27.75 | 18.29 | 3.97 | 0.00 | 138 / 138 | 57 / 64 | 256 / 62 |
-| 2478 | 28.39 | 18.49 | 4.55 | 0.00 | 136 / 136 | 62 / 64 | 256 / 63 |
-| 2479 | 28.14 | 18.30 | 4.11 | 0.00 | 126 / 126 | 63 / 64 | 256 / 58 |
-| 2480 | 44.85 | 18.36 | 4.14 | 0.00 | 130 / 130 | 58 / 64 | 256 / 49 |
-| 2481 | 30.31 | 18.94 | 5.67 | 0.00 | 152 / 152 | 49 / 64 | 256 / 56 |
-| 2482 | 30.04 | 20.20 | 4.70 | 0.00 | 148 / 148 | 56 / 64 | 256 / 63 |
-
-采集包含续写、CPU 判分与队列处理；carry 为采集前已完成的有效组，pending 为暂停后未完成组，surplus 为留到后轮的完整有效组。各计数不解释为 native DAPO 补采次数。
-
-
-## GPU 0–7
-
-| GPU | 利用率 | 已用 / 总显存 GiB | 最新采样（北京时间） | 采样状态 |
-|---:|---:|---:|---|---|
-| 0 | 0% | 0.91 / 268.59 | 2026-10-31T18:20:32.352+08:00 | ok |
-| 1 | 0% | 0.91 / 268.59 | 2026-10-31T18:20:32.352+08:00 | ok |
-| 2 | 0% | 0.91 / 268.59 | 2026-10-31T18:20:32.352+08:00 | ok |
-| 3 | 0% | 0.91 / 268.59 | 2026-10-31T18:20:32.352+08:00 | ok |
-| 4 | 0% | 0.91 / 268.59 | 2026-10-31T18:20:32.352+08:00 | ok |
-| 5 | 0% | 0.91 / 268.59 | 2026-10-31T18:20:32.352+08:00 | ok |
-| 6 | 0% | 0.91 / 268.59 | 2026-10-31T18:20:32.352+08:00 | ok |
-| 7 | 0% | 0.91 / 268.59 | 2026-10-31T18:20:32.352+08:00 | ok |
-
-最新值来源：1 秒滚动快照。数值均为瞬时采样，失败采样留空，不当成零。
-
-## 最近十分钟 GPU 利用率
-
-每秒采样；当前实际覆盖 **598.0 / 600 秒**，592 个采样时刻。
-窗口：2026-10-31T18:10:34+08:00 至 2026-10-31T18:20:32+08:00。
-快照距本页生成 **57.3 秒**（采样已过期，请留意时间）。
-
-![最近十分钟 GPU 利用率](gpu_utilization_10m.svg?v=d5eeea21e4e1)
-
-![最近十分钟 GPU 显存](gpu_memory_10m.svg?v=d5eeea21e4e1)
-
-8 卡共享北京时间轴，利用率面板固定 0–100% 范围和颜色；无平滑，失败采样与缺口处断线。刚启动不足十分钟时仅展示已有样本。本实验仅发布有界十分钟快照；未生成分钟长历史，历史 CSV 仅含表头。
-
-[状态 JSON](status.json) · [验证 CSV](validation.csv) · [GPU 最新值](gpu_latest.csv) · [GPU 秒级窗口](gpu_10m.csv) · [GPU 分钟历史](gpu_history.csv) · [验证矢量图](validation.svg) · [GPU 矢量图](gpu_utilization_10m.svg)
+- [20261021-dapo-deepmath7-scalar-400](history/20261021-dapo-deepmath7-scalar-400/README.md)
+- [20261022-base-deepmath-20k-24h](history/20261022-base-deepmath-20k-24h/README.md)
+- [20261023-april-deepmath-20k-24h](history/20261023-april-deepmath-20k-24h/README.md)
+- [20261025-rollpacker-deepmath-20k-24h](history/20261025-rollpacker-deepmath-20k-24h/README.md)
+- [20261025-rollpacker-deepmath-70-fresh-24h](history/20261025-rollpacker-deepmath-70-fresh-24h/README.md)
+- [20261026-tailsieve-deepmath-64-fresh-24h](history/20261026-tailsieve-deepmath-64-fresh-24h/README.md)
+- [20261027-rollverify-deepmath-112-fresh-24h](history/20261027-rollverify-deepmath-112-fresh-24h/README.md)
+- [20261029-april-discard8-w256-g64-from0-24h](history/20261029-april-discard8-w256-g64-from0-24h/README.md)
+- [20261030-april-cpuopt-discard8-w256-g64-eval50-from0-24h](history/20261030-april-cpuopt-discard8-w256-g64-eval50-from0-24h/README.md)
+- [20261030-april-cpuopt-discard8-w256-g64-from0-24h](history/20261030-april-cpuopt-discard8-w256-g64-from0-24h/README.md)
+- [20261030-april-eight-w256-g64-eval50-from0-20h](history/20261030-april-eight-w256-g64-eval50-from0-20h/README.md)
+- [20261031-setup2-qwen3-8b-april-eight-w256-g64-8k-from0-12h](history/20261031-setup2-qwen3-8b-april-eight-w256-g64-8k-from0-12h/README.md)
