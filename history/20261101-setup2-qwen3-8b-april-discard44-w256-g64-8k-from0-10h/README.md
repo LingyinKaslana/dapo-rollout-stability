@@ -1,0 +1,129 @@
+# Qwen3-8B Base APRIL 4+4 early-discard + DAPO 训练进度
+
+更新时间：2026-11-01T13:08:25+08:00（北京时间，计划每 10 分钟同步；网络失败时顺延）
+
+方法：**APRIL 4+4 首四条全对舍弃 + DAPO**；独立实验，从 Base 重新开始，不接续上一组权重。每题先生成并判分前 4 条；前 4 条全部答对即舍弃该半组，不生成后 4 条；否则才放行后 4 条。完整 G8 按原 DAPO 规则过滤全对或全错组。
+
+**8 张 GPU · pending 窗口 W=256 组 · 每次更新 64 个完整有效组（512 条回答）· PPO mini-batch 16 组**。ready 池独立，不占 pending 窗口；半组舍弃、完整有效或完整无效组退出 pending 后都补新题。未完成回答可跨权重续写。
+
+保留 CPU 状态处理优化；启动时做初始评估，之后每 **50 轮评估**、每 **50 轮保存检查点**，保留最近 2 个。10 小时从真实 GPU 分配开始计时，100,000 步仅为保护上限。
+
+累计用时 **0.01 / 10 小时**；剩余 **9.99 小时**。包含初始化、生成、CPU 判分、验证、保存及收尾，不补回空档。
+
+Qwen3-8B-Base · DeepMath open-v4 train 40,299 · 回答上限 8192 tokens · 学习率 5e-7。
+
+**训练中 · 已完成 0 步 · 10 小时硬上限**
+
+当前第 — 轮，阶段：等待运行事件。
+计划截止：**2026-11-01T23:07:56+08:00**。
+
+最近十轮平均耗时：等待完整轮次计时记录。
+最新检查点：尚无已完成检查点标记。
+
+## 验证集
+
+[上一轮普通 8 同发完整归档](../20261031-setup2-qwen3-8b-april-eight-w256-g64-8k-from0-12h/README.md)：原计划 12 小时，约 10 小时 2 分钟异常结束；保留原始名称与失败状态。作为约 10 小时对照，不并入本轮曲线。
+
+DeepMath hard-dev 固定 **1,021 题**；公共测评保留 AIME24 / AIME25 / AMC23 / MATH500 全部 **600 题**。每题采样 4 次，报告 **mean@4**（4 个回答正确率的均值），不是 pass@4；unknown 保留在分母并计错。
+
+等待本轮首次真实验证；不使用旧实验或校准分数填充。
+
+| 验证分组 | 题数 × 回答数 | mean@4 |
+|---|---:|---:|
+| DeepMath hard-dev | 1021 × 4 | 等待实测 |
+| DeepMath D5-6 | 128 × 4 | 等待实测 |
+| DeepMath D6-7 | 255 × 4 | 等待实测 |
+| DeepMath D7-8 | 319 × 4 | 等待实测 |
+| DeepMath D8-9 | 272 × 4 | 等待实测 |
+| DeepMath D9-10 | 47 × 4 | 等待实测 |
+| AIME24 | 30 × 4 | 等待实测 |
+| AIME25 | 30 × 4 | 等待实测 |
+| AMC23 | 40 × 4 | 等待实测 |
+| MATH500 | 500 × 4 | 等待实测 |
+
+![验证 mean@4](validation.svg?v=cdc54861af70)
+
+两个面板分别展示 DeepMath hard-dev（总体与五个难度桶）和四个公共测评集。hard-dev 总体按各桶真实题数加权；公共测评不合并成一个总分。仅连接实测检查点，无平滑。
+
+<details>
+<summary>各项历史最佳 mean@4</summary>
+
+| 验证分组 | 最佳步数 | 历史最佳 mean@4 |
+|---|---:|---:|
+| DeepMath hard-dev | — | 等待实测 |
+| DeepMath D5-6 | — | 等待实测 |
+| DeepMath D6-7 | — | 等待实测 |
+| DeepMath D7-8 | — | 等待实测 |
+| DeepMath D8-9 | — | 等待实测 |
+| DeepMath D9-10 | — | 等待实测 |
+| AIME24 | — | 等待实测 |
+| AIME25 | — | 等待实测 |
+| AMC23 | — | 等待实测 |
+| MATH500 | — | 等待实测 |
+
+各项独立取最佳，不代表同一个检查点同时达到，也不代表该轮权重仍被保留。
+
+</details>
+
+## 最近十轮
+
+| 轮次 | 总秒数（含验证） | 采集秒数 | 更新秒数 | 验证秒数 | 新候选组 / 完成组 | carry / 选中组 | pending / surplus |
+|---:|---:|---:|---:|---:|---:|---:|---:|
+| — | — | — | — | — | — | — | — |
+
+采集包含续写、CPU 判分与队列处理；carry 为采集前已完成的有效组，pending 为暂停后未完成组，surplus 为留到后轮的完整有效组。未记录的值显示‘—’，不填零；总秒数优先使用轮次结束事件，缺失时仅在两项计时均存在时使用 step + testing。
+
+## GPU 0–7
+
+| GPU | 利用率 | 已用 / 总显存 GiB | 最新采样（北京时间） | 采样状态 |
+|---:|---:|---:|---|---|
+| 0 | 0% | 0.91 / 268.59 | 2026-11-01T13:08:25+08:00 | ok |
+| 1 | 0% | 0.91 / 268.59 | 2026-11-01T13:08:25+08:00 | ok |
+| 2 | 0% | 0.91 / 268.59 | 2026-11-01T13:08:25+08:00 | ok |
+| 3 | 0% | 0.91 / 268.59 | 2026-11-01T13:08:25+08:00 | ok |
+| 4 | 0% | 0.91 / 268.59 | 2026-11-01T13:08:25+08:00 | ok |
+| 5 | 0% | 0.91 / 268.59 | 2026-11-01T13:08:25+08:00 | ok |
+| 6 | 0% | 0.91 / 268.59 | 2026-11-01T13:08:25+08:00 | ok |
+| 7 | 0% | 0.91 / 268.59 | 2026-11-01T13:08:25+08:00 | ok |
+
+最新值来源：1 秒滚动快照。数值均为瞬时采样，失败采样留空，不当成零。
+
+## 最近十分钟 GPU 利用率
+
+每秒采样；当前实际覆盖 **28.9 / 600 秒**，30 个采样时刻。
+窗口：2026-11-01T13:07:56+08:00 至 2026-11-01T13:08:25+08:00。
+快照距本页生成 **0.1 秒**（新鲜）。
+
+![最近十分钟 GPU 利用率](gpu_utilization_10m.svg?v=7eba81a3bfb0)
+
+![最近十分钟 GPU 显存](gpu_memory_10m.svg?v=cb66805a3310)
+
+8 卡逐行展示、共享北京时间轴，利用率面板固定 0–100% 范围和颜色；无平滑，失败采样与缺口处断线。刚启动不足十分钟时仅展示已有样本，分钟长历史单独保留。
+
+[状态 JSON](status.json) · [验证 CSV](validation.csv) · [训练耗时 CSV](training.csv) · [GPU 最新值](gpu_latest.csv) · [GPU 秒级窗口](gpu_10m.csv) · [GPU 分钟历史](gpu_history.csv) · [验证矢量图](validation.svg) · [GPU 矢量图](gpu_utilization_10m.svg)
+
+<details>
+<summary>数据口径与发布范围</summary>
+
+独立校准集 508 题不参与训练。训练池仍保留 1,629 条 review-only 题，规则筛查不代表所有题意或金标已被人工证明无误。
+只发布汇总数值和图，不发布题目、回答、CoT、题目 ID、权重或私有路径。
+
+</details>
+
+## 历史实验
+
+[当前首页](../../README.md)
+
+- [20261021-dapo-deepmath7-scalar-400](../20261021-dapo-deepmath7-scalar-400/README.md)
+- [20261022-base-deepmath-20k-24h](../20261022-base-deepmath-20k-24h/README.md)
+- [20261023-april-deepmath-20k-24h](../20261023-april-deepmath-20k-24h/README.md)
+- [20261025-rollpacker-deepmath-20k-24h](../20261025-rollpacker-deepmath-20k-24h/README.md)
+- [20261025-rollpacker-deepmath-70-fresh-24h](../20261025-rollpacker-deepmath-70-fresh-24h/README.md)
+- [20261026-tailsieve-deepmath-64-fresh-24h](../20261026-tailsieve-deepmath-64-fresh-24h/README.md)
+- [20261027-rollverify-deepmath-112-fresh-24h](../20261027-rollverify-deepmath-112-fresh-24h/README.md)
+- [20261029-april-discard8-w256-g64-from0-24h](../20261029-april-discard8-w256-g64-from0-24h/README.md)
+- [20261030-april-cpuopt-discard8-w256-g64-eval50-from0-24h](../20261030-april-cpuopt-discard8-w256-g64-eval50-from0-24h/README.md)
+- [20261030-april-cpuopt-discard8-w256-g64-from0-24h](../20261030-april-cpuopt-discard8-w256-g64-from0-24h/README.md)
+- [20261030-april-eight-w256-g64-eval50-from0-20h](../20261030-april-eight-w256-g64-eval50-from0-20h/README.md)
+- [20261031-setup2-qwen3-8b-april-eight-w256-g64-8k-from0-12h](../20261031-setup2-qwen3-8b-april-eight-w256-g64-8k-from0-12h/README.md)
+- [20261101-setup2-qwen3-8b-april-discard44-w256-g64-8k-from0-10h](../20261101-setup2-qwen3-8b-april-discard44-w256-g64-8k-from0-10h/README.md)
