@@ -41,7 +41,7 @@ for p in documents:
             errors.append(f'Missing link: {p.relative_to(ROOT)} -> {link}')
         if target.name=='evidence.md' and parsed.fragment and parsed.fragment.upper() not in ids:
             errors.append(f'Unknown evidence anchor: {link}')
-    if re.search(r'\[(?:C\d{2}|S\d{2}|G-\d{2})(?:[、,，\s]+(?:C\d{2}|S\d{2}|G-\d{2}))*\](?!\()',text):
+    if re.search(r'\[(?:C\d{2}|S\d{2}|G-\d{2})[^\]]*\](?!\()',text):
         errors.append(f'Unresolved evidence reference: {p.relative_to(ROOT)}')
 
 for p in [*documents,*ROOT.glob('data/**/*.json'),*ROOT.glob('progress/*.json')]:
