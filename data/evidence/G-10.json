@@ -1,0 +1,56 @@
+{
+  "id": "G-10",
+  "title": "APRIL跨轮跨度与重复前缀重建统计",
+  "status": "completed_snapshot_analysis",
+  "status_label": "已完成 局部证据",
+  "chapter": "group-sampling",
+  "finding": "反复短续写再暂停不是该快照主流；仍有前缀重建开销。",
+  "limitations": [
+    "来自discard44的一份快照，不代表全部实验。",
+    "Native call timing does not separate queue/prefill/decode; no wall-time fraction attributable to rebuild is identifiable."
+  ],
+  "source_fingerprints": [
+    {
+      "artifact_name": "summary.json",
+      "sha256": "8639fa3ee8ae7b3e5757571b3e594f611cac01f37d081e84b1ae4fbb8295a0c9"
+    },
+    {
+      "artifact_name": "checks.json",
+      "sha256": "75ea0ec8fdbda18405b2615bb09b5839e6844c4087ad777e570b805a18ff368b"
+    }
+  ],
+  "results": {
+    "current_max_step": 495,
+    "full8_groups": 39188,
+    "full8_update_count_stats": {
+      "n": 39188,
+      "mean": 2.506251913851179,
+      "min": 0.0,
+      "p50": 2.0,
+      "p90": 4.0,
+      "p95": 4.0,
+      "p99": 6.0,
+      "max": 12.0
+    },
+    "full_history_answers": 414622,
+    "at_most_one_cross_weight_resume_fraction": 0.9602264231034533,
+    "observed_cross_weight_calls": 237296,
+    "observed_calls_coverage": 0.9672005461019941,
+    "short256_aborted_calls": 0,
+    "short256_terminal_calls": 31928,
+    "short256_fraction": 0.13454925493897915,
+    "short256_uncached_prefix_per_new_token": 14.040264896707221,
+    "relative5_aborted_calls": 66,
+    "relative5_confirmed_next_weight_calls": 52,
+    "full_run_resume_cache": {
+      "calls": 252211,
+      "cache_known": 252211,
+      "cache_unknown": 0,
+      "submitted_prefix_tokens_known": 412936493,
+      "cached_tokens_known": 3932800,
+      "uncached_submitted_tokens_known": 409003693,
+      "output_tokens": 354313006,
+      "uncached_prefix_per_output_token": 1.1543569840052668
+    }
+  }
+}

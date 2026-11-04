@@ -1,0 +1,84 @@
+{
+  "id": "C01",
+  "title": "三次全参数更新的E/K/V增量谱",
+  "status": "observed",
+  "status_label": "已完成 局部证据",
+  "chapter": "cache-reconstruction",
+  "finding": "缓存变化小不代表增量可以高精度低秩拟合。",
+  "limitations": [
+    "单seed、3次更新、4道重复heldout题；谱最多512抽样位置；oracle谱非在线算法。"
+  ],
+  "source_fingerprints": [
+    {
+      "artifact_name": "README.md",
+      "sha256": "16631165186e3c8d6efdd8d654acbbc539522a55a0179fdc2f66ef801b669329"
+    },
+    {
+      "artifact_name": "summary.json",
+      "sha256": "562306719d19a2e02025b305294f06944941fec72e3491399248a28acb267fac"
+    }
+  ],
+  "results": {
+    "model": "Qwen3-1.7B",
+    "dataset": "DeepMath",
+    "updates": 3,
+    "prompts_per_update": 32,
+    "group": 8,
+    "heldout": {
+      "projection_input": {
+        "observations": 336,
+        "median_relative_change": 0.0029589625411574243,
+        "median_r90": 79.0,
+        "median_r99": 325.0,
+        "median_energy_r16": 0.7399237398989646,
+        "median_energy_r64": 0.881645642876439,
+        "median_error_r64": 0.34402661848723326
+      },
+      "k_raw": {
+        "observations": 336,
+        "median_relative_change": 0.0028222961263049827,
+        "median_r90": 33.0,
+        "median_r99": 200.0,
+        "median_energy_r16": 0.8355610094048251,
+        "median_energy_r64": 0.944892161049578,
+        "median_error_r64": 0.23474795434808232
+      },
+      "k_normalized": {
+        "observations": 336,
+        "median_relative_change": 0.0021402228110207287,
+        "median_r90": 26.5,
+        "median_r99": 173.5,
+        "median_energy_r16": 0.8604782246566052,
+        "median_energy_r64": 0.9568870922934463,
+        "median_error_r64": 0.20763642776422078
+      },
+      "k_cache": {
+        "observations": 336,
+        "median_relative_change": 0.0021402227044961222,
+        "median_r90": 50.5,
+        "median_r99": 259.0,
+        "median_energy_r16": 0.8011695001413056,
+        "median_energy_r64": 0.9176283007256651,
+        "median_error_r64": 0.2870045464631842
+      },
+      "v_cache": {
+        "observations": 336,
+        "median_relative_change": 0.004057381938444555,
+        "median_r90": 67.0,
+        "median_r99": 265.0,
+        "median_energy_r16": 0.7496635227432547,
+        "median_energy_r64": 0.8963466784701608,
+        "median_error_r64": 0.32195077427310337
+      },
+      "block_output": {
+        "observations": 336,
+        "median_relative_change": 0.0007248460054971768,
+        "median_r90": 94.0,
+        "median_r99": 357.0,
+        "median_energy_r16": 0.732403684857377,
+        "median_energy_r64": 0.8688905399395352,
+        "median_error_r64": 0.3620903998811077
+      }
+    }
+  }
+}

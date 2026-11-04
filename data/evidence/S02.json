@@ -1,0 +1,53 @@
+{
+  "id": "S02",
+  "title": "早期首token直接损失干预",
+  "status": "causal_intervention_fixed_replay",
+  "status_label": "受控干预",
+  "chapter": "training-stability",
+  "finding": "首token置零降低端点自然长度与Alright比例，随机/NLLmatched单token对照无相同效果。",
+  "limitations": [
+    "固定历史batch训练后评测，不是在线采集训练；端点同配置seed非per-request paired RNG；正文共享梯度仍可更新首token偏好。"
+  ],
+  "source_fingerprints": [
+    {
+      "artifact_name": "research_state.json",
+      "sha256": "b680e6955b6c9f16d9577bf1b51a596ac59e3185f7ac0354e3dd8bf2cd910548"
+    },
+    {
+      "artifact_name": "replay_endpoint_comparison.json",
+      "sha256": "b2031dc9f31d227bf1c2440951585dcfa535e8d432b0d339972ec1f139ea24d2"
+    }
+  ],
+  "results": {
+    "early_max_preclip_norm_800_updates": 0.706914,
+    "natural_lengths_four_arms": {
+      "control": {
+        "mean_length": 3328.2,
+        "correct": 167,
+        "unknown": 1,
+        "Alright": 247
+      },
+      "firsttokenzero": {
+        "mean_length": 2034.99,
+        "correct": 158,
+        "unknown": 0,
+        "Alright": 65
+      },
+      "randomzero": {
+        "mean_length": 3360.34,
+        "correct": 167,
+        "unknown": 0,
+        "Alright": 235
+      },
+      "NLLmatchedzero": {
+        "mean_length": 3270.91,
+        "correct": 169,
+        "unknown": 2,
+        "Alright": 241
+      },
+      "each_n": 256,
+      "scope": "Same64qid×4/T1/nativeenvironment; engine seeds sameconfig, NOTperrequestpairedRNG. Fixedrecordedbatchreplay, notonlineoptimizationresult."
+    },
+    "finding": "First-response-token gradient intervention reduced early length transition; random and NLL-matched one-token controls did not reproduce it. Early800update maximum preclipnorm0.706914."
+  }
+}

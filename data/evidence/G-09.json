@@ -1,0 +1,64 @@
+{
+  "id": "G-09",
+  "title": "超过已正确短回答2倍长度时停止的离线估算",
+  "status": "offline_counterfactual_only",
+  "status_label": "离线估算",
+  "chapter": "group-sampling",
+  "finding": "离线2L停止能省token，也会截掉原本正确的回答。",
+  "limitations": [
+    "Reference is the shortest already correctly scored response.",
+    "Equal token-generation rates within each concurrently started stage; reward latency is zero.",
+    "Current 4+4 starts stage two only after the first four settle; later correct references never retroactively truncate stage one.",
+    "Cancel after floor(2*reference_length)+1 generated tokens only if the response has not finished.",
+    "Fixed observed generation traces: weight updates, sampling, future training and wall-clock speed effects are not simulated.",
+    "Originally correct aborted means the full original answer was correct; the shortened answer is not regraded."
+  ],
+  "source_fingerprints": [
+    {
+      "artifact_name": "stats.json",
+      "sha256": "2678781d53794cd6822c56a2ef53806f181d3ccd60b4035f6d56a5d42136920e"
+    },
+    {
+      "artifact_name": "checks.json",
+      "sha256": "7627b4128a01a8db80a6d60b6ddcfbc3bb1d192dfc8b4f0073b87251414d07a4"
+    }
+  ],
+  "results": {
+    "eight": {
+      "complete8": {
+        "answers": 675064,
+        "aborted_answers": 45810,
+        "aborted_fraction": 0.06786023251128782,
+        "saved_decode_token_fraction": 0.05163626076689118,
+        "originally_correct_aborted": 27926,
+        "original_correct_fraction_among_aborted": 0.6096048897620607
+      },
+      "selected8": {
+        "answers": 338944,
+        "aborted_answers": 29403,
+        "aborted_fraction": 0.08674884346676737,
+        "saved_decode_token_fraction": 0.08087703477784002,
+        "originally_correct_aborted": 11597,
+        "original_correct_fraction_among_aborted": 0.39441553582967726
+      }
+    },
+    "discard44": {
+      "complete8": {
+        "answers": 224368,
+        "aborted_answers": 25155,
+        "aborted_fraction": 0.11211491834842759,
+        "saved_decode_token_fraction": 0.06878456988683708,
+        "originally_correct_aborted": 11065,
+        "original_correct_fraction_among_aborted": 0.439872788709998
+      },
+      "selected8": {
+        "answers": 180224,
+        "aborted_answers": 25139,
+        "aborted_fraction": 0.13948752663352273,
+        "saved_decode_token_fraction": 0.08672094474178052,
+        "originally_correct_aborted": 11057,
+        "original_correct_fraction_among_aborted": 0.4398345200684196
+      }
+    }
+  }
+}

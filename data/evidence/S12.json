@@ -1,0 +1,376 @@
+{
+  "id": "S12",
+  "title": "固定信号下的状态响应、FP32和块回退",
+  "status": "local_causal_parameter_intervention",
+  "status_label": "受控干预",
+  "chapter": "training-stability",
+  "finding": "同一输入与固定系数的梯度随模型状态增大；FP32 master仍大；部分中间层回退降低响应但未验证修复质量。",
+  "limitations": [
+    "固定事后挑选的8回答与固定系数，非全局Jacobian或前瞻预警；BF16参数像转FP32与真实master要分开；单点FP32不代表FP32全训练。"
+  ],
+  "source_fingerprints": [
+    {
+      "artifact_name": "research_state.json",
+      "sha256": "b680e6955b6c9f16d9577bf1b51a596ac59e3185f7ac0354e3dd8bf2cd910548"
+    },
+    {
+      "artifact_name": "report_additional_results.json",
+      "sha256": "eb302c900285c154369b67e8b974f2fd2a8fc4318a9c689b63f0f397442cf3cf"
+    }
+  ],
+  "results": {
+    "fixed_signal_precision": {
+      "raw_master_gradient_norm": 340.90607278748934,
+      "BF16_image_in_FP32_gradient_norm": 489.193496868326,
+      "raw_over_BF16_image_gradient_norm": 0.6968736808029349,
+      "mean_abs_chosen_logp_difference": 7.677890956183546,
+      "max_abs_chosen_logp_difference": 33.183878898620605,
+      "true_native_FP32_values": true,
+      "live_all_parameters_bitwise_match_native_source": true,
+      "interpretation": "Same selected 8-response micro and fixed c; comparison isolates parameter-value rounding under the same FP32/SDPA/FlashCE execution. Both refer to the reconstructed pre-inner2 point, not an original production intermediate. No PPO/Adam recomputation or optimizer update."
+    },
+    "timecourse": {
+      "steps": [
+        500,
+        501,
+        502,
+        505,
+        510,
+        "reconstructed517"
+      ],
+      "grad_norms": [
+        5.013,
+        5.373,
+        6.135,
+        6.88,
+        13.312,
+        489.193
+      ]
+    },
+    "rollback_grad_norm": {
+      "reference": 489.193,
+      "layers8_15": 9.616,
+      "layers16_23": 11.769,
+      "layers8_15_mlp": 15.343,
+      "layers8_15_attention": 227.776,
+      "layers16_23_attention": 37.927,
+      "layers16_23_mlp": 30.4,
+      "all500": 5.013
+    },
+    "backprop_flow": {
+      "passed": true,
+      "hooks": 1152,
+      "unhooked_logp_and_parameter_norm_exact": true,
+      "adjacent_discrepancy": 0,
+      "ratios": [
+        {
+          "layer": 0,
+          "input_517_over500": 285.42366352373807,
+          "output_517_over500": 284.2807661797426,
+          "gain500_input_over_output": 19.54576810809915,
+          "gain517_input_over_output": 19.624348191997523,
+          "ratio_of_gains": 1.00402031188868
+        },
+        {
+          "layer": 1,
+          "input_517_over500": 284.2807661797426,
+          "output_517_over500": 290.68933757750204,
+          "gain500_input_over_output": 1.148473617741273,
+          "gain517_input_over_output": 1.1231542330019697,
+          "ratio_of_gains": 0.977953882136971
+        },
+        {
+          "layer": 2,
+          "input_517_over500": 290.68933757750204,
+          "output_517_over500": 294.55029185914884,
+          "gain500_input_over_output": 1.124961168364954,
+          "gain517_input_over_output": 1.1102152191680608,
+          "ratio_of_gains": 0.9868920371550909
+        },
+        {
+          "layer": 3,
+          "input_517_over500": 294.55029185914884,
+          "output_517_over500": 303.77970925007367,
+          "gain500_input_over_output": 1.2479010050073867,
+          "gain517_input_over_output": 1.2099873495292108,
+          "ratio_of_gains": 0.969618058382803
+        },
+        {
+          "layer": 4,
+          "input_517_over500": 303.77970925007367,
+          "output_517_over500": 320.14954865737855,
+          "gain500_input_over_output": 1.1790670442499813,
+          "gain517_input_over_output": 1.1187791623967611,
+          "ratio_of_gains": 0.9488681477891955
+        },
+        {
+          "layer": 5,
+          "input_517_over500": 320.14954865737855,
+          "output_517_over500": 333.1428483978509,
+          "gain500_input_over_output": 1.1256656579460607,
+          "gain517_input_over_output": 1.0817622352203768,
+          "ratio_of_gains": 0.9609978127912404
+        },
+        {
+          "layer": 6,
+          "input_517_over500": 333.1428483978509,
+          "output_517_over500": 334.48374871732244,
+          "gain500_input_over_output": 1.1122195058898283,
+          "gain517_input_over_output": 1.1077607676208117,
+          "ratio_of_gains": 0.9959911346227924
+        },
+        {
+          "layer": 7,
+          "input_517_over500": 334.48374871732244,
+          "output_517_over500": 333.8362817023095,
+          "gain500_input_over_output": 1.0890078653449609,
+          "gain517_input_over_output": 1.091119968524115,
+          "ratio_of_gains": 1.0019394746781605
+        },
+        {
+          "layer": 8,
+          "input_517_over500": 333.8362817023095,
+          "output_517_over500": 328.62447083584647,
+          "gain500_input_over_output": 1.1222993155260954,
+          "gain517_input_over_output": 1.1400983910277027,
+          "ratio_of_gains": 1.0158594728299053
+        },
+        {
+          "layer": 9,
+          "input_517_over500": 328.62447083584647,
+          "output_517_over500": 313.50914323323633,
+          "gain500_input_over_output": 1.0663963433551036,
+          "gain517_input_over_output": 1.1178108887741065,
+          "ratio_of_gains": 1.048213354949476
+        },
+        {
+          "layer": 10,
+          "input_517_over500": 313.50914323323633,
+          "output_517_over500": 310.7425513332377,
+          "gain500_input_over_output": 0.8985959268870622,
+          "gain517_input_over_output": 0.9065962738045704,
+          "ratio_of_gains": 1.0089031640119082
+        },
+        {
+          "layer": 11,
+          "input_517_over500": 310.7425513332377,
+          "output_517_over500": 311.9286216911822,
+          "gain500_input_over_output": 1.0656689330056937,
+          "gain517_input_over_output": 1.0616168574828784,
+          "ratio_of_gains": 0.996197622547383
+        },
+        {
+          "layer": 12,
+          "input_517_over500": 311.9286216911822,
+          "output_517_over500": 324.2677170231234,
+          "gain500_input_over_output": 1.0540888471206125,
+          "gain517_input_over_output": 1.0139784627371131,
+          "ratio_of_gains": 0.9619478144626363
+        },
+        {
+          "layer": 13,
+          "input_517_over500": 324.2677170231234,
+          "output_517_over500": 342.19911504535463,
+          "gain500_input_over_output": 1.1495950847226806,
+          "gain517_input_over_output": 1.0893557500130309,
+          "ratio_of_gains": 0.9475995195959094
+        },
+        {
+          "layer": 14,
+          "input_517_over500": 342.19911504535463,
+          "output_517_over500": 341.40575102855877,
+          "gain500_input_over_output": 1.0745870002913753,
+          "gain517_input_over_output": 1.0770841423470652,
+          "ratio_of_gains": 1.0023238156194079
+        },
+        {
+          "layer": 15,
+          "input_517_over500": 341.40575102855877,
+          "output_517_over500": 332.9745200624821,
+          "gain500_input_over_output": 1.2040382065111686,
+          "gain517_input_over_output": 1.2345255969852849,
+          "ratio_of_gains": 1.0253209493762303
+        },
+        {
+          "layer": 16,
+          "input_517_over500": 332.9745200624821,
+          "output_517_over500": 294.22787568615934,
+          "gain500_input_over_output": 1.3379091004280632,
+          "gain517_input_over_output": 1.514097328689029,
+          "ratio_of_gains": 1.1316892367385754
+        },
+        {
+          "layer": 17,
+          "input_517_over500": 294.22787568615934,
+          "output_517_over500": 290.6282757343888,
+          "gain500_input_over_output": 1.4059877026927519,
+          "gain517_input_over_output": 1.4234016767942534,
+          "ratio_of_gains": 1.0123855806620146
+        },
+        {
+          "layer": 18,
+          "input_517_over500": 290.6282757343888,
+          "output_517_over500": 266.8109826567536,
+          "gain500_input_over_output": 1.1017893045264635,
+          "gain517_input_over_output": 1.2001422228149505,
+          "ratio_of_gains": 1.0892665393323617
+        },
+        {
+          "layer": 19,
+          "input_517_over500": 266.8109826567536,
+          "output_517_over500": 55.51578270579173,
+          "gain500_input_over_output": 1.701890769080714,
+          "gain517_input_over_output": 8.179352363260671,
+          "ratio_of_gains": 4.806038384989182
+        },
+        {
+          "layer": 20,
+          "input_517_over500": 55.51578270579173,
+          "output_517_over500": 56.10376111088974,
+          "gain500_input_over_output": 1.1156926847233817,
+          "gain517_input_over_output": 1.1040000068644662,
+          "ratio_of_gains": 0.9895198041369121
+        },
+        {
+          "layer": 21,
+          "input_517_over500": 56.10376111088974,
+          "output_517_over500": 55.72870613469327,
+          "gain500_input_over_output": 1.1095440598398778,
+          "gain517_input_over_output": 1.1170113069700445,
+          "ratio_of_gains": 1.0067300140665385
+        },
+        {
+          "layer": 22,
+          "input_517_over500": 55.72870613469327,
+          "output_517_over500": 39.12478535143099,
+          "gain500_input_over_output": 1.171356019446109,
+          "gain517_input_over_output": 1.6684604094429547,
+          "ratio_of_gains": 1.4243836901371012
+        },
+        {
+          "layer": 23,
+          "input_517_over500": 39.12478535143099,
+          "output_517_over500": 38.9868970645885,
+          "gain500_input_over_output": 1.1108379887072353,
+          "gain517_input_over_output": 1.1147667842450963,
+          "ratio_of_gains": 1.003536785361863
+        },
+        {
+          "layer": 24,
+          "input_517_over500": 38.9868970645885,
+          "output_517_over500": 31.752363519161612,
+          "gain500_input_over_output": 1.132027490369136,
+          "gain517_input_over_output": 1.3899513091260827,
+          "ratio_of_gains": 1.2278423633270972
+        },
+        {
+          "layer": 25,
+          "input_517_over500": 31.752363519161612,
+          "output_517_over500": 30.702417670684813,
+          "gain500_input_over_output": 1.0844962053212297,
+          "gain517_input_over_output": 1.1215832614833599,
+          "ratio_of_gains": 1.0341974974003205
+        },
+        {
+          "layer": 26,
+          "input_517_over500": 30.702417670684813,
+          "output_517_over500": 29.04588642243114,
+          "gain500_input_over_output": 1.0572319655453524,
+          "gain517_input_over_output": 1.1175275186611295,
+          "ratio_of_gains": 1.057031526742265
+        },
+        {
+          "layer": 27,
+          "input_517_over500": 29.04588642243114,
+          "output_517_over500": 28.156482584478464,
+          "gain500_input_over_output": 1.0700583010676512,
+          "gain517_input_over_output": 1.1038591835801326,
+          "ratio_of_gains": 1.0315878886961174
+        },
+        {
+          "layer": 28,
+          "input_517_over500": 28.156482584478464,
+          "output_517_over500": 27.3323146013499,
+          "gain500_input_over_output": 1.0523086340399488,
+          "gain517_input_over_output": 1.08403953927776,
+          "ratio_of_gains": 1.030153611033288
+        },
+        {
+          "layer": 29,
+          "input_517_over500": 27.3323146013499,
+          "output_517_over500": 19.995694136493263,
+          "gain500_input_over_output": 1.0779521915805683,
+          "gain517_input_over_output": 1.4734636479422436,
+          "ratio_of_gains": 1.3669100164653396
+        },
+        {
+          "layer": 30,
+          "input_517_over500": 19.995694136493263,
+          "output_517_over500": 18.353972360168076,
+          "gain500_input_over_output": 1.0566594397276903,
+          "gain517_input_over_output": 1.1511752632409296,
+          "ratio_of_gains": 1.0894477633565616
+        },
+        {
+          "layer": 31,
+          "input_517_over500": 18.353972360168076,
+          "output_517_over500": 16.06522504336723,
+          "gain500_input_over_output": 1.0569877230253035,
+          "gain517_input_over_output": 1.2075724679283568,
+          "ratio_of_gains": 1.1424659356232167
+        },
+        {
+          "layer": 32,
+          "input_517_over500": 16.06522504336723,
+          "output_517_over500": 11.332576969852363,
+          "gain500_input_over_output": 1.1012858582292093,
+          "gain517_input_over_output": 1.5611987632289215,
+          "ratio_of_gains": 1.4176144654569705
+        },
+        {
+          "layer": 33,
+          "input_517_over500": 11.332576969852363,
+          "output_517_over500": 10.56026287647245,
+          "gain500_input_over_output": 1.2220018592355717,
+          "gain517_input_over_output": 1.3113717233254838,
+          "ratio_of_gains": 1.0731339837288119
+        },
+        {
+          "layer": 34,
+          "input_517_over500": 10.56026287647245,
+          "output_517_over500": 6.837898611362224,
+          "gain500_input_over_output": 1.1545875151357812,
+          "gain517_input_over_output": 1.783113258431008,
+          "ratio_of_gains": 1.5443725443552119
+        },
+        {
+          "layer": 35,
+          "input_517_over500": 6.837898611362224,
+          "output_517_over500": 2.290558264107682,
+          "gain500_input_over_output": 0.9600788447021923,
+          "gain517_input_over_output": 2.866079375433318,
+          "ratio_of_gains": 2.985254170788806
+        }
+      ],
+      "limits": [
+        "Both models here use BF16 parameter images cast to FP32. This flow observation is distinct from the newly tested unrounded FP32 master.",
+        "The hidden gradient norm is sqrt of summed squares across 8 separate response activation tensors, including all prompt and response positions. It is not the norm of summed parameter gradients.",
+        "Incoming gradient directions and forward hidden states differ between models. A large block input/output gain is not proof that this block parameter change alone caused the anomaly; it is not the block global operator norm.",
+        "The chosen 8-response 517 micro was selected after seeing a large whole-micro gradient projection. These values are descriptive, not a population effect or a prospective warning test.",
+        "Large hidden gradients show the effect is already visible before shared-parameter accumulation, but do not quantify how much final parameter-gradient growth comes from Jacobian geometry versus changed directions/coherence."
+      ]
+    },
+    "additional_findings": [
+      {
+        "title": "实际反向传播中的方向增益。",
+        "text": "同一旧8条回答与固定c，仍使用BF16参数像的FP32执行。重构517相对500的末层输出hidden梯度范数为2.29倍，第一层输入却为285.42倍。16–23层整段实际方向增益从5.68变为48.52，32–35层从1.49变为10.46；8–15层约1.80→1.80。因此8–15层MLP回退有效，不能直接理解成该段局部反向增益的贡献；前向状态与跨层交互也会改变。这里按8条回答的hidden梯度平方和聚合，参数梯度则跨回答求和，二者口径不同；这是特定方向的测量，不是全局Jacobian范数，也没有证明某一层自身更新独自致因。所有chosen logp、最终参数norm和相邻层边界检查均与原参考完全一致。",
+        "figure": "fixed_probes/strong517_precision/backprop_flow/backprop_flow.png",
+        "caption": "观察已存在的反向流，不修改梯度；每个hook恰好调用一次。两个点仍是BF16参数像，原始FP32 master对照单独列出。"
+      },
+      {
+        "title": "幅度匹配随机扰动与未获支持的机制。",
+        "text": "另行预先固定的Gaussian v2控制按每个张量的名义改变量生成噪声，再舍入到FP32，总改变量范数匹配；范数仍为489.287。极小张量的实际相对改变量会受舍入影响，因此不声称每个张量都精确等幅。此前v1在前向前校验失败，不计为结果。激活检查也没有支持“最终隐藏向量更集中”或“Q/K归一化输入跌到epsilon底部”这两个具体假设；其他分布式放大路径仍未排除。"
+      }
+    ]
+  }
+}

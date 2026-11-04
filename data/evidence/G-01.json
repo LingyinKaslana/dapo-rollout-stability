@@ -1,0 +1,30 @@
+{
+  "id": "G-01",
+  "title": "固定权重八同发与4+4生成微实验",
+  "status": "completed_fixed_weight_microbenchmark",
+  "status_label": "已完成 局部证据",
+  "chapter": "group-sampling",
+  "finding": "固定权重4+4耗时为八同发的1.373倍；首四全对仍可能丢掉有效G8组。",
+  "limitations": [
+    "无actor更新，无实际舍弃。",
+    "配对种子不保证批处理改变后的逐token相同轨迹。"
+  ],
+  "source_fingerprints": [
+    {
+      "artifact_name": "pilot44_summary.json",
+      "sha256": "a2c2b9b9b49c407f29878efcb9f9f5e844ad0f39f87753070107267c25ee15d1"
+    }
+  ],
+  "results": {
+    "questions": 224,
+    "measured_responses": 3584,
+    "wall_ratio_44_over_8": 1.3725890453796037,
+    "token_throughput_ratio_44_over_8": 0.6908652469181586,
+    "second_half_prompt_cache_percent": {
+      "eight": 40.73,
+      "four_four": 57.77
+    },
+    "shadow_first4_all_correct": 7,
+    "shadow_would_drop_mixed_g8": 6
+  }
+}

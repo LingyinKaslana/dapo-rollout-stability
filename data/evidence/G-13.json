@@ -1,0 +1,27 @@
+{
+  "id": "G-13",
+  "title": "8B候选与组内rollout长度分布",
+  "status": "completed_snapshot_analysis",
+  "status_label": "已完成 局部证据",
+  "chapter": "group-sampling",
+  "finding": "回答长度与组内最大值呈长尾，训练选中组与全部候选分母不同。",
+  "limitations": [
+    "仅完整候选组；未完成的组被截尾。",
+    "token-only同步利用率只是代理量，不是实测GPU利用率。"
+  ],
+  "source_fingerprints": [
+    {
+      "artifact_name": "stats.json",
+      "sha256": "9c323cbb57d3d8b0da2f7211c7d99bbbb711c03d5463549569525f57ab7bc193"
+    }
+  ],
+  "results": {
+    "eight_complete_groups": 84383,
+    "eight_complete_responses": 675064,
+    "eight_mean_tokens": 1537.5015524453977,
+    "eight_p50_tokens": 1243.0,
+    "eight_p99_tokens": 8192.0,
+    "eight_longest10pct_token_share": 0.27126984764222023,
+    "eight_group_max_over_median_ge2_fraction": 0.12882926655843002
+  }
+}

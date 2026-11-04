@@ -1,0 +1,324 @@
+{
+  "id": "S14",
+  "title": "在线TIS/同步分支与输出质量",
+  "status": "online_single_trajectory_comparison",
+  "status_label": "在线单轨迹对照",
+  "chapter": "training-stability",
+  "finding": "从500启用TIS大幅压低梯度，但64题端点异常标签更多；低梯度不保证好质量。",
+  "limitations": [
+    "不同在线分支回答不同，非同样本因果对照；64题T1不同于1621题T0.6固定验证；AI标签非人工真值；原500无driver Python/NumPy RNG，非位级历史续跑。"
+  ],
+  "source_fingerprints": [
+    {
+      "artifact_name": "research_state.json",
+      "sha256": "b680e6955b6c9f16d9577bf1b51a596ac59e3185f7ac0354e3dd8bf2cd910548"
+    },
+    {
+      "artifact_name": "report_additional_results.json",
+      "sha256": "eb302c900285c154369b67e8b974f2fd2a8fc4318a9c689b63f0f397442cf3cf"
+    }
+  ],
+  "results": {
+    "online_501_550": {
+      "Uncorrected APRIL": {
+        "first_step": 501,
+        "last_step": 550,
+        "rounds": 50,
+        "updates": 200,
+        "max_preclip_norm": 1780.7255859375,
+        "norm_above_one_count": 109,
+        "final": {
+          "step": 550,
+          "grad_mean": 25.361999109387398,
+          "grad_max": 52.26593017578125,
+          "norms": [
+            0.5089555978775024,
+            52.26593017578125,
+            48.19320297241211,
+            0.47990769147872925
+          ],
+          "length": 1395.271484375,
+          "cap": 0.01953125,
+          "entropy": 0.5910395383834839,
+          "p0_q_abs_prob_gap": 0.016679810360074043,
+          "p0_q_abs_logppl_gap": 0.058509789407253265,
+          "PPO_clipfrac": 0.01878095743988221,
+          "seconds": 61.68489940895233,
+          "lr": 5e-07,
+          "stale_token_fraction": 0.7937747330198676,
+          "validation": {
+            "val-core/deepmath_D8_9/acc/mean@4": 0.7215073529411765,
+            "val-core/deepmath_D8_9/acc/best@4/mean": 0.8229264705882353,
+            "val-core/deepmath_D8_9/acc/best@4/std": 0.06448630486761939,
+            "val-core/deepmath_D9_10/acc/mean@4": 0.7127659574468085,
+            "val-core/deepmath_D9_10/acc/best@4/mean": 0.7932127659574469,
+            "val-core/deepmath_D9_10/acc/best@4/std": 0.03689220341579576,
+            "val-core/deepmath_D7_8/acc/mean@4": 0.7484326018808778,
+            "val-core/deepmath_D7_8/acc/best@4/mean": 0.8479529780564263,
+            "val-core/deepmath_D7_8/acc/best@4/std": 0.06491938783595062,
+            "val-core/deepmath_D6_7/acc/mean@4": 0.7186274509803922,
+            "val-core/deepmath_D6_7/acc/best@4/mean": 0.8222862745098038,
+            "val-core/deepmath_D6_7/acc/best@4/std": 0.05836756585796049,
+            "val-core/deepmath_D5_6/acc/mean@4": 0.6953125,
+            "val-core/deepmath_D5_6/acc/best@4/mean": 0.7971328125,
+            "val-core/deepmath_D5_6/acc/best@4/std": 0.06385992512762467,
+            "val-core/aime24/acc/mean@4": 0.18333333333333332,
+            "val-core/aime24/acc/best@4/mean": 0.2436333333333333,
+            "val-core/aime24/acc/best@4/std": 0.042142739888761,
+            "val-core/aime25/acc/mean@4": 0.16666666666666666,
+            "val-core/aime25/acc/best@4/mean": 0.20883333333333332,
+            "val-core/aime25/acc/best@4/std": 0.0397747269787215,
+            "val-core/amc23/acc/mean@4": 0.65,
+            "val-core/amc23/acc/best@4/mean": 0.761425,
+            "val-core/amc23/acc/best@4/std": 0.07338439565390599,
+            "val-core/math500/acc/mean@4": 0.832,
+            "val-core/math500/acc/best@4/mean": 0.8909659999999999,
+            "val-core/math500/acc/best@4/std": 0.036585255788723826
+          }
+        }
+      },
+      "TIS from 500": {
+        "first_step": 501,
+        "last_step": 550,
+        "rounds": 50,
+        "updates": 200,
+        "max_preclip_norm": 1.3493866920471191,
+        "norm_above_one_count": 1,
+        "final": {
+          "step": 550,
+          "grad_mean": 0.47055692225694656,
+          "grad_max": 0.4961370527744293,
+          "norms": [
+            0.4766259491443634,
+            0.4212019741535187,
+            0.4961370527744293,
+            0.48826271295547485
+          ],
+          "length": 1588.15625,
+          "cap": 0.0,
+          "entropy": 0.9892479777336121,
+          "p0_q_abs_prob_gap": 0.004376632161438465,
+          "p0_q_abs_logppl_gap": 0.0015750906895846128,
+          "PPO_clipfrac": 0.002006410142560829,
+          "seconds": 63.26214536593761,
+          "lr": 5e-07,
+          "stale_token_fraction": 0.8663729068692076,
+          "validation": {
+            "val-core/deepmath_D8_9/acc/mean@4": 0.7150735294117647,
+            "val-core/deepmath_D8_9/acc/best@4/mean": 0.826,
+            "val-core/deepmath_D8_9/acc/best@4/std": 0.07097466083698822,
+            "val-core/deepmath_D9_10/acc/mean@4": 0.6968085106382979,
+            "val-core/deepmath_D9_10/acc/best@4/mean": 0.7784042553191489,
+            "val-core/deepmath_D9_10/acc/best@4/std": 0.05423941250447037,
+            "val-core/deepmath_D7_8/acc/mean@4": 0.7304075235109718,
+            "val-core/deepmath_D7_8/acc/best@4/mean": 0.8414921630094043,
+            "val-core/deepmath_D7_8/acc/best@4/std": 0.06919875548351116,
+            "val-core/deepmath_D6_7/acc/mean@4": 0.7147058823529412,
+            "val-core/deepmath_D6_7/acc/best@4/mean": 0.8176549019607843,
+            "val-core/deepmath_D6_7/acc/best@4/std": 0.05832678327038573,
+            "val-core/deepmath_D5_6/acc/mean@4": 0.705078125,
+            "val-core/deepmath_D5_6/acc/best@4/mean": 0.8007031250000001,
+            "val-core/deepmath_D5_6/acc/best@4/std": 0.06719636931127225,
+            "val-core/aime24/acc/mean@4": 0.175,
+            "val-core/aime24/acc/best@4/mean": 0.29736666666666667,
+            "val-core/aime24/acc/best@4/std": 0.11270941510559869,
+            "val-core/aime25/acc/mean@4": 0.15833333333333333,
+            "val-core/aime25/acc/best@4/mean": 0.16656666666666667,
+            "val-core/aime25/acc/best@4/std": 0.0018230011885167093,
+            "val-core/amc23/acc/mean@4": 0.64375,
+            "val-core/amc23/acc/best@4/mean": 0.763375,
+            "val-core/amc23/acc/best@4/std": 0.0825388149147607,
+            "val-core/math500/acc/mean@4": 0.8235,
+            "val-core/math500/acc/best@4/mean": 0.886126,
+            "val-core/math500/acc/best@4/std": 0.03975815992122283
+          }
+        }
+      },
+      "Fresh synchronous G8 (to 520)": {
+        "first_step": 501,
+        "last_step": 520,
+        "rounds": 20,
+        "updates": 80,
+        "max_preclip_norm": 0.6294620633125305,
+        "norm_above_one_count": 0,
+        "final": {
+          "step": 520,
+          "grad_mean": 0.4760780781507492,
+          "grad_max": 0.550622820854187,
+          "norms": [
+            0.525181770324707,
+            0.3759393095970154,
+            0.550622820854187,
+            0.4525684118270874
+          ],
+          "length": 1572.130859375,
+          "cap": 0.005859375,
+          "entropy": 0.6559507846832275,
+          "p0_q_abs_prob_gap": 0.004539258312433958,
+          "p0_q_abs_logppl_gap": 0.0012148070381954312,
+          "PPO_clipfrac": 0.0025411412627060295,
+          "seconds": 120.07161324401386,
+          "lr": 5e-07,
+          "stale_token_fraction": null,
+          "validation": {
+            "val-core/deepmath_D8_9/acc/mean@4": 0.7224264705882353,
+            "val-core/deepmath_D8_9/acc/best@4/mean": 0.8311360294117648,
+            "val-core/deepmath_D8_9/acc/best@4/std": 0.06560240272897284,
+            "val-core/deepmath_D9_10/acc/mean@4": 0.7074468085106383,
+            "val-core/deepmath_D9_10/acc/best@4/mean": 0.7970425531914893,
+            "val-core/deepmath_D9_10/acc/best@4/std": 0.06150743762127405,
+            "val-core/deepmath_D7_8/acc/mean@4": 0.7272727272727273,
+            "val-core/deepmath_D7_8/acc/best@4/mean": 0.8317931034482758,
+            "val-core/deepmath_D7_8/acc/best@4/std": 0.06533595561201175,
+            "val-core/deepmath_D6_7/acc/mean@4": 0.7235294117647059,
+            "val-core/deepmath_D6_7/acc/best@4/mean": 0.8143019607843137,
+            "val-core/deepmath_D6_7/acc/best@4/std": 0.05926448805191125,
+            "val-core/deepmath_D5_6/acc/mean@4": 0.71875,
+            "val-core/deepmath_D5_6/acc/best@4/mean": 0.8240468750000001,
+            "val-core/deepmath_D5_6/acc/best@4/std": 0.07180223379758532,
+            "val-core/aime24/acc/mean@4": 0.19166666666666668,
+            "val-core/aime24/acc/best@4/mean": 0.2449,
+            "val-core/aime24/acc/best@4/std": 0.036614532001291736,
+            "val-core/aime25/acc/mean@4": 0.15,
+            "val-core/aime25/acc/best@4/mean": 0.18663333333333335,
+            "val-core/aime25/acc/best@4/std": 0.026157160501645953,
+            "val-core/amc23/acc/mean@4": 0.6625,
+            "val-core/amc23/acc/best@4/mean": 0.78085,
+            "val-core/amc23/acc/best@4/std": 0.060062221997180566,
+            "val-core/math500/acc/mean@4": 0.8315,
+            "val-core/math500/acc/best@4/mean": 0.892748,
+            "val-core/math500/acc/best@4/std": 0.03909199669137747
+          }
+        }
+      },
+      "TIS switched at 520": {
+        "first_step": 521,
+        "last_step": 550,
+        "rounds": 30,
+        "updates": 120,
+        "max_preclip_norm": 90.58901977539062,
+        "norm_above_one_count": 60,
+        "final": {
+          "step": 550,
+          "grad_mean": 1.6321984827518463,
+          "grad_max": 3.4818735122680664,
+          "norms": [
+            0.5672128796577454,
+            3.4818735122680664,
+            2.0859737396240234,
+            0.39373379945755005
+          ],
+          "length": 1877.7421875,
+          "cap": 0.08984375,
+          "entropy": 0.5070047974586487,
+          "p0_q_abs_prob_gap": 0.08685612678527832,
+          "p0_q_abs_logppl_gap": 0.7455160617828369,
+          "PPO_clipfrac": 0.07908549560688699,
+          "seconds": 88.96462926000822,
+          "lr": 5e-07,
+          "stale_token_fraction": 0.7719231457326993,
+          "validation": {
+            "val-core/deepmath_D8_9/acc/mean@4": 0.7040441176470589,
+            "val-core/deepmath_D8_9/acc/best@4/mean": 0.8121727941176471,
+            "val-core/deepmath_D8_9/acc/best@4/std": 0.0694992630496468,
+            "val-core/deepmath_D9_10/acc/mean@4": 0.6648936170212766,
+            "val-core/deepmath_D9_10/acc/best@4/mean": 0.7764255319148937,
+            "val-core/deepmath_D9_10/acc/best@4/std": 0.07336658688148923,
+            "val-core/deepmath_D7_8/acc/mean@4": 0.7484326018808778,
+            "val-core/deepmath_D7_8/acc/best@4/mean": 0.8487210031347963,
+            "val-core/deepmath_D7_8/acc/best@4/std": 0.06647435269935804,
+            "val-core/deepmath_D6_7/acc/mean@4": 0.7254901960784313,
+            "val-core/deepmath_D6_7/acc/best@4/mean": 0.8181372549019608,
+            "val-core/deepmath_D6_7/acc/best@4/std": 0.06312884309473345,
+            "val-core/deepmath_D5_6/acc/mean@4": 0.703125,
+            "val-core/deepmath_D5_6/acc/best@4/mean": 0.80621875,
+            "val-core/deepmath_D5_6/acc/best@4/std": 0.06321468917156296,
+            "val-core/aime24/acc/mean@4": 0.21666666666666667,
+            "val-core/aime24/acc/best@4/mean": 0.3334333333333333,
+            "val-core/aime24/acc/best@4/std": 0.07625974555079797,
+            "val-core/aime25/acc/mean@4": 0.15833333333333333,
+            "val-core/aime25/acc/best@4/mean": 0.23233333333333336,
+            "val-core/aime25/acc/best@4/std": 0.05858274250483109,
+            "val-core/amc23/acc/mean@4": 0.6625,
+            "val-core/amc23/acc/best@4/mean": 0.792575,
+            "val-core/amc23/acc/best@4/std": 0.07540451336587775,
+            "val-core/math500/acc/mean@4": 0.832,
+            "val-core/math500/acc/best@4/mean": 0.8885799999999999,
+            "val-core/math500/acc/best@4/std": 0.038474180999710894
+          }
+        }
+      }
+    },
+    "fixed_64_DeepMath_T1_endpoints_550": {
+      "baseline550": {
+        "responses": 256,
+        "labels": {
+          "normal": 235,
+          "abnormal": 20,
+          "uncertain": 1
+        },
+        "type_counts_overlap": {
+          "gibberish": 18,
+          "repetition": 2,
+          "task_drift": 1
+        },
+        "correct_n": 137.0,
+        "unknown_n": 0.0,
+        "cap_n": 0,
+        "strict_at32_n": 0,
+        "native_correct_among_abnormal": 5.0,
+        "mean_tokens": 1199.70703125
+      },
+      "online_tis550": {
+        "responses": 256,
+        "labels": {
+          "normal": 148,
+          "abnormal": 105,
+          "uncertain": 3
+        },
+        "type_counts_overlap": {
+          "gibberish": 105,
+          "task_drift": 1,
+          "repetition": 4,
+          "invented_dialogue": 1
+        },
+        "correct_n": 134.0,
+        "unknown_n": 2.0,
+        "cap_n": 1,
+        "strict_at32_n": 0,
+        "native_correct_among_abnormal": 33.0,
+        "mean_tokens": 1449.39453125
+      },
+      "late_rescue_tis550": {
+        "responses": 256,
+        "labels": {
+          "abnormal": 68,
+          "normal": 182,
+          "uncertain": 6
+        },
+        "type_counts_overlap": {
+          "gibberish": 66,
+          "task_drift": 2,
+          "invented_dialogue": 1,
+          "repetition": 1
+        },
+        "correct_n": 139.0,
+        "unknown_n": 0.0,
+        "cap_n": 30,
+        "strict_at32_n": 0,
+        "native_correct_among_abnormal": 12.0,
+        "mean_tokens": 2001.1015625
+      }
+    },
+    "positive_advantage_abnormal_counts_first20": {
+      "original": 1577,
+      "TIS": 837,
+      "sync": 395
+    },
+    "original_grader_correct_within_those": {
+      "original": 1405,
+      "TIS": 826,
+      "sync": 391
+    }
+  }
+}

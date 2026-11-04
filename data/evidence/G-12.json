@@ -1,0 +1,51 @@
+{
+  "id": "G-12",
+  "title": "Base与discard44 step503的首中次数和采样覆盖",
+  "status": "completed_max100_paired_seed_schedule",
+  "status_label": "已完成 局部证据",
+  "chapter": "group-sampling",
+  "finding": "首答和100次覆盖提高，总生成token却增加约85.2%。",
+  "limitations": [
+    "目录名含20，但最终上限实际为100。",
+    "旧1621题评测集非新盲测。",
+    "一次配对种子方案，有限覆盖不足以证明新能力或能力支持集不变。",
+    "不得公开逐题CSV：含题目标识，改用聚合首中曲线。"
+  ],
+  "source_fingerprints": [
+    {
+      "artifact_name": "summary.json",
+      "sha256": "ffbb34eab5333dcc2a8b299df2f9fb2edc05289ae4c63f7ceabd097bf5741c58"
+    }
+  ],
+  "results": {
+    "questions": 1621,
+    "max_attempts": 100,
+    "results": {
+      "base": {
+        "pass1": 0.594694632942628,
+        "coverage20": 0.8889574336829118,
+        "coverage100": 0.9450956199876619,
+        "total_attempts": 16543,
+        "total_generated_tokens": 21637470,
+        "unsolved_after_limit": 89
+      },
+      "final": {
+        "pass1": 0.7717458359037631,
+        "coverage20": 0.958667489204195,
+        "coverage100": 0.9784083898827884,
+        "total_attempts": 7642,
+        "total_generated_tokens": 40074934,
+        "unsolved_after_limit": 35
+      }
+    },
+    "paired_outcomes": {
+      "same_first_correct_attempt": 912,
+      "base_fewer_attempts": 129,
+      "final_fewer_attempts": 485,
+      "both_unsolved": 29,
+      "final_only_solved": 60,
+      "base_only_solved": 6
+    },
+    "token_increase_fraction": 0.8521081253954368
+  }
+}

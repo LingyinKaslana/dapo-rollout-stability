@@ -1,0 +1,27 @@
+{
+  "id": "S11",
+  "title": "最高NLL/失配token的梯度净投影",
+  "status": "selected_peak_attribution",
+  "status_label": "已完成 局部证据",
+  "chapter": "training-stability",
+  "finding": "最高少量token并未解释主要净梯度，低p0/q的大集合贡献约59%。",
+  "limitations": [
+    "517为重构轮内点非原生产峰值；这是集合净投影，允许内部抵消；不排除前缀内容或更早触发。"
+  ],
+  "source_fingerprints": [
+    {
+      "artifact_name": "research_state.json",
+      "sha256": "b680e6955b6c9f16d9577bf1b51a596ac59e3185f7ac0354e3dd8bf2cd910548"
+    }
+  ],
+  "results": {
+    "point": "Reconstructed517pre-inner2, not originalproduction",
+    "fullnorm": 1404.793526,
+    "top404_NLL_projection_fraction": 0.0013718,
+    "top404_abs_logprob_gap_projection_fraction": 0.00110491,
+    "top404_abs_probability_gap_projection_fraction": -1.44341392e-06,
+    "low_p0_over_q_lt_001_count": 82291,
+    "low_weight_projection_fraction": 0.591615,
+    "limit": "Subset net loss-gradient projection, not individual-token ranking or deletion of causal prefix content; partition residual0.29–0.43%."
+  }
+}

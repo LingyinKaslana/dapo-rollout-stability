@@ -1,0 +1,155 @@
+{
+  "id": "C10",
+  "title": "旧top100重建及新top100 oracle",
+  "status": "negative_result",
+  "status_label": "已完成 阴性结果",
+  "chapter": "cache-reconstruction",
+  "finding": "旧/新top100误差几乎相同，固定100选择损失尾部质量主导误差。",
+  "limitations": [
+    "oracle新top100只有checkpoint001四题；后续32token固定teacher forcing；不支持kernel时延结论。"
+  ],
+  "source_fingerprints": [
+    {
+      "artifact_name": "summary.json",
+      "sha256": "80a77acebf6d506b8292de145715b5696e03f34853d7668316c63858ea3f7539"
+    }
+  ],
+  "results": {
+    "1": {
+      "K": {
+        "mean_layer_relative_error": 0.08323486641804383,
+        "last_layer_relative_error": 0.04612273121060498,
+        "old_cache_mean_layer_relative_error": 0.0028612031297161966
+      },
+      "V": {
+        "mean_layer_relative_error": 0.16937472365163972,
+        "last_layer_relative_error": 0.13919488914311334,
+        "old_cache_mean_layer_relative_error": 0.005950613273821914
+      },
+      "prefill_response": {
+        "mean_tv": 0.04789252093329554,
+        "p95_tv": 0.27067257587862337,
+        "max_tv": 0.690985708775258,
+        "mean_kl": 0.04134883781430751,
+        "top1_agreement": 0.9453125
+      },
+      "last_prefill_token": {
+        "mean_tv": 0.06050446191282619,
+        "p95_tv": 0.19709776872227203,
+        "max_tv": 0.23027442944492224,
+        "mean_kl": 0.034593662469221916,
+        "top1_agreement": 1.0
+      },
+      "continuation_32": {
+        "mean_tv": 0.03790985635115303,
+        "p95_tv": 0.23988158390623648,
+        "max_tv": 0.6232358211421206,
+        "mean_kl": 0.040569614227685194,
+        "top1_agreement": 0.953125,
+        "mean_nll_delta": 0.036692142780410233
+      },
+      "record_old_top100_mass": 0.8996192216873169,
+      "reference_new_top100_mass": 0.8996771749641214
+    },
+    "2": {
+      "K": {
+        "mean_layer_relative_error": 0.08322675756724848,
+        "last_layer_relative_error": 0.046153959158645924,
+        "old_cache_mean_layer_relative_error": 0.0023578509288876373
+      },
+      "V": {
+        "mean_layer_relative_error": 0.16938208302543473,
+        "last_layer_relative_error": 0.13918732548686294,
+        "old_cache_mean_layer_relative_error": 0.005246739214729566
+      },
+      "prefill_response": {
+        "mean_tv": 0.04731742259708706,
+        "p95_tv": 0.27079341391992917,
+        "max_tv": 0.6995908050852708,
+        "mean_kl": 0.04089125689847757,
+        "top1_agreement": 0.947265625
+      },
+      "last_prefill_token": {
+        "mean_tv": 0.060016685253711746,
+        "p95_tv": 0.1954214343563725,
+        "max_tv": 0.22826655192483386,
+        "mean_kl": 0.03383850093407112,
+        "top1_agreement": 1.0
+      },
+      "continuation_32": {
+        "mean_tv": 0.03791196981973679,
+        "p95_tv": 0.24358508164620207,
+        "max_tv": 0.635572902239284,
+        "mean_kl": 0.04132870424532808,
+        "top1_agreement": 0.9609375,
+        "mean_nll_delta": 0.0379217471306978
+      },
+      "record_old_top100_mass": 0.8996833174356392,
+      "reference_new_top100_mass": 0.8997258905853543
+    },
+    "3": {
+      "K": {
+        "mean_layer_relative_error": 0.08323248968650654,
+        "last_layer_relative_error": 0.04618820194907651,
+        "old_cache_mean_layer_relative_error": 0.001676552622048287
+      },
+      "V": {
+        "mean_layer_relative_error": 0.16931897279000901,
+        "last_layer_relative_error": 0.13931627977513167,
+        "old_cache_mean_layer_relative_error": 0.003480627334291741
+      },
+      "prefill_response": {
+        "mean_tv": 0.047282570612755995,
+        "p95_tv": 0.26883535724508145,
+        "max_tv": 0.719108574666618,
+        "mean_kl": 0.04107228118896515,
+        "top1_agreement": 0.94921875
+      },
+      "last_prefill_token": {
+        "mean_tv": 0.05973127568487144,
+        "p95_tv": 0.19433501698412078,
+        "max_tv": 0.2269489092154493,
+        "mean_kl": 0.03355347067246052,
+        "top1_agreement": 1.0
+      },
+      "continuation_32": {
+        "mean_tv": 0.037849506482534,
+        "p95_tv": 0.24217516139402845,
+        "max_tv": 0.6443574959662756,
+        "mean_kl": 0.041130120549816046,
+        "top1_agreement": 0.9609375,
+        "mean_nll_delta": 0.037159418889300064
+      },
+      "record_old_top100_mass": 0.8997305301683289,
+      "reference_new_top100_mass": 0.8997247900281634
+    },
+    "oracle_new_top100": {
+      "K": 0.08323105538250751,
+      "V": 0.16944132960751376,
+      "reference_new_top100_mass": 0.8996833174356392,
+      "prefill_response_tv": 0.04767969054221876,
+      "last_prefill_token_tv": 0.06035037753344966,
+      "continuation_32_tv": 0.03788610664658269
+    },
+    "scope": {
+      "model": "Qwen3-1.7B",
+      "data": "DeepMath saved sequences",
+      "case_count": 24,
+      "heldout_cases": 12,
+      "same_heldout_prompts_each_pair": 4,
+      "prefix_tokens": [
+        1950,
+        8160
+      ],
+      "per_layer_KV_error": "Frobenius relative to full new cache, then equal mean over probes/layers",
+      "probability_metric": "TV between full vocabulary distributions; 128 response positions and 32 fixed continuation tokens",
+      "continuation": "Both runs use new weights and ordinary dense attention after prefix reconstruction",
+      "oracle": "Checkpoint 001, four heldout probes, top100 fixed from full NEW attention, same sparse propagation",
+      "performance": "Dot-product counts only; no kernel speedup claim",
+      "causal_dot_pair_fraction_range": [
+        0.024358138059782177,
+        0.09990931672120806
+      ]
+    }
+  }
+}

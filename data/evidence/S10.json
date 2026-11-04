@@ -1,0 +1,112 @@
+{
+  "id": "S10",
+  "title": "负优势校正和token权重对应关系",
+  "status": "causal_intervention_fixed_replay",
+  "status_label": "受控干预",
+  "chapter": "training-stability",
+  "finding": "负优势TIS在共同10轮抑制峰值；20轮中正确token对应的TIS显著优于均值/乱序权重。",
+  "limitations": [
+    "单个历史流与一个乱序seed；TIS cap2不是无偏整轨迹校正；均值/打乱分支无行为端点评测；PPO后系数不保证总质量守恒。"
+  ],
+  "source_fingerprints": [
+    {
+      "artifact_name": "research_state.json",
+      "sha256": "b680e6955b6c9f16d9577bf1b51a596ac59e3185f7ac0354e3dd8bf2cd910548"
+    },
+    {
+      "artifact_name": "report_additional_results.json",
+      "sha256": "eb302c900285c154369b67e8b974f2fd2a8fc4318a9c689b63f0f397442cf3cf"
+    }
+  ],
+  "results": {
+    "common_first10_rounds_40_updates_max_preclip_norm": {
+      "original_PPO": 33.954,
+      "full_TIS": 7.519,
+      "negative_only_TIS": 5.131,
+      "positive_only_TIS": 61.562
+    },
+    "fixed_history_501_520": {
+      "same_data_and_optimizer_start": true,
+      "own_p0_each_round": true,
+      "FA2_deterministic": true,
+      "arms": [
+        {
+          "run": "recorded_control500to520-v1",
+          "label": "Original PPO",
+          "rounds": 20,
+          "optimizer_updates": 80,
+          "max_preclip_norm": 1818.1220703125,
+          "mean_preclip_norm": 71.30555892400443,
+          "updates_above_clip1": 51,
+          "last_four_norms": [
+            0.6174272894859314,
+            9.980995178222656,
+            1.4284008741378784,
+            0.477857381105423
+          ],
+          "maximum_native_loss_reconstruction_error": 1.4901161193847656e-07,
+          "audit_kind": "Independent CPU actual-coefficient reconstruction; all20 rounds"
+        },
+        {
+          "run": "recorded_tis500to520-v1",
+          "label": "Full token TIS",
+          "rounds": 20,
+          "optimizer_updates": 80,
+          "max_preclip_norm": 12.691268920898438,
+          "mean_preclip_norm": 1.2234408237040042,
+          "updates_above_clip1": 17,
+          "last_four_norms": [
+            0.40708664059638977,
+            0.40403422713279724,
+            0.42162349820137024,
+            0.5041205883026123
+          ],
+          "maximum_native_loss_reconstruction_error": 5.960464477539063e-08,
+          "audit_kind": "Independent CPU actual-coefficient reconstruction; all20 rounds"
+        },
+        {
+          "run": "recorded_inner_mean500to520-v1",
+          "label": "Mean per optimizer update",
+          "rounds": 20,
+          "optimizer_updates": 80,
+          "max_preclip_norm": 598.552001953125,
+          "mean_preclip_norm": 27.218437656387685,
+          "updates_above_clip1": 53,
+          "last_four_norms": [
+            0.8957220315933228,
+            19.78801918029785,
+            11.073954582214355,
+            0.5222690105438232
+          ],
+          "maximum_native_loss_reconstruction_error": 8.940696716308594e-08,
+          "audit_kind": "Independent CPU actual-coefficient reconstruction; all20 rounds"
+        },
+        {
+          "run": "recorded_response_shuffle500to520-v1",
+          "label": "Within-response permutation",
+          "rounds": 20,
+          "optimizer_updates": 80,
+          "max_preclip_norm": 721.2144775390625,
+          "mean_preclip_norm": 22.80476824603975,
+          "updates_above_clip1": 43,
+          "last_four_norms": [
+            0.3700266480445862,
+            38.67158126831055,
+            0.3256317377090454,
+            0.4886164665222168
+          ],
+          "maximum_native_loss_reconstruction_error": 5.960464477539063e-08,
+          "audit_kind": "Independent CPU actual-coefficient reconstruction; all20 rounds"
+        }
+      ],
+      "limits": [
+        "Allnorms are before nativeclip1, not Adam input/update magnitude.",
+        "No newrollout, behavior evaluation or endpoint Jacobian conclusions for the addedarms.",
+        "Mean uses oneconstant per global128-response optimizer on allmaskvalid tokens, includingzeroA/laterclipped tokens; not an Adam learning-rate equivalence.",
+        "Permutation preserves eachresponse raww multiset and preclip signed/absoluteAw sums; post-PPO-clipping c neednot preserve mass.",
+        "Single fixedhistoricalstream and frozenpermutationseed; this doesnot establishgeneral convergence or online reward improvement."
+      ]
+    },
+    "TIS_weight_cap": 2
+  }
+}

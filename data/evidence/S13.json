@@ -1,0 +1,211 @@
+{
+  "id": "S13",
+  "title": "full8 eight长度、开头与后期梯度",
+  "status": "same_run_observation",
+  "status_label": "已完成 局部证据",
+  "chapter": "training-stability",
+  "finding": "350→400长度翻倍而梯度仍小；600→650评测长度和机械重复下降但梯度上涨。",
+  "limitations": [
+    "Only this eight trajectory is plotted; no splice with formal or nodiscard44.",
+    "Natural opening strata are selected by the policy. Sparse pre-transition Alright cannot identify a causal composition effect.",
+    "Validation sampling T0.6/top_p0.95/top_k20 differs from training T1/p1/k-1; not the same prompts/responses as training batches.",
+    "Mechanical rule is conservative, not semantic-loop or gibberish prevalence. Rule-negative does not certify normal output.",
+    "PPL here uses every10-round native metric samples. Opening/validation points are every50 rounds. Within-interval lead/lag is not resolved.",
+    "Original350/400 actor checkpoints were pruned; only600/650 remain complete per the latest inventory."
+  ],
+  "source_fingerprints": [
+    {
+      "artifact_name": "summary.json",
+      "sha256": "c40096e95a586e9115881ec24f6d328076af3171c66b51830c1ae7f1ee4f0c5b"
+    },
+    {
+      "artifact_name": "repetition_audit.json",
+      "sha256": "684028e305b9c078a92c278d5da5869dcb86b69265fce34008bd5d88ecd8725f"
+    }
+  ],
+  "results": {
+    "population": "Fixed1021 DeepMath prompts x4 natural generations per saved validation. Training batches differ and use different sampling temperature.",
+    "checks": {
+      "validation_points": 14,
+      "validation_responses": 57176,
+      "training_rounds": 662,
+      "all_validation_source_hashes_match": true
+    },
+    "selected_validation_points": [
+      {
+        "step": 350,
+        "n": 4084,
+        "validation_mean_length": 1421.7061704211558,
+        "validation_accuracy": 0.713026444662096,
+        "validation_reward": 0.4098925016068805,
+        "mechanical_repeat_n": 37,
+        "mechanical_repeat_fraction": 0.009059745347698335,
+        "mixed_opening_questions": 1,
+        "same_question_length_difference_A_minus_To": 6890.666666666667,
+        "Alright_n": 1,
+        "Alright_fraction": 0.0002448579823702253,
+        "Alright_mean_length": 8192,
+        "Alright_accuracy": 0.0,
+        "Alright_mechanical_repeat_fraction": 0.0,
+        "To_n": 4068,
+        "To_fraction": 0.9960822722820764,
+        "To_mean_length": 1420.3011307767945,
+        "To_accuracy": 0.7136184857423795,
+        "To_mechanical_repeat_fraction": 0.009095378564405112,
+        "logged_round_mean_grad_norm": 0.36260368302464485
+      },
+      {
+        "step": 400,
+        "n": 4084,
+        "validation_mean_length": 2838.200783545544,
+        "validation_accuracy": 0.7431439764936337,
+        "validation_reward": 0.41350774363369247,
+        "mechanical_repeat_n": 80,
+        "mechanical_repeat_fraction": 0.019588638589618023,
+        "mixed_opening_questions": 23,
+        "same_question_length_difference_A_minus_To": 1081.9492753623188,
+        "Alright_n": 4047,
+        "Alright_fraction": 0.9909402546523016,
+        "Alright_mean_length": 2855.637509266123,
+        "Alright_accuracy": 0.7449962935507783,
+        "Alright_mechanical_repeat_fraction": 0.019767729182110207,
+        "To_n": 37,
+        "To_fraction": 0.009059745347698335,
+        "To_mean_length": 931,
+        "To_accuracy": 0.5405405405405406,
+        "To_mechanical_repeat_fraction": 0.0,
+        "logged_round_mean_grad_norm": 0.23093216121196747
+      },
+      {
+        "step": 500,
+        "n": 4084,
+        "validation_mean_length": 2830.2955435847207,
+        "validation_accuracy": 0.767384916748286,
+        "validation_reward": 0.4707279933888345,
+        "mechanical_repeat_n": 54,
+        "mechanical_repeat_fraction": 0.013222331047992164,
+        "mixed_opening_questions": 9,
+        "same_question_length_difference_A_minus_To": 870.7222222222222,
+        "Alright_n": 4072,
+        "Alright_fraction": 0.9970617042115573,
+        "Alright_mean_length": 2835.8774557956776,
+        "Alright_accuracy": 0.7674361493123772,
+        "Alright_mechanical_repeat_fraction": 0.013261296660117878,
+        "To_n": 12,
+        "To_fraction": 0.002938295788442703,
+        "To_mean_length": 936.1666666666666,
+        "To_accuracy": 0.75,
+        "To_mechanical_repeat_fraction": 0.0,
+        "logged_round_mean_grad_norm": 0.3897024467587471
+      },
+      {
+        "step": 550,
+        "n": 4084,
+        "validation_mean_length": 2081.4485798237024,
+        "validation_accuracy": 0.7558765915768854,
+        "validation_reward": 0.49517541300654994,
+        "mechanical_repeat_n": 14,
+        "mechanical_repeat_fraction": 0.0034280117531831538,
+        "mixed_opening_questions": 218,
+        "same_question_length_difference_A_minus_To": 329.1498470948012,
+        "Alright_n": 3442,
+        "Alright_fraction": 0.8428011753183153,
+        "Alright_mean_length": 2179.644683323649,
+        "Alright_accuracy": 0.747239976757699,
+        "Alright_mechanical_repeat_fraction": 0.0031958163858221964,
+        "To_n": 634,
+        "To_fraction": 0.15523996082272282,
+        "To_mean_length": 1553.7555205047317,
+        "To_accuracy": 0.8028391167192429,
+        "To_mechanical_repeat_fraction": 0.00473186119873817,
+        "logged_round_mean_grad_norm": 0.4703720211982727
+      },
+      {
+        "step": 600,
+        "n": 4084,
+        "validation_mean_length": 1865.5315866797257,
+        "validation_accuracy": 0.7526934378060725,
+        "validation_reward": 0.48851522806225517,
+        "mechanical_repeat_n": 6,
+        "mechanical_repeat_fraction": 0.0014691478942213516,
+        "mixed_opening_questions": 142,
+        "same_question_length_difference_A_minus_To": 9.494131455399058,
+        "Alright_n": 3708,
+        "Alright_fraction": 0.9079333986287953,
+        "Alright_mean_length": 1904.9476806903992,
+        "Alright_accuracy": 0.7454153182308522,
+        "Alright_mechanical_repeat_fraction": 0.001348435814455232,
+        "To_n": 351,
+        "To_fraction": 0.08594515181194907,
+        "To_mean_length": 1480.5099715099716,
+        "To_accuracy": 0.8205128205128205,
+        "To_mechanical_repeat_fraction": 0.002849002849002849,
+        "logged_round_mean_grad_norm": 0.6583168506622314
+      },
+      {
+        "step": 650,
+        "n": 4084,
+        "validation_mean_length": 1377.1214495592556,
+        "validation_accuracy": 0.7475514201762977,
+        "validation_reward": 0.4941126480625612,
+        "mechanical_repeat_n": 1,
+        "mechanical_repeat_fraction": 0.0002448579823702253,
+        "mixed_opening_questions": 298,
+        "same_question_length_difference_A_minus_To": 138.17170022371363,
+        "Alright_n": 1297,
+        "Alright_fraction": 0.3175808031341822,
+        "Alright_mean_length": 1617.983037779491,
+        "Alright_accuracy": 0.674633770239013,
+        "Alright_mechanical_repeat_fraction": 0.0,
+        "To_n": 2535,
+        "To_fraction": 0.6207149853085211,
+        "To_mean_length": 1259.148717948718,
+        "To_accuracy": 0.7798816568047338,
+        "To_mechanical_repeat_fraction": 0.0003944773175542406,
+        "logged_round_mean_grad_norm": 77.27626778185368
+      }
+    ],
+    "conclusions": [
+      {
+        "claim": "长期To之后快速转为Alright，且长度跃升",
+        "status": "在同一run的观察上成立",
+        "evidence": "350→400：Alright0.0245%→99.094%；固定评测长度1421.71→2838.20；训练长度365–400也快速增加。"
+      },
+      {
+        "claim": "这次跃升主要由首token更新造成",
+        "status": "尚未在本run干预验证",
+        "evidence": "350只有1条Alright且截断8192；不能可靠估计跃升前条件长度，也不能搬用formal100–140的首token损失干预作为本run因果证据。"
+      },
+      {
+        "claim": "快速变长本身不意味着梯度/PPL爆炸",
+        "status": "得到同一run直接支持",
+        "evidence": "351–400每轮平均裁剪前grad最大0.4075，后段反而下降；PPL两侧仍接近。"
+      },
+      {
+        "claim": "较长阶段会伴随更多重复",
+        "status": "保守机械指标有阶段性支持，不能泛化",
+        "evidence": "350→400机械重复37/4084→80/4084；550–650持续下降。没有完整的同口径LLM语义重复率。"
+      },
+      {
+        "claim": "Alright始终固定对应长回答",
+        "status": "被本run反例否定",
+        "evidence": "550→600，Alright比例84.28%→90.79%，总体长度2081→1866；Alright条件长度2180→1905。"
+      },
+      {
+        "claim": "后期梯度增长需要长度和重复同步增加",
+        "status": "不符合本run的固定评测观察",
+        "evidence": "600→650验证长度1866→1377，机械重复6→1；轮平均梯度0.658→77.276。实际入训长度另有波动，615达到4019.6，不能与固定评测混用。"
+      }
+    ],
+    "late_descriptive_decomposition": {
+      "from": 600,
+      "to": 650,
+      "method": "Symmetric two-factor Kitagawa identity, Alright/To/Let/other. Descriptive, not causal; conditional populations differ.",
+      "composition_tokens": -231.65400808231698,
+      "within_opening_tokens": -256.7561290381532,
+      "total_tokens": -488.41013712047015,
+      "composition_fraction_of_total": 0.47430221135065775
+    },
+    "mechanical_rule": "Exact adjacent 4+ identical line/paragraph blocks spanning >=500 Unicode characters and >=320 nonspace characters; 5+ identical long sentences spanning >=500 characters; or extreme runs of one nonnumeric/nondecorative character. Whitespace only normalized; digits/formula changes preserved. Matrix/table row and repeated summand exclusions. No LLM, tokenizer, GPU, sampling or model inference."
+  }
+}

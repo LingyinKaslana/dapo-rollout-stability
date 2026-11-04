@@ -1,0 +1,215 @@
+{
+  "id": "S09",
+  "title": "PPL尾部与时间顺序",
+  "status": "measurement_audit",
+  "status_label": "核验或复核",
+  "chapter": "training-stability",
+  "finding": "算术平均PPL可被极少回答主导；不能从总曲线推断单token触发或普通回答整体恶化。",
+  "limitations": [
+    "These metrics score selected sampled answers, not a fixed heldout corpus; content/policy versions and length vary.",
+    "Arithmetic PPL can be dominated by a few responses; geometric PPL and median are different diagnostics, not replacements for the logged metric.",
+    "Opening-conditioned PPL rows are observational and can have very small n. PPL is not correctness variance or parameter-gradient variance."
+  ],
+  "source_fingerprints": [
+    {
+      "artifact_name": "ppl_diagnostics_summary.json",
+      "sha256": "012162560109f5974652a438558a35994e380707612b4db241fa602fa89167e1"
+    }
+  ],
+  "results": {
+    "max_relative_error_reconstructed_arithmetic_ppl": 4.006101886501378e-06,
+    "key_late_tail_observations": [
+      {
+        "run": "late",
+        "step": 507,
+        "opening": "all",
+        "n": 512,
+        "training_ppl_reconstructed": 15.777072734347271,
+        "rollout_ppl_reconstructed": 14.632151367579677,
+        "training_mean_log_ppl": 1.7289630673765992,
+        "rollout_mean_log_ppl": 1.6776489409958577,
+        "training_median_ppl": 3.6850420123924748,
+        "rollout_median_ppl": 3.606203510876014,
+        "training_p95_ppl": 74.29555906088679,
+        "training_max_ppl": 162.26162020913495,
+        "training_top1_fraction_of_ppl_sum": 0.020087200731541674,
+        "training_top5_fraction_of_ppl_sum": 0.08544279243379187,
+        "mean_absolute_log_ppl_gap": 0.0513966180026644
+      },
+      {
+        "run": "late",
+        "step": 517,
+        "opening": "all",
+        "n": 512,
+        "training_ppl_reconstructed": 17324.105454491906,
+        "rollout_ppl_reconstructed": 17.3163388031532,
+        "training_mean_log_ppl": 2.0978907151132127,
+        "rollout_mean_log_ppl": 1.2997830022939971,
+        "training_median_ppl": 1.7567678896462038,
+        "rollout_median_ppl": 1.7533614192853328,
+        "training_p95_ppl": 30698.1606334733,
+        "training_max_ppl": 1216490.3752375527,
+        "training_top1_fraction_of_ppl_sum": 0.13714750065318906,
+        "training_top5_fraction_of_ppl_sum": 0.479591013756501,
+        "mean_absolute_log_ppl_gap": 0.7983629234408818
+      },
+      {
+        "run": "late",
+        "step": 520,
+        "opening": "all",
+        "n": 512,
+        "training_ppl_reconstructed": 2274238.4436124805,
+        "rollout_ppl_reconstructed": 3.149598235193588,
+        "training_mean_log_ppl": 1.2785105342816148,
+        "rollout_mean_log_ppl": 0.726257832980144,
+        "training_median_ppl": 1.5432094665186837,
+        "rollout_median_ppl": 1.5408582550047372,
+        "training_p95_ppl": 169.63604208367445,
+        "training_max_ppl": 365470571.1809381,
+        "training_top1_fraction_of_ppl_sum": 0.3138675767893226,
+        "training_top5_fraction_of_ppl_sum": 0.900048997356498,
+        "mean_absolute_log_ppl_gap": 0.5524872280484563
+      },
+      {
+        "run": "late",
+        "step": 521,
+        "opening": "all",
+        "n": 512,
+        "training_ppl_reconstructed": 67010775.94663611,
+        "rollout_ppl_reconstructed": 4.213353179402828,
+        "training_mean_log_ppl": 2.005711415514705,
+        "rollout_mean_log_ppl": 0.9575707105241522,
+        "training_median_ppl": 2.005519276470432,
+        "rollout_median_ppl": 1.9978267845951252,
+        "training_p95_ppl": 35141.113154117375,
+        "training_max_ppl": 14057891301.116796,
+        "training_top1_fraction_of_ppl_sum": 0.4097373677534927,
+        "training_top5_fraction_of_ppl_sum": 0.9804312569493355,
+        "mean_absolute_log_ppl_gap": 1.0483750162599
+      },
+      {
+        "run": "late",
+        "step": 532,
+        "opening": "all",
+        "n": 512,
+        "training_ppl_reconstructed": 2.0569457528958344,
+        "rollout_ppl_reconstructed": 1.4600989534958522,
+        "training_mean_log_ppl": 0.49511261309384175,
+        "rollout_mean_log_ppl": 0.3281668384702707,
+        "training_median_ppl": 1.4549080827162246,
+        "rollout_median_ppl": 1.2691929011897605,
+        "training_p95_ppl": 3.236581152851467,
+        "training_max_ppl": 114.53488046449887,
+        "training_top1_fraction_of_ppl_sum": 0.10875393193636292,
+        "training_top5_fraction_of_ppl_sum": 0.1810080258846002,
+        "mean_absolute_log_ppl_gap": 0.16719801953730445
+      },
+      {
+        "run": "late",
+        "step": 548,
+        "opening": "all",
+        "n": 512,
+        "training_ppl_reconstructed": 2.1000372542006264e+19,
+        "rollout_ppl_reconstructed": 2.0848813534445947,
+        "training_mean_log_ppl": 0.9983242902818513,
+        "rollout_mean_log_ppl": 0.5575168799078877,
+        "training_median_ppl": 1.5007753276470708,
+        "rollout_median_ppl": 1.4896722453670073,
+        "training_p95_ppl": 4.852940848090786,
+        "training_max_ppl": 8.299441661153224e+21,
+        "training_top1_fraction_of_ppl_sum": 0.7718837826336622,
+        "training_top5_fraction_of_ppl_sum": 1.0,
+        "mean_absolute_log_ppl_gap": 0.441182419229697
+      },
+      {
+        "run": "late",
+        "step": 550,
+        "opening": "all",
+        "n": 512,
+        "training_ppl_reconstructed": 529.1759058305196,
+        "rollout_ppl_reconstructed": 1.9966995267521146,
+        "training_mean_log_ppl": 0.6312431539325114,
+        "rollout_mean_log_ppl": 0.5730946141632223,
+        "training_median_ppl": 1.6259686087575531,
+        "rollout_median_ppl": 1.6227495481128384,
+        "training_p95_ppl": 3.5288876803798463,
+        "training_max_ppl": 266704.7388100817,
+        "training_top1_fraction_of_ppl_sum": 0.9843753036542694,
+        "training_top5_fraction_of_ppl_sum": 0.9963149090303438,
+        "mean_absolute_log_ppl_gap": 0.05850977866570282
+      }
+    ],
+    "early_transition_windows": [
+      {
+        "first": 101,
+        "last": 110,
+        "training_ppl": 1.1994096517562867,
+        "rollout_ppl": 1.1988203048706054,
+        "mean_absolute_log_ppl_gap": 0.0008518312068190425,
+        "mean_length": 1240.4296875
+      },
+      {
+        "first": 111,
+        "last": 120,
+        "training_ppl": 1.214658999443054,
+        "rollout_ppl": 1.2140139937400818,
+        "mean_absolute_log_ppl_gap": 0.0008275351778138429,
+        "mean_length": 1520.9615234375
+      },
+      {
+        "first": 121,
+        "last": 130,
+        "training_ppl": 1.1977442979812623,
+        "rollout_ppl": 1.1970835328102112,
+        "mean_absolute_log_ppl_gap": 0.0007841091603040696,
+        "mean_length": 2013.0845703125
+      },
+      {
+        "first": 131,
+        "last": 140,
+        "training_ppl": 1.175124740600586,
+        "rollout_ppl": 1.1744921326637268,
+        "mean_absolute_log_ppl_gap": 0.0006664254935458303,
+        "mean_length": 3323.2708984375
+      }
+    ],
+    "peaks": {
+      "early": {
+        "training_ppl": {
+          "step": 16,
+          "value": 8.112247467041016
+        },
+        "rollout_ppl": {
+          "step": 16,
+          "value": 8.104483604431152
+        },
+        "training_mean_log_ppl": {
+          "step": 6,
+          "value": 0.6221430897712708
+        },
+        "mean_absolute_log_ppl_gap": {
+          "step": 6,
+          "value": 0.0019786583725363016
+        }
+      },
+      "late": {
+        "training_ppl": {
+          "step": 548,
+          "value": 2.100035982921931e+19
+        },
+        "rollout_ppl": {
+          "step": 512,
+          "value": 59.500736236572266
+        },
+        "training_mean_log_ppl": {
+          "step": 526,
+          "value": 2.7237956523895264
+        },
+        "mean_absolute_log_ppl_gap": {
+          "step": 526,
+          "value": 2.023756265640259
+        }
+      }
+    }
+  }
+}

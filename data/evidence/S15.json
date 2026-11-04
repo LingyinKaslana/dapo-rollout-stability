@@ -1,0 +1,60 @@
+{
+  "id": "S15",
+  "title": "full8 650→850续训",
+  "status": "in_progress_at_curation",
+  "status_label": "运行中",
+  "chapter": "training-stability",
+  "finding": "从完整650恢复，继续200轮；首轮651验证通过，后期趋势待运行结束后分析。",
+  "limitations": [
+    "状态为本地采集快照，不宣称实时进度或已完成；不能把重跑651–662当新增历史。"
+  ],
+  "source_fingerprints": [
+    {
+      "artifact_name": "status.json",
+      "sha256": "8684df96b19ef8617cf6e9417f5c9eaaa09c9a0129d09ede29178dfaef0205bf"
+    }
+  ],
+  "results": {
+    "curation_snapshot_unix": 1793778605.0094779,
+    "planned": {
+      "start_step": 650,
+      "target_step": 850,
+      "new_training_rounds": 200,
+      "overlap_with_old_history": [
+        651,
+        662
+      ],
+      "science_sections_equal": true
+    },
+    "restored_protocol": {
+      "schema_version": 4,
+      "mode": "eight",
+      "group_size": 8,
+      "stage_size": 8,
+      "discard_pilot": false,
+      "gate": "none",
+      "gate_scope": "prompt_group",
+      "sampling_seeds": "unchanged_native_april",
+      "window_accounting": "pending",
+      "refill_policy": "on_every_full_group_completion",
+      "experiment_profile": "setup2_formal_v4_april_full8_8k",
+      "full_group_filter": "binary_acc_mixed",
+      "selection_correction": "none"
+    },
+    "canary": {
+      "passed": true,
+      "step": 651,
+      "responses": 512,
+      "optimizer_updates": 4,
+      "lr": 5e-07,
+      "full_joint_restored": true,
+      "full_checkpoint_verified": true
+    },
+    "canary_rank0_grad_norms": [
+      2.895400047302246,
+      305.2210998535156,
+      89.7637710571289,
+      0.7875244617462158
+    ]
+  }
+}

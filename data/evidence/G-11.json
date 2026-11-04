@@ -1,0 +1,36 @@
+{
+  "id": "G-11",
+  "title": "8B正式setup迁移与生成/反向基础检查",
+  "status": "completed_infrastructure_checks",
+  "status_label": "已完成 局部证据",
+  "chapter": "group-sampling",
+  "finding": "设置与奖励链经过基础核验；基准就绪不意味着算法更优。",
+  "limitations": [
+    "ARM64单卡重新搭建环境，未直接复制x86环境。",
+    "迁移检查仅生成执行与CE反向检查，不是完整RL收敛验证。"
+  ],
+  "source_fingerprints": [
+    {
+      "artifact_name": "summary.json",
+      "sha256": "bfc0b91b9e4112636953c4f9232c67e99a6b43b5cd6667d18fe1b2cbd7b76456"
+    }
+  ],
+  "results": {
+    "train_examples": 40299,
+    "validation_examples": 1621,
+    "validation_composition": {
+      "DeepMath_dev": 1021,
+      "aime24": 30,
+      "aime25": 30,
+      "amc23": 40,
+      "math500": 500
+    },
+    "group_size": 8,
+    "train_batch_groups": 64,
+    "ppo_minibatch_groups": 16,
+    "lr": 5e-07,
+    "max_response_tokens": 8192,
+    "cpu_tests": 79,
+    "verified_reward_contexts": 41920
+  }
+}

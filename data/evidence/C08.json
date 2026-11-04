@@ -1,0 +1,80 @@
+{
+  "id": "C08",
+  "title": "0.6B GSM8K baseline/APRIL长跑权重轨迹",
+  "status": "training_observed_cache_sweep_pending",
+  "status_label": "部分完成",
+  "chapter": "cache-reconstruction",
+  "finding": "长跑已有训练曲线；本次已核对证据未包含多间隔E/K/V完整扫描。",
+  "limitations": [
+    "原始配置包含机器路径，发布仅提取白名单字段；单次轨迹与反复验证不是多seed对比；APRIL不是我们的浅层E/V复用算法。"
+  ],
+  "source_fingerprints": [
+    {
+      "artifact_name": "summary.json",
+      "sha256": "f4260a9be1e53d02e80eed329a7a4af5164ff5d93e91f9b943e5ca2f643d2781"
+    },
+    {
+      "artifact_name": "baseline_config.yaml",
+      "sha256": "599702ec17e8080f9983f90a32e2fcd62fd4b2f208dc7277e856a67fabc4622c"
+    },
+    {
+      "artifact_name": "april_config.yaml",
+      "sha256": "c2de4349c181440d9c4473d43b4a13e6f172cfc70ff3c56420e71d3cee19b3ce"
+    }
+  ],
+  "results": {
+    "model": "Qwen3-0.6B-Base",
+    "dataset": "GSM8K",
+    "response_cap": 4096,
+    "group_size": 8,
+    "selected_groups": 24,
+    "lr": 5e-07,
+    "training_summary": {
+      "baseline": {
+        "cutoff": 2850,
+        "training_points": 2848,
+        "missing_steps": [
+          90,
+          190
+        ],
+        "skipped_validation": [],
+        "latest": {
+          "step": 2850,
+          "accuracy": 0.84375,
+          "tokens": 327.2513020833333,
+          "truncation": 0
+        },
+        "best": {
+          "step": 2600,
+          "accuracy": 0.8684895833333334,
+          "tokens": 324.3958333333333,
+          "truncation": 0
+        },
+        "last10_accuracy": 0.84921875,
+        "matched_2360_2850_accuracy": 0.8467708333333334,
+        "last50_grad": 1.426417293548584
+      },
+      "april": {
+        "cutoff": 3300,
+        "training_points": 3300,
+        "missing_steps": [],
+        "skipped_validation": [],
+        "latest": {
+          "step": 3300,
+          "accuracy": 0.8385416666666666,
+          "tokens": 329.14453125,
+          "truncation": 0
+        },
+        "best": {
+          "step": 2290,
+          "accuracy": 0.8606770833333334,
+          "tokens": 558.7669270833334,
+          "truncation": 0
+        },
+        "last10_accuracy": 0.8326822916666666,
+        "matched_2360_2850_accuracy": 0.833125,
+        "last50_grad": 1.5562339067459106
+      }
+    }
+  }
+}

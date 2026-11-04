@@ -1,0 +1,179 @@
+{
+  "id": "S03",
+  "title": "Base与早期checkpoint的强制开头正确率和方差",
+  "status": "forced_prefix_evaluation",
+  "status_label": "已完成 局部证据",
+  "chapter": "training-stability",
+  "finding": "Base的Alright正确率高于To；G4方差差异的区间跨零，不能推出更好梯度信号。",
+  "limitations": [
+    "These are forced-prefix evaluations on one64-question panel, T=1, max8192; not actual G8 training group statistics.",
+    "Conditional Bernoulli variance p(1-p) is tied to conditional accuracy. Across-question heterogeneity is a different quantity.",
+    "Actual shaped reward includes an overlong penalty. Binary variance does not measure full reward variance or parameter-gradient variance.",
+    "More nonzero advantages do not imply positive reinforcement of a style. Natural historical opening accuracy remains selection-confounded; n=0 is missing, never zero accuracy.",
+    "No same-panel forced-opening later checkpoint comparison is available in the existing evaluated results."
+  ],
+  "source_fingerprints": [
+    {
+      "artifact_name": "accuracy_variance_summary.json",
+      "sha256": "30cda0a4d6ef875760b4f7de4ae7693187af1b08a8a72ffe8d2bf66c213867ef"
+    }
+  ],
+  "results": {
+    "forced_prefix": [
+      {
+        "checkpoint": 0,
+        "prompts": 64,
+        "responses_per_prompt": 4,
+        "arms": {
+          "alright": {
+            "correct": 148,
+            "unknown": 2,
+            "accuracy": 0.578125,
+            "mixed_correctness_G4": 0.546875,
+            "unbiased_within_question_binary_variance": 0.15104166666666663,
+            "mixed_correctness_groups": 35
+          },
+          "to": {
+            "correct": 102,
+            "unknown": 7,
+            "accuracy": 0.3984375,
+            "mixed_correctness_G4": 0.421875,
+            "unbiased_within_question_binary_variance": 0.11979166666666666,
+            "mixed_correctness_groups": 27
+          }
+        },
+        "paired_differences": {
+          "accuracy": {
+            "difference": 0.1796875,
+            "prompt_bootstrap95_ci": [
+              0.10546875,
+              0.25390625
+            ]
+          },
+          "mixed_correctness_G4": {
+            "difference": 0.125,
+            "prompt_bootstrap95_ci": [
+              -0.03125,
+              0.28125
+            ]
+          },
+          "unbiased_within_question_binary_variance": {
+            "difference": 0.03125,
+            "prompt_bootstrap95_ci": [
+              -0.014322916666666664,
+              0.07682291666666666
+            ]
+          }
+        }
+      },
+      {
+        "checkpoint": 100,
+        "prompts": 64,
+        "responses_per_prompt": 4,
+        "arms": {
+          "alright": {
+            "correct": 165,
+            "unknown": 3,
+            "accuracy": 0.64453125,
+            "mixed_correctness_G4": 0.515625,
+            "unbiased_within_question_binary_variance": 0.13932291666666666,
+            "mixed_correctness_groups": 33
+          },
+          "to": {
+            "correct": 143,
+            "unknown": 0,
+            "accuracy": 0.55859375,
+            "mixed_correctness_G4": 0.46875,
+            "unbiased_within_question_binary_variance": 0.12890625,
+            "mixed_correctness_groups": 30
+          }
+        },
+        "paired_differences": {
+          "accuracy": {
+            "difference": 0.0859375,
+            "prompt_bootstrap95_ci": [
+              0.0234375,
+              0.15625
+            ]
+          },
+          "mixed_correctness_G4": {
+            "difference": 0.046875,
+            "prompt_bootstrap95_ci": [
+              -0.078125,
+              0.171875
+            ]
+          },
+          "unbiased_within_question_binary_variance": {
+            "difference": 0.01041666666666667,
+            "prompt_bootstrap95_ci": [
+              -0.024739583333333332,
+              0.045572916666666664
+            ]
+          }
+        }
+      },
+      {
+        "checkpoint": 150,
+        "prompts": 64,
+        "responses_per_prompt": 4,
+        "arms": {
+          "alright": {
+            "correct": 179,
+            "unknown": 2,
+            "accuracy": 0.69921875,
+            "mixed_correctness_G4": 0.515625,
+            "unbiased_within_question_binary_variance": 0.14192708333333331,
+            "mixed_correctness_groups": 33
+          },
+          "to": {
+            "correct": 154,
+            "unknown": 3,
+            "accuracy": 0.6015625,
+            "mixed_correctness_G4": 0.5,
+            "unbiased_within_question_binary_variance": 0.13802083333333331,
+            "mixed_correctness_groups": 32
+          }
+        },
+        "paired_differences": {
+          "accuracy": {
+            "difference": 0.09765625,
+            "prompt_bootstrap95_ci": [
+              0.01943359375000009,
+              0.1796875
+            ]
+          },
+          "mixed_correctness_G4": {
+            "difference": 0.015625,
+            "prompt_bootstrap95_ci": [
+              -0.140625,
+              0.15625
+            ]
+          },
+          "unbiased_within_question_binary_variance": {
+            "difference": 0.00390625,
+            "prompt_bootstrap95_ci": [
+              -0.037760416666666664,
+              0.04427083333333333
+            ]
+          }
+        }
+      }
+    ],
+    "bootstrap": {
+      "unit": "paired question, keeping all4 outcomes per mode",
+      "replicates": 20000,
+      "seed": 20261104
+    },
+    "definitions": {
+      "correctness_variance": "Within each fixed question/style, unbiased s^2=4/3*p_hat*(1-p_hat), then averaged over64 questions.",
+      "G4_mixed_group": "Among four fixed-prefix generations, at least one original-grader correct and one noncorrect. Unknown counted noncorrect as in source."
+    },
+    "limits": [
+      "These are forced-prefix evaluations on one64-question panel, T=1, max8192; not actual G8 training group statistics.",
+      "Conditional Bernoulli variance p(1-p) is tied to conditional accuracy. Across-question heterogeneity is a different quantity.",
+      "Actual shaped reward includes an overlong penalty. Binary variance does not measure full reward variance or parameter-gradient variance.",
+      "More nonzero advantages do not imply positive reinforcement of a style. Natural historical opening accuracy remains selection-confounded; n=0 is missing, never zero accuracy.",
+      "No same-panel forced-opening later checkpoint comparison is available in the existing evaluated results."
+    ]
+  }
+}

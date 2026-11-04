@@ -1,0 +1,189 @@
+{
+  "id": "C05",
+  "title": "全网络一阶JVP与旧E新W",
+  "status": "mixed_result",
+  "status_label": "已完成 局部证据",
+  "chapter": "cache-reconstruction",
+  "finding": "全JVP精度显著优于仅更新投影，但当前实现比新prefill慢约2.96倍。",
+  "limitations": [
+    "24个前缀案例；参数增量为实际checkpoint差，不是裸梯度；oracle true E不可在线获得；能量汇总误差明显大于中位数。"
+  ],
+  "source_fingerprints": [
+    {
+      "artifact_name": "summary.json",
+      "sha256": "8ad0f2e661eff4cb9e4a4ed7aedfe64fc0ee1227c336073fe97aaf05ff198b98"
+    }
+  ],
+  "results": {
+    "errors": [
+      {
+        "kind": "E",
+        "method": "full_jvp",
+        "split": "all",
+        "n": 672,
+        "median_delta_error": 0.05562562923422325,
+        "p90_delta_error": 0.2728255236211991,
+        "max_delta_error": 0.7373265006252593,
+        "median_state_error": 0.0001739673816989174,
+        "pooled_delta_error": 0.34285050422548846
+      },
+      {
+        "kind": "K",
+        "method": "stale",
+        "split": "all",
+        "n": 672,
+        "median_delta_error": 1.0,
+        "p90_delta_error": 1.0,
+        "max_delta_error": 1.0,
+        "median_state_error": 0.0020810642091535886,
+        "pooled_delta_error": 1.0
+      },
+      {
+        "kind": "K",
+        "method": "weight_only",
+        "split": "all",
+        "n": 672,
+        "median_delta_error": 0.9996976644002082,
+        "p90_delta_error": 1.0001752026539033,
+        "max_delta_error": 1.0123027815955656,
+        "median_state_error": 0.0020809939893552303,
+        "pooled_delta_error": 0.9996804310934907
+      },
+      {
+        "kind": "K",
+        "method": "oracle_true_E_drop_cross",
+        "split": "all",
+        "n": 672,
+        "median_delta_error": 0.0002447714173079619,
+        "p90_delta_error": 0.0019448346467028034,
+        "max_delta_error": 0.037818121000350174,
+        "median_state_error": 4.925568788728658e-07,
+        "pooled_delta_error": 0.00030428412141124655
+      },
+      {
+        "kind": "K",
+        "method": "full_jvp",
+        "split": "all",
+        "n": 672,
+        "median_delta_error": 0.05910619950423589,
+        "p90_delta_error": 0.29887203620522124,
+        "max_delta_error": 0.7716516544671896,
+        "median_state_error": 0.0001334372347441238,
+        "pooled_delta_error": 0.34902839270166514
+      },
+      {
+        "kind": "K",
+        "method": "native_reconstruction_control",
+        "split": "all",
+        "n": 672,
+        "median_delta_error": 0.0,
+        "p90_delta_error": 0.0,
+        "max_delta_error": 0.0,
+        "median_state_error": 0.0,
+        "pooled_delta_error": 0.0
+      },
+      {
+        "kind": "V",
+        "method": "stale",
+        "split": "all",
+        "n": 672,
+        "median_delta_error": 1.0,
+        "p90_delta_error": 1.0,
+        "max_delta_error": 1.0,
+        "median_state_error": 0.004165132352203575,
+        "pooled_delta_error": 1.0
+      },
+      {
+        "kind": "V",
+        "method": "weight_only",
+        "split": "all",
+        "n": 672,
+        "median_delta_error": 0.9984290626958011,
+        "p90_delta_error": 0.999658794079682,
+        "max_delta_error": 0.9999476288344312,
+        "median_state_error": 0.004157013695185771,
+        "pooled_delta_error": 0.9989920578817489
+      },
+      {
+        "kind": "V",
+        "method": "oracle_true_E_drop_cross",
+        "split": "all",
+        "n": 672,
+        "median_delta_error": 0.00016264716004136523,
+        "p90_delta_error": 0.0006745371212320142,
+        "max_delta_error": 0.0048314658082768205,
+        "median_state_error": 7.136885773829737e-07,
+        "pooled_delta_error": 0.00012660103892353592
+      },
+      {
+        "kind": "V",
+        "method": "full_jvp",
+        "split": "all",
+        "n": 672,
+        "median_delta_error": 0.06518522889257027,
+        "p90_delta_error": 0.3104251637844038,
+        "max_delta_error": 0.7634763714260021,
+        "median_state_error": 0.00029176170403395784,
+        "pooled_delta_error": 0.3818909416561057
+      },
+      {
+        "kind": "V",
+        "method": "native_reconstruction_control",
+        "split": "all",
+        "n": 672,
+        "median_delta_error": 0.0,
+        "p90_delta_error": 0.0,
+        "max_delta_error": 0.0,
+        "median_state_error": 0.0,
+        "pooled_delta_error": 0.0
+      }
+    ],
+    "functional": [
+      {
+        "method": "native_control",
+        "n": 24,
+        "mean_kl": 0.0,
+        "mean_top1_agreement": 1.0,
+        "mean_abs_target_logp_change": 0.0,
+        "max_case_mean_kl": 0.0
+      },
+      {
+        "method": "stale",
+        "n": 24,
+        "mean_kl": 2.740790625987151e-05,
+        "mean_top1_agreement": 0.9986979166666666,
+        "mean_abs_target_logp_change": 0.0019530343531364385,
+        "max_case_mean_kl": 0.00018388106705239683
+      },
+      {
+        "method": "weight_only",
+        "n": 24,
+        "mean_kl": 2.5830290947289947e-05,
+        "mean_top1_agreement": 0.9993489583333334,
+        "mean_abs_target_logp_change": 0.0018623913205499925,
+        "max_case_mean_kl": 0.00017555765726111642
+      },
+      {
+        "method": "oracle_true_E_drop_cross",
+        "n": 24,
+        "mean_kl": 3.961924376780405e-12,
+        "mean_top1_agreement": 1.0,
+        "mean_abs_target_logp_change": 8.633636521955986e-07,
+        "max_case_mean_kl": 1.3296655779398692e-11
+      },
+      {
+        "method": "full_jvp",
+        "n": 24,
+        "mean_kl": 2.3963389050166793e-07,
+        "mean_top1_agreement": 1.0,
+        "mean_abs_target_logp_change": 0.00011213484391208016,
+        "max_case_mean_kl": 3.3814682129496608e-06
+      }
+    ],
+    "timing": {
+      "median_jvp_seconds": 3.3993552919710055,
+      "median_new_prefill_seconds": 1.1483743350254372,
+      "median_ratio": 2.9600340352625816
+    }
+  }
+}

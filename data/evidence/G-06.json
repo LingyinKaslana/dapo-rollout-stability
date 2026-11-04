@@ -1,0 +1,31 @@
+{
+  "id": "G-06",
+  "title": "race4 v1取消失效与排除",
+  "status": "invalid_for_targeted_cancellation_performance",
+  "status_label": "实现无效 已排除",
+  "chapter": "group-sampling",
+  "finding": "目标取消未生效；首版不得用于有效取消加速的性能结论。",
+  "limitations": [
+    "底层请求ID映射与abort参数不匹配，筛选有效但取消无效。",
+    "不得作为成功取消加速器的结果发布。"
+  ],
+  "source_fingerprints": [
+    {
+      "artifact_name": "setup2-race4-invalid-stop-20261102.json",
+      "sha256": "0020ed551c783348c9c2040f002559fadd0b06192efd93dba8d9094604c5a00f"
+    },
+    {
+      "artifact_name": "setup2-race4-live-cancel-audit-20261102.json",
+      "sha256": "9ad5e794ec4bafe4ee85e1a2d41809c9d1e54751a4514c4449fb885ac90ece40"
+    },
+    {
+      "artifact_name": "setup2-race4v2-sync-repair-20261102.json",
+      "sha256": "781a1fe2dd44d10b86b353c995e4a3ab48151cc440c5313c4b2d240f74dccdb9"
+    }
+  ],
+  "results": {
+    "committed_rounds": 120,
+    "active_targeted_cancellations": 0,
+    "discarded_groups": 4883
+  }
+}

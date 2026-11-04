@@ -1,0 +1,64 @@
+{
+  "id": "G-08",
+  "title": "0.6B GSM8K三策略1000轮稳定性筛选",
+  "status": "all_three_completed_one_seed_not_replicated",
+  "status_label": "已完成 局部证据",
+  "chapter": "group-sampling",
+  "finding": "三组各1000轮均未触发既定失稳筛选门槛，单种子。",
+  "limitations": [
+    "模型、数据、上限、window和batch不同于8B。",
+    "不稳定阈值是探索筛选规则，不是显著性检验。",
+    "初始设计JSON状态过期，以11/3完成快照为准。"
+  ],
+  "source_fingerprints": [
+    {
+      "artifact_name": "snapshot.json",
+      "sha256": "bf66ce929b845d03f3e607daad02d53a3ecb96ec1a71ac4e1d4b45b3438686eb"
+    },
+    {
+      "artifact_name": "summary.json",
+      "sha256": "0718e84485ff7a8b16f630cf447ebb32e568585f5623ecb92f56a9d4e25dbe88"
+    },
+    {
+      "artifact_name": "experiment_design.json",
+      "sha256": "411a9c8077fa77589699e8ae8eefcf2e71be9bd66f0d87fcaf36c22dc3064e62"
+    }
+  ],
+  "results": {
+    "rounds_each": 1000,
+    "training_seed": 20261102,
+    "screening": {
+      "arms": {
+        "A_eight": {
+          "last_four_dev_mean": 0.869140625,
+          "peak_two_dev_mean": 0.8720703125,
+          "baseline_grad_median": 2.018689662218094,
+          "max_25_round_grad_median": 2.360619843006134,
+          "unstable": false
+        },
+        "B_four_four_keep": {
+          "last_four_dev_mean": 0.85205078125,
+          "peak_two_dev_mean": 0.85986328125,
+          "baseline_grad_median": 1.9606833755970001,
+          "max_25_round_grad_median": 2.203377425670624,
+          "unstable": false
+        },
+        "C_four_four_discard": {
+          "last_four_dev_mean": 0.85693359375,
+          "peak_two_dev_mean": 0.8623046875,
+          "baseline_grad_median": 1.8621879667043686,
+          "max_25_round_grad_median": 2.3570939898490906,
+          "unstable": false
+        }
+      },
+      "dev_spread": 0.01708984375,
+      "replicate": false,
+      "rule": "Different instability labels OR >=3 percentage point spread in last four dev means. Instability: a 25-round grad median >5x rounds51-150 median AND last-two dev mean >=3pp below best-two dev mean. Exploratory trigger, not a significance test."
+    },
+    "final_dev_mean_tokens": {
+      "screen-A_eight-seed20261102": 555.83,
+      "screen-B_four_four_keep-seed20261102": 475.41,
+      "screen-C_four_four_discard-seed20261102": 384.52
+    }
+  }
+}

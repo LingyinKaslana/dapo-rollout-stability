@@ -1,0 +1,69 @@
+{
+  "id": "S01",
+  "title": "实验设置与指标边界",
+  "status": "audited_setup",
+  "status_label": "核验或复核",
+  "chapter": "training-stability",
+  "finding": "early formal、late nodiscard44、full8 eight分别处理；裁剪前范数不同于Adam参数更新幅度。",
+  "limitations": [
+    "online branches sampled different data; fixed replay intentionally bypasses async collection",
+    "研究中的baseline可能指原未校正APRIL，而不是同步DAPO；original eight在663的运行错误不能已归因于大梯度。"
+  ],
+  "source_fingerprints": [
+    {
+      "artifact_name": "research_state.json",
+      "sha256": "b680e6955b6c9f16d9577bf1b51a596ac59e3185f7ac0354e3dd8bf2cd910548"
+    },
+    {
+      "artifact_name": "availability_and_design.json",
+      "sha256": "e8f5d25bb721005246bd80fa30b7db4e08fdc3c0dd614b81ae89e14fb8209157"
+    },
+    {
+      "artifact_name": "recommendation.json",
+      "sha256": "dc0619469f4fd3d18c72eab9cdeb46e137dd7c5d18b43878dd50b23ceddd6f7d"
+    }
+  ],
+  "results": {
+    "model": "Qwen3-8B-Base",
+    "native_update": {
+      "entry": "verl.trainer.ppo.ray_trainer.RayPPOTrainer._update_actor",
+      "rows_per_round": 512,
+      "groups_per_round": 64,
+      "group_size": 8,
+      "minibatch_global_responses": 128,
+      "optimizer_steps_per_round": 4,
+      "shuffle": false,
+      "actor_main_compute": "BF16",
+      "model_storage": "FP32",
+      "optimizer": "AdamW",
+      "lr": 5e-07,
+      "warmup_rounds": 10,
+      "weight_decay": 0.01,
+      "betas": [
+        0.9,
+        0.999
+      ],
+      "grad_clip": 1.0,
+      "loss_agg_mode": "token-mean",
+      "clip_ratio_low": 0.2,
+      "clip_ratio_high": 0.28,
+      "dual_clip_c": 10.0,
+      "entropy_coeff": 0,
+      "use_kl_loss": false,
+      "rollout_importance_sampling": null
+    },
+    "rewards": {
+      "base_correct": 1,
+      "base_incorrect": -1,
+      "overlong_free_tokens": 6144,
+      "overlong_span": 2048,
+      "overlong_penalty_at_8192": -1,
+      "incorrect_8192_total": -2,
+      "correct_8192_total": 0,
+      "mixed_group_filter": "acc rather than shaped reward"
+    },
+    "baseline_terminology": "Original uncorrected APRIL/nodiscard44 continuation, not native synchronous DAPO.",
+    "eight_native_gradient_definition": "Round aggregation of actor update norms; mean across inner updates, not the largest individual optimizer-update norm.",
+    "eight_stopping_condition": "At round663 collect/pause stage: APRIL worker did not quiesce after native abort. Runtime error, not a normal budget completion; causation by gradient growth not established."
+  }
+}

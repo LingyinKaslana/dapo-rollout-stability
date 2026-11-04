@@ -1,0 +1,29 @@
+{
+  "id": "G-03",
+  "title": "旧1.7B/4k八同发与4+4舍弃约20h长跑",
+  "status": "completed_single_trajectory_per_arm",
+  "status_label": "已完成 局部证据",
+  "chapter": "group-sampling",
+  "finding": "旧1.7B设置的4+4多提交约6.4%轮次，不能外推到8B。",
+  "limitations": [
+    "这里actor_updates字段是轮次提交计数，不是Adam优化器step。",
+    "不能向新8B数据与8k设置外推。"
+  ],
+  "source_fingerprints": [
+    {
+      "artifact_name": "old-pair-matched-step-audit-20261101.json",
+      "sha256": "7810b04467feb65d78ebd30d360c02e6cc55869c3d6af886944abe9896eba41d"
+    }
+  ],
+  "results": {
+    "round_commits": {
+      "eight": 2482,
+      "four_four": 2640
+    },
+    "complete_metric_rounds": {
+      "eight": 2482,
+      "four_four": 2639
+    },
+    "extra_round_fraction": 0.06365834004834814
+  }
+}

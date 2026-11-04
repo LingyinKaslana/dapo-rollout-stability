@@ -1,0 +1,80 @@
+{
+  "id": "G-05",
+  "title": "8B四种组策略的长度演化",
+  "status": "completed_descriptive_analysis",
+  "status_label": "已完成 局部证据",
+  "chapter": "group-sampling",
+  "finding": "不同组策略都出现固定题评测长度增长，发生阶段不同。",
+  "limitations": [
+    "onset为预定义描述阈值，不是因果变点。",
+    "race4v2轮335未完成记录不补造。"
+  ],
+  "source_fingerprints": [
+    {
+      "artifact_name": "summary.json",
+      "sha256": "a9b29a5f4ac47c23d3ca1d1180689d452d934f0975263c9e7f167381a623eb48"
+    }
+  ],
+  "results": {
+    "eight": {
+      "complete_training_rounds": 662,
+      "latest_validation_round": 650,
+      "first_fixeddev_ge2500": {
+        "step": 400,
+        "wall_hours": 4.8199563950300215,
+        "harddev_response_tokens_mean": 2838.200783545544,
+        "harddev_hit_token_cap_fraction": 0.05901077375122429
+      },
+      "training_sustained_onset": {
+        "step": 381,
+        "wall_hours": 4.268942615588506,
+        "trailing_mean": 2069.19931640625
+      }
+    },
+    "discard44": {
+      "complete_training_rounds": 502,
+      "latest_validation_round": 500,
+      "first_fixeddev_ge2500": {
+        "step": 200,
+        "wall_hours": 2.56554859134886,
+        "harddev_response_tokens_mean": 3004.6062683643486,
+        "harddev_hit_token_cap_fraction": 0.08888344760039177
+      },
+      "training_sustained_onset": {
+        "step": 178,
+        "wall_hours": 1.9319430094957353,
+        "trailing_mean": 2000.04716796875
+      }
+    },
+    "nodiscard44": {
+      "complete_training_rounds": 541,
+      "latest_validation_round": 541,
+      "first_fixeddev_ge2500": {
+        "step": 250,
+        "wall_hours": 2.9030599886841246,
+        "harddev_response_tokens_mean": 2954.1821743388837,
+        "harddev_hit_token_cap_fraction": 0.0727228207639569
+      },
+      "training_sustained_onset": {
+        "step": 237,
+        "wall_hours": 2.46525051732858,
+        "trailing_mean": 2051.46416015625
+      }
+    },
+    "race4v2": {
+      "complete_training_rounds": 334,
+      "latest_validation_round": 300,
+      "first_fixeddev_ge2500": {
+        "step": 150,
+        "wall_hours": 2.0705725543366538,
+        "harddev_response_tokens_mean": 3356.7331047992166,
+        "harddev_hit_token_cap_fraction": 0.12659157688540645
+      },
+      "training_sustained_onset": {
+        "step": 136,
+        "wall_hours": 1.5875171056720945,
+        "trailing_mean": 2014.45625
+      }
+    }
+  }
+}

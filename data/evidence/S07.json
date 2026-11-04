@@ -1,0 +1,207 @@
+{
+  "id": "S07",
+  "title": "异常前缀、checkpoint与数据触发检查",
+  "status": "selected_case_causal_interventions",
+  "status_label": "受控干预",
+  "chapter": "training-stability",
+  "finding": "相同失败前缀更换checkpoint强烈改变循环；局部重采样支持题目×权重×轨迹交互而非单一坏题解释。",
+  "limitations": [
+    "Four failure-selected trajectories from only three questions, including two trajectories from the same math problem; not an estimate of population failure rate.",
+    "Rewind and fresh-prompt arms begin earlier and use the same next2048-token horizon, so they do not establish full-response eventual failure rates.",
+    "The non-@ alternative was selected by FP32 token probability excluding special tokens; in some cases it is extremely unlikely and not guaranteed to preserve mathematical semantics.",
+    "Keep500 has0/32 @ repetition at the boundary, but21/32 continuations still hit the2048-token cap; correctness has not been evaluated.",
+    "Attribution targets three previously selected high-mismatch tokens and uses FP32. Input-gradient concentration on shared prompt/template tokens is descriptive, not proof that the template causes instability.",
+    "This addresses conditional generation and local sensitivity at late checkpoints. No training update ablation or causal reproduction of the earlier length surge was performed; those early full checkpoints were not retained.",
+    "Six evaluation prompts, selected using earlier diagnostic extremes and low-mismatch controls; not a random training-data sample.",
+    "Cross-checkpoint fixed-token comparisons use vLLM prefill vs HF full sequence; new sampled responses use recorded native decode vs HF.",
+    "BF16/FP16 use the same exported BF16 weight values. FP32 reference additionally changes attention from FA2 to SDPA and uses exact prefixes; verified BF16/FP16 prefix and full-sequence scores agree at the selected points.",
+    "Gradient probes use unit-token negative log probability with no advantages, token averaging, PPO clipping, optimizer state, or updates.",
+    "Checkpoints 500 and 541 concern late instability, not race4v2 steps126-140. No training-level causal ablation was performed."
+  ],
+  "source_fingerprints": [
+    {
+      "artifact_name": "findings.json",
+      "sha256": "ce04e135c0de2dfc2ff0d164e7bcb39199462f34f03703482a6eba7fc5038e1c"
+    },
+    {
+      "artifact_name": "findings.json",
+      "sha256": "c6143ae83756ec97d82d8ddbba1d2867a0ba1faa9d9f57ebc4237284313dfb9e"
+    }
+  ],
+  "results": {
+    "prefix_validation": {
+      "passed": true,
+      "main_responses": 384,
+      "supplement_responses": 32,
+      "total_responses": 416,
+      "backward_passes": 42,
+      "optimizer_updates": 0,
+      "paired_seed_and_prefix_hash_checks": true,
+      "nll_vs_logodds_gradient_identity_max_relative_error": 1.4244731591395166e-05,
+      "cases": 4,
+      "unique_questions": 3
+    },
+    "prefix_cells": [
+      {
+        "model": "keep541",
+        "dtype": "bf16",
+        "mode": "rewind512",
+        "n": 32,
+        "loops": 16,
+        "caps": 16,
+        "mean_tokens": 1301.625,
+        "high_repeat20": 14
+      },
+      {
+        "model": "keep541",
+        "dtype": "bf16",
+        "mode": "rewind128",
+        "n": 32,
+        "loops": 21,
+        "caps": 21,
+        "mean_tokens": 1437.15625,
+        "high_repeat20": 21
+      },
+      {
+        "model": "keep541",
+        "dtype": "bf16",
+        "mode": "boundary",
+        "n": 32,
+        "loops": 32,
+        "caps": 32,
+        "mean_tokens": 2048,
+        "high_repeat20": 32
+      },
+      {
+        "model": "keep541",
+        "dtype": "bf16",
+        "mode": "force_at",
+        "n": 32,
+        "loops": 32,
+        "caps": 32,
+        "mean_tokens": 2048,
+        "high_repeat20": 32
+      },
+      {
+        "model": "keep541",
+        "dtype": "bf16",
+        "mode": "force_alt",
+        "n": 32,
+        "loops": 32,
+        "caps": 31,
+        "mean_tokens": 2012.53125,
+        "high_repeat20": 31
+      },
+      {
+        "model": "keep541",
+        "dtype": "fp16",
+        "mode": "rewind512",
+        "n": 32,
+        "loops": 16,
+        "caps": 16,
+        "mean_tokens": 1314.03125,
+        "high_repeat20": 15
+      },
+      {
+        "model": "keep541",
+        "dtype": "fp16",
+        "mode": "rewind128",
+        "n": 32,
+        "loops": 19,
+        "caps": 19,
+        "mean_tokens": 1345.125,
+        "high_repeat20": 19
+      },
+      {
+        "model": "keep541",
+        "dtype": "fp16",
+        "mode": "boundary",
+        "n": 32,
+        "loops": 32,
+        "caps": 32,
+        "mean_tokens": 2048,
+        "high_repeat20": 32
+      },
+      {
+        "model": "keep541",
+        "dtype": "fp16",
+        "mode": "force_at",
+        "n": 32,
+        "loops": 32,
+        "caps": 32,
+        "mean_tokens": 2048,
+        "high_repeat20": 32
+      },
+      {
+        "model": "keep541",
+        "dtype": "fp16",
+        "mode": "force_alt",
+        "n": 32,
+        "loops": 31,
+        "caps": 30,
+        "mean_tokens": 1931.84375,
+        "high_repeat20": 31
+      },
+      {
+        "model": "keep500",
+        "dtype": "bf16",
+        "mode": "boundary",
+        "n": 32,
+        "loops": 0,
+        "caps": 21,
+        "mean_tokens": 1618.6875,
+        "high_repeat20": 0
+      },
+      {
+        "model": "keep500",
+        "dtype": "bf16",
+        "mode": "force_at",
+        "n": 32,
+        "loops": 0,
+        "caps": 20,
+        "mean_tokens": 1582,
+        "high_repeat20": 0
+      },
+      {
+        "model": "keep541",
+        "dtype": "bf16",
+        "mode": "fresh",
+        "n": 32,
+        "loops": 16,
+        "caps": 16,
+        "mean_tokens": 1512,
+        "high_repeat20": 2
+      }
+    ],
+    "prefix_interpretation": "On these selected failed prefixes, checkpoint identity causally changes conditional @ repetition: keep541 repeats with32/32 boundary continuations, keep5000/32. FP16 does not rescue keep541 boundary continuations. Rewinding can reduce recurrence; replacing only the first @ is insufficient. High-salience response-token substitutions do not consistently reduce confidence-adjusted log-odds gradient sensitivity.",
+    "data_counts": {
+      "fixed_sequence_comparisons": 96,
+      "new_responses": 48,
+      "backward_passes": 24,
+      "optimizer_updates": 0
+    },
+    "probability_matched_gradient_ratios": [
+      31.961935814158725,
+      40.16550757883311,
+      38.83550827759762
+    ],
+    "native_resampling": {
+      "keep500": {
+        "responses": 24,
+        "at_loops_ge100chars": 0,
+        "capped": 5
+      },
+      "keep541": {
+        "responses": 24,
+        "at_loops_ge100chars": 4,
+        "capped": 4
+      }
+    },
+    "temporal": {
+      "loop_responses": 4,
+      "first_abs_loggap_gt1_after_first_at": 4,
+      "first_abs_probgap_gt02_after_first_at": 3
+    },
+    "data_interpretation": "Fixed-token interventions show strong checkpoint dependence. Repeated sampling shows prompt-by-checkpoint-by-trajectory interaction. Large unit-token gradients persist in FP16 and FP32 even when backend probability differences shrink. This supports local sensitivity as a common mechanism; it does not identify a trigger training example or prove the cause of the early length surge."
+  }
+}

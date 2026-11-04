@@ -1,0 +1,330 @@
+{
+  "id": "C16",
+  "title": "K/V相邻变化的口径复核",
+  "status": "observed",
+  "status_label": "已完成 局部证据",
+  "chapter": "cache-reconstruction",
+  "finding": "两模型被测相邻权重的K相对变化均小于V；绝对RMS和相对误差不同。",
+  "limitations": [
+    "Qwen1.7B本地1次RL更新间隔；Pythia公共1000次预训练更新间隔；两者不是可直接比较的训练对照；4固定文本前2048token。"
+  ],
+  "source_fingerprints": [
+    {
+      "artifact_name": "summary.json",
+      "sha256": "0d81b57785f48bd39656ded5aa671d5aec575075c870850b2ff9706b40ce4fd6"
+    },
+    {
+      "artifact_name": "config.json",
+      "sha256": "7d1fcba3c681cdd7c0ca279d90d90237f31c701001081f7c10b52f9b4ce8f0b1"
+    }
+  ],
+  "results": {
+    "pythia": {
+      "all": {
+        "mean_per_probe_pair_layer": {
+          "E": {
+            "relative_old": 0.09323604984208161,
+            "relative_new": 0.09319560673743171,
+            "relative_symmetric": 0.0932157702691832,
+            "delta_rms": 0.1006675219640602,
+            "old_rms": 1.054442925307161,
+            "centered_relative_old": 0.12482804532562132,
+            "old_token_mean_energy_fraction": 0.5011952391731045
+          },
+          "K_cache": {
+            "relative_old": 0.028133280952903746,
+            "relative_new": 0.028135671322642275,
+            "relative_symmetric": 0.028134432559295635,
+            "delta_rms": 0.1110873514689416,
+            "old_rms": 7.690309296112001,
+            "centered_relative_old": 0.07478038229164527,
+            "old_token_mean_energy_fraction": 0.7310924272560858
+          },
+          "K_raw": {
+            "relative_old": 0.028133281002848867,
+            "relative_new": 0.028135671372631597,
+            "relative_symmetric": 0.028134432609262825,
+            "delta_rms": 0.11108735119994166,
+            "old_rms": 7.690309290839104,
+            "centered_relative_old": 0.10964433180070528,
+            "old_token_mean_energy_fraction": 0.8854189689286598
+          },
+          "V_cache": {
+            "relative_old": 0.13808574501421014,
+            "relative_new": 0.13822011470018356,
+            "relative_symmetric": 0.13815249320905243,
+            "delta_rms": 0.09913579255621241,
+            "old_rms": 0.710229739849673,
+            "centered_relative_old": 0.1344884405287773,
+            "old_token_mean_energy_fraction": 0.15494941437677046
+          }
+        },
+        "fraction_K_less_than_V": {
+          "relative_old": 1.0,
+          "delta_rms": 0.08680555555555555,
+          "centered_relative_old": 1.0
+        },
+        "cases": 288
+      },
+      "layers_0_9": {
+        "mean_per_probe_pair_layer": {
+          "E": {
+            "relative_old": 0.07828301059261461,
+            "relative_new": 0.0782299428798232,
+            "relative_symmetric": 0.078256452647299,
+            "delta_rms": 0.06629323660190051,
+            "old_rms": 0.8067961568354513,
+            "centered_relative_old": 0.09179772973408486,
+            "old_token_mean_energy_fraction": 0.42074720364710483
+          },
+          "K_cache": {
+            "relative_old": 0.0451268041175217,
+            "relative_new": 0.04512301156031062,
+            "relative_symmetric": 0.045124816362574934,
+            "delta_rms": 0.08042071322549324,
+            "old_rms": 1.7532139447019055,
+            "centered_relative_old": 0.054301933593908766,
+            "old_token_mean_energy_fraction": 0.41331646663743576
+          },
+          "K_raw": {
+            "relative_old": 0.04512680427212409,
+            "relative_new": 0.04512301171505559,
+            "relative_symmetric": 0.045124816517248444,
+            "delta_rms": 0.08042071307292711,
+            "old_rms": 1.7532139352427494,
+            "centered_relative_old": 0.08150992737141456,
+            "old_token_mean_energy_fraction": 0.7541057101165033
+          },
+          "V_cache": {
+            "relative_old": 0.09509347207405314,
+            "relative_new": 0.09509280702955787,
+            "relative_symmetric": 0.09509302122834427,
+            "delta_rms": 0.06784763395728731,
+            "old_rms": 0.6737534591759153,
+            "centered_relative_old": 0.09018014984463364,
+            "old_token_mean_energy_fraction": 0.09657188033396807
+          }
+        },
+        "fraction_K_less_than_V": {
+          "relative_old": 1.0,
+          "delta_rms": 0.1,
+          "centered_relative_old": 1.0
+        },
+        "cases": 120
+      },
+      "layers_10_plus": {
+        "mean_per_probe_pair_layer": {
+          "E": {
+            "relative_old": 0.10391679216312949,
+            "relative_new": 0.10388536663572348,
+            "relative_symmetric": 0.10390099714195762,
+            "delta_rms": 0.12522058293703142,
+            "old_rms": 1.2313334742155253,
+            "centered_relative_old": 0.1484211278910045,
+            "old_token_mean_energy_fraction": 0.5586581216916757
+          },
+          "K_cache": {
+            "relative_old": 0.015995050121033767,
+            "relative_new": 0.016001856867164873,
+            "relative_symmetric": 0.015998444128381854,
+            "delta_rms": 0.1329920930714047,
+            "old_rms": 11.931091689976355,
+            "centered_relative_old": 0.08940784564717134,
+            "old_token_mean_energy_fraction": 0.9580752562694075
+          },
+          "K_raw": {
+            "relative_old": 0.015995050096223713,
+            "relative_new": 0.016001856842328736,
+            "relative_symmetric": 0.015998444103558804,
+            "delta_rms": 0.13299209271923773,
+            "old_rms": 11.931091687693643,
+            "centered_relative_old": 0.12974033496448434,
+            "old_token_mean_energy_fraction": 0.9792141537944856
+          },
+          "V_cache": {
+            "relative_old": 0.16879451140003654,
+            "relative_new": 0.16902533446491622,
+            "relative_symmetric": 0.16890925890955827,
+            "delta_rms": 0.12148447726973034,
+            "old_rms": 0.736284226045214,
+            "centered_relative_old": 0.1661372195888799,
+            "old_token_mean_energy_fraction": 0.19664765297877218
+          }
+        },
+        "fraction_K_less_than_V": {
+          "relative_old": 1.0,
+          "delta_rms": 0.07738095238095238,
+          "centered_relative_old": 1.0
+        },
+        "cases": 168
+      }
+    },
+    "qwen": {
+      "all": {
+        "mean_per_probe_pair_layer": {
+          "E": {
+            "relative_old": 0.0027611138808260084,
+            "relative_new": 0.002760687155771203,
+            "relative_symmetric": 0.0027609004067620686,
+            "delta_rms": 0.017838905715385194,
+            "old_rms": 4.824548166750169,
+            "centered_relative_old": 0.0032452056048331754,
+            "old_token_mean_energy_fraction": 0.4392061817655688
+          },
+          "K_cache": {
+            "relative_old": 0.0019298767296457684,
+            "relative_new": 0.00192960263439453,
+            "relative_symmetric": 0.001929739657255217,
+            "delta_rms": 0.005735142504603474,
+            "old_rms": 4.483704256636895,
+            "centered_relative_old": 0.0028634433890208457,
+            "old_token_mean_energy_fraction": 0.664746822290503
+          },
+          "K_norm": {
+            "relative_old": 0.001929876729802704,
+            "relative_new": 0.0019296026345633978,
+            "relative_symmetric": 0.0019297396574181186,
+            "delta_rms": 0.005735142508464601,
+            "old_rms": 4.483704252585194,
+            "centered_relative_old": 0.0033200474948288246,
+            "old_token_mean_energy_fraction": 0.7447177035907385
+          },
+          "K_raw": {
+            "relative_old": 0.0027417500451245766,
+            "relative_new": 0.002741786491496991,
+            "relative_symmetric": 0.0027417682321947655,
+            "delta_rms": 0.024949968438763362,
+            "old_rms": 8.327954029137619,
+            "centered_relative_old": 0.0034675070867932994,
+            "old_token_mean_energy_fraction": 0.518809286394414
+          },
+          "V_cache": {
+            "relative_old": 0.0038898150366928567,
+            "relative_new": 0.0038892769815695224,
+            "relative_symmetric": 0.0038895458056814485,
+            "delta_rms": 0.022829144690461496,
+            "old_rms": 5.149615482903217,
+            "centered_relative_old": 0.0038980640130910895,
+            "old_token_mean_energy_fraction": 0.11520607806842251
+          }
+        },
+        "fraction_K_less_than_V": {
+          "relative_old": 1.0,
+          "delta_rms": 0.5625,
+          "centered_relative_old": 0.9791666666666666
+        },
+        "cases": 336
+      },
+      "layers_0_9": {
+        "mean_per_probe_pair_layer": {
+          "E": {
+            "relative_old": 0.001094605339646845,
+            "relative_new": 0.001094607345200734,
+            "relative_symmetric": 0.0010946063394044673,
+            "delta_rms": 0.00048655812083873913,
+            "old_rms": 0.3290467806086063,
+            "centered_relative_old": 0.0011403023829439612,
+            "old_token_mean_energy_fraction": 0.4438959258029748
+          },
+          "K_cache": {
+            "relative_old": 0.0006424166346726006,
+            "relative_new": 0.000642374037411459,
+            "relative_symmetric": 0.0006423953332760051,
+            "delta_rms": 0.002980152963775196,
+            "old_rms": 7.300196444041945,
+            "centered_relative_old": 0.0011345081071084402,
+            "old_token_mean_energy_fraction": 0.8528336763283133
+          },
+          "K_norm": {
+            "relative_old": 0.000642416640805038,
+            "relative_new": 0.0006423740435386668,
+            "relative_symmetric": 0.0006423953394058285,
+            "delta_rms": 0.002980153011978905,
+            "old_rms": 7.300196439717405,
+            "centered_relative_old": 0.0013276870546895937,
+            "old_token_mean_energy_fraction": 0.8976481433677106
+          },
+          "K_raw": {
+            "relative_old": 0.0012534255872269798,
+            "relative_new": 0.001253292071378189,
+            "relative_symmetric": 0.0012533588164800105,
+            "delta_rms": 0.0011659515233964888,
+            "old_rms": 0.6985307740651504,
+            "centered_relative_old": 0.0013877155614401555,
+            "old_token_mean_energy_fraction": 0.5808411299826531
+          },
+          "V_cache": {
+            "relative_old": 0.0016612634090326542,
+            "relative_new": 0.0016613340581300086,
+            "relative_symmetric": 0.0016612987236919563,
+            "delta_rms": 0.0008729414314274269,
+            "old_rms": 0.39480506445831287,
+            "centered_relative_old": 0.001472069830684959,
+            "old_token_mean_energy_fraction": 0.10990436085314549
+          }
+        },
+        "fraction_K_less_than_V": {
+          "relative_old": 1.0,
+          "delta_rms": 0.0,
+          "centered_relative_old": 0.95
+        },
+        "cases": 120
+      },
+      "layers_10_plus": {
+        "mean_per_probe_pair_layer": {
+          "E": {
+            "relative_old": 0.003686951959258877,
+            "relative_new": 0.003686287050532575,
+            "relative_symmetric": 0.003686619333071847,
+            "delta_rms": 0.027479098823466552,
+            "old_rms": 7.322048936828815,
+            "centered_relative_old": 0.004414596283660516,
+            "old_token_mean_energy_fraction": 0.43660076841145434
+          },
+          "K_cache": {
+            "relative_old": 0.002645132337964195,
+            "relative_new": 0.0026447296327184585,
+            "relative_symmetric": 0.0026449309483547795,
+            "delta_rms": 0.007265692249508072,
+            "old_rms": 2.9189863747452,
+            "centered_relative_old": 0.003823962990083293,
+            "old_token_mean_energy_fraction": 0.5602541256028305
+          },
+          "K_norm": {
+            "relative_old": 0.002645132334801407,
+            "relative_new": 0.002644729629577137,
+            "relative_symmetric": 0.0026449309452027236,
+            "delta_rms": 0.007265692228734431,
+            "old_rms": 2.9189863708450776,
+            "centered_relative_old": 0.004426914406017286,
+            "old_token_mean_energy_fraction": 0.6597563481590873
+          },
+          "K_raw": {
+            "relative_old": 0.0035685969661787974,
+            "relative_new": 0.003568727836007436,
+            "relative_symmetric": 0.0035686623520362953,
+            "delta_rms": 0.038163311169522735,
+            "old_rms": 12.566522504177877,
+            "centered_relative_old": 0.004622946823100602,
+            "old_token_mean_energy_fraction": 0.4843471510676146
+          },
+          "V_cache": {
+            "relative_old": 0.005127899274281859,
+            "relative_new": 0.00512702305014703,
+            "relative_symmetric": 0.005127460851231166,
+            "delta_rms": 0.03502703538992486,
+            "old_rms": 7.791176826483717,
+            "centered_relative_old": 0.005245838558872273,
+            "old_token_mean_energy_fraction": 0.11815147652135417
+          }
+        },
+        "fraction_K_less_than_V": {
+          "relative_old": 1.0,
+          "delta_rms": 0.875,
+          "centered_relative_old": 0.9953703703703703
+        },
+        "cases": 216
+      }
+    }
+  }
+}

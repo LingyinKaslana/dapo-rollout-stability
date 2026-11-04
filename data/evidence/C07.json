@@ -1,0 +1,107 @@
+{
+  "id": "C07",
+  "title": "浅层E/V复用和K重算方案",
+  "status": "proposal_supported_by_observation",
+  "status_label": "方案待在线验证",
+  "chapter": "cache-reconstruction",
+  "finding": "浅10层E/V变化能量占全层极少；尚未做完整混合方案在线长跑。",
+  "limitations": [
+    "early10_stale_only_oracle注入真实深层KV；不是计划中的旧E旧V新K算法。中高层入口状态须补充设计。"
+  ],
+  "source_fingerprints": [
+    {
+      "artifact_name": "summary.json",
+      "sha256": "3d740c15d5efa1af403addbda6e78d75abca973f0f0a4a2577f5feeefbf93e57"
+    }
+  ],
+  "results": {
+    "early_layer_energy": [
+      {
+        "family": "E",
+        "n": 24,
+        "early10_energy_fraction_median": 0.00020936343617304558,
+        "minimum": 4.782265721029826e-05,
+        "maximum": 0.00046637912459682846
+      },
+      {
+        "family": "K",
+        "n": 24,
+        "early10_energy_fraction_median": 0.10558240529748014,
+        "minimum": 0.028085160904883867,
+        "maximum": 0.19236057982961147
+      },
+      {
+        "family": "V",
+        "n": 24,
+        "early10_energy_fraction_median": 0.00036118650882177366,
+        "minimum": 9.756546197753502e-05,
+        "maximum": 0.0008645498975661588
+      }
+    ],
+    "functional": [
+      {
+        "split": "all",
+        "method": "native_control",
+        "n": 24,
+        "mean_kl": 0.0,
+        "mean_top1_agreement": 1.0,
+        "mean_total_variation": 0.0,
+        "median_repair_ms": 0.004050089046359062
+      },
+      {
+        "split": "all",
+        "method": "stale_all",
+        "n": 24,
+        "mean_kl": 2.740790625987151e-05,
+        "mean_top1_agreement": 0.9986979166666666,
+        "mean_total_variation": 0.0010086772584376724,
+        "median_repair_ms": 0.004995032213628292
+      },
+      {
+        "split": "all",
+        "method": "channel_all",
+        "n": 24,
+        "mean_kl": 2.0103344323548515e-05,
+        "mean_top1_agreement": 0.9986979166666666,
+        "mean_total_variation": 0.0009568503233267092,
+        "median_repair_ms": 9.053813468199223
+      },
+      {
+        "split": "all",
+        "method": "block_all",
+        "n": 24,
+        "mean_kl": 1.8575783785115072e-05,
+        "mean_top1_agreement": 1.0,
+        "mean_total_variation": 0.0008615364824447009,
+        "median_repair_ms": 12.143302999902517
+      },
+      {
+        "split": "all",
+        "method": "early10_stale_channel_late",
+        "n": 24,
+        "mean_kl": 1.7155670215718357e-05,
+        "mean_top1_agreement": 0.9986979166666666,
+        "mean_total_variation": 0.0009043412266099165,
+        "median_repair_ms": 5.824518972076476
+      },
+      {
+        "split": "all",
+        "method": "early10_stale_block_late",
+        "n": 24,
+        "mean_kl": 1.779878661337914e-05,
+        "mean_top1_agreement": 1.0,
+        "mean_total_variation": 0.0008507004766835658,
+        "median_repair_ms": 7.789194001816213
+      },
+      {
+        "split": "all",
+        "method": "early10_stale_only_oracle",
+        "n": 24,
+        "mean_kl": 5.738094337840561e-07,
+        "mean_top1_agreement": 1.0,
+        "mean_total_variation": 0.0001415096549561943,
+        "median_repair_ms": 0.005409936420619488
+      }
+    ]
+  }
+}

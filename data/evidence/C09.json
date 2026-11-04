@@ -1,0 +1,57 @@
+{
+  "id": "C09",
+  "title": "相邻权重attention变化",
+  "status": "observed",
+  "status_label": "已完成 局部证据",
+  "chapter": "cache-reconstruction",
+  "finding": "平均attention TV很小但存在少量大变化query行。",
+  "limitations": [
+    "只用4道heldout×3相邻更新；FP32 forward与FP64 attention，不是BF16 serving测量。"
+  ],
+  "source_fingerprints": [
+    {
+      "artifact_name": "summary.json",
+      "sha256": "fedf4bf2b7e7d26be05388203469b67e6660e5180e6fa4a29346eadc1920fa62"
+    }
+  ],
+  "results": {
+    "1": {
+      "mean_tv": 0.0020338466029474625,
+      "early_layers_0_9_tv": 0.0007907706877118495,
+      "middle_layers_10_19_tv": 0.0028959582316269365,
+      "late_layers_20_27_tv": 0.0025100519611426352,
+      "top1_flip_rate": 0.001988002232142857
+    },
+    "2": {
+      "mean_tv": 0.0014090520311195599,
+      "early_layers_0_9_tv": 0.0006499953627869782,
+      "middle_layers_10_19_tv": 0.0020145092129118672,
+      "late_layers_20_27_tv": 0.0016010513892949036,
+      "top1_flip_rate": 0.0013253348214285715
+    },
+    "3": {
+      "mean_tv": 0.001033703552188464,
+      "early_layers_0_9_tv": 0.0005726441334599541,
+      "middle_layers_10_19_tv": 0.0016108097673641023,
+      "late_layers_20_27_tv": 0.0008886450566295537,
+      "top1_flip_rate": 0.0010724748883928572
+    },
+    "controls": {
+      "max_native_output_reconstruction_error": 2.5953001900852175e-06,
+      "repeat_forward_bitwise_identical": true
+    },
+    "scope": {
+      "model": "Qwen3-1.7B",
+      "pairs": [
+        "000→001",
+        "001→002",
+        "002→003"
+      ],
+      "unique_common_heldout_prompts": 4,
+      "response_query_rows_per_probe": 128,
+      "figures_use": "heldout response queries only",
+      "TV_mean_aggregation": "equal average over sampled queries, heads, layers and 4 probes; not token-length weighted",
+      "precision": "FP32 forwards, FP64 attention probabilities; not BF16 rollout measurement"
+    }
+  }
+}

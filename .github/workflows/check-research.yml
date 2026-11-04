@@ -1,0 +1,11 @@
+name: Check research records
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  records:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check links, evidence identities and aggregate data
+        run: python3 tools/check_project.py

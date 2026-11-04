@@ -1,0 +1,79 @@
+{
+  "id": "C13",
+  "title": "Qwen GQA Wv秩",
+  "status": "observed",
+  "status_label": "已完成 局部证据",
+  "chapter": "cache-reconstruction",
+  "finding": "Wv为1024×2048且满行秩，一般E不能从V唯一恢复。",
+  "limitations": [
+    "完整权重非增量；仅要求Q唯一时条件是ker(Wv)包含于ker(Wq)，方阵非必要条件。"
+  ],
+  "source_fingerprints": [
+    {
+      "artifact_name": "summary.json",
+      "sha256": "554fd64756aea23e057fabe86104cbf452216b960f265bf05289c5d42fdd375e"
+    }
+  ],
+  "results": {
+    "subject": "Full Wv weights, NOT update delta Wv",
+    "shape_torch": [
+      1024,
+      2048
+    ],
+    "layers": 28,
+    "svd_precision": "FP64 direct SVD (gesvd), float32-tolerance and float64-tolerance ranks both reported",
+    "rank_tolerance": "max(rows,columns) * eps(dtype) * sigma_max",
+    "metrics": {
+      "numeric_rank_fp32_tol": {
+        "min": 1024,
+        "mean": 1024.0,
+        "max": 1024
+      },
+      "r90": {
+        "min": 533,
+        "mean": 602.8214285714286,
+        "max": 688
+      },
+      "r95": {
+        "min": 651,
+        "mean": 723.6785714285714,
+        "max": 787
+      },
+      "r99": {
+        "min": 846,
+        "mean": 905.5357142857143,
+        "max": 940
+      },
+      "stable_rank": {
+        "min": 70.52276019962488,
+        "mean": 172.11500374859156,
+        "max": 274.77311548547124
+      },
+      "condition_number": {
+        "min": 9.688183121478277,
+        "mean": 18.893703640407626,
+        "max": 145.1420341083587
+      },
+      "best_rank_64_relative_error": {
+        "min": 0.8193877462061324,
+        "mean": 0.8833611689560755,
+        "max": 0.9170273970788397
+      },
+      "best_rank_128_relative_error": {
+        "min": 0.7285074907197269,
+        "mean": 0.7947858251793043,
+        "max": 0.84793906463421
+      },
+      "best_rank_256_relative_error": {
+        "min": 0.5769580486363591,
+        "mean": 0.6427120374491119,
+        "max": 0.7233629767967484
+      },
+      "best_rank_512_relative_error": {
+        "min": 0.3336346876286558,
+        "mean": 0.3927045391135368,
+        "max": 0.48495463291283575
+      }
+    }
+  }
+}

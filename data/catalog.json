@@ -1,0 +1,366 @@
+{
+  "curated_date": "2026-11-04",
+  "count": 45,
+  "entries": [
+    {
+      "id": "C01",
+      "title": "三次全参数更新的E/K/V增量谱",
+      "status": "observed",
+      "status_label": "已完成 局部证据",
+      "chapter": "cache-reconstruction",
+      "finding": "缓存变化小不代表增量可以高精度低秩拟合。"
+    },
+    {
+      "id": "C02",
+      "title": "Wk/Wv实际更新的低秩近似",
+      "status": "observed",
+      "status_label": "已完成 局部证据",
+      "chapter": "cache-reconstruction",
+      "finding": "权重增量rank64留下约69–70%残差；图像似噪声不证明独立噪声。"
+    },
+    {
+      "id": "C03",
+      "title": "Fourier与坐标函数拟合",
+      "status": "negative_result",
+      "status_label": "已完成 阴性结果",
+      "chapter": "cache-reconstruction",
+      "finding": "带符号增量的二维Fourier留出行误差接近100%；绝对值图规律不等于可预测符号。"
+    },
+    {
+      "id": "C04",
+      "title": "仿射/ridge映射、末层修复、历史外推、量化稀疏",
+      "status": "mixed_result",
+      "status_label": "已完成 局部证据",
+      "chapter": "cache-reconstruction",
+      "finding": "通道与逐头映射约改善28% KL；历史外推可劣于直接旧缓存。"
+    },
+    {
+      "id": "C05",
+      "title": "全网络一阶JVP与旧E新W",
+      "status": "mixed_result",
+      "status_label": "已完成 局部证据",
+      "chapter": "cache-reconstruction",
+      "finding": "全JVP精度显著优于仅更新投影，但当前实现比新prefill慢约2.96倍。"
+    },
+    {
+      "id": "C06",
+      "title": "一阶与固定E误差的低秩残差",
+      "status": "oracle_diagnostic",
+      "status_label": "Oracle 结构诊断",
+      "chapter": "cache-reconstruction",
+      "finding": "JVP残差较容易压缩，但依赖真实残差，尚未得到在线修正器。"
+    },
+    {
+      "id": "C07",
+      "title": "浅层E/V复用和K重算方案",
+      "status": "proposal_supported_by_observation",
+      "status_label": "方案待在线验证",
+      "chapter": "cache-reconstruction",
+      "finding": "浅10层E/V变化能量占全层极少；尚未做完整混合方案在线长跑。"
+    },
+    {
+      "id": "C08",
+      "title": "0.6B GSM8K baseline/APRIL长跑权重轨迹",
+      "status": "training_observed_cache_sweep_pending",
+      "status_label": "部分完成",
+      "chapter": "cache-reconstruction",
+      "finding": "长跑已有训练曲线；本次已核对证据未包含多间隔E/K/V完整扫描。"
+    },
+    {
+      "id": "C09",
+      "title": "相邻权重attention变化",
+      "status": "observed",
+      "status_label": "已完成 局部证据",
+      "chapter": "cache-reconstruction",
+      "finding": "平均attention TV很小但存在少量大变化query行。"
+    },
+    {
+      "id": "C10",
+      "title": "旧top100重建及新top100 oracle",
+      "status": "negative_result",
+      "status_label": "已完成 阴性结果",
+      "chapter": "cache-reconstruction",
+      "finding": "旧/新top100误差几乎相同，固定100选择损失尾部质量主导误差。"
+    },
+    {
+      "id": "C11",
+      "title": "按累计attention质量选择",
+      "status": "observed",
+      "status_label": "已完成 局部证据",
+      "chapter": "cache-reconstruction",
+      "finding": "99%/99.9%改善重建质量；99.9%仍需保留约46.48%的QK对。"
+    },
+    {
+      "id": "C12",
+      "title": "均值尾部补偿",
+      "status": "mixed_result",
+      "status_label": "已完成 局部证据",
+      "chapter": "cache-reconstruction",
+      "finding": "top100+均值未稳定改善续写；99.9%+均值平均误差进一步下降。"
+    },
+    {
+      "id": "C13",
+      "title": "Qwen GQA Wv秩",
+      "status": "observed",
+      "status_label": "已完成 局部证据",
+      "chapter": "cache-reconstruction",
+      "finding": "Wv为1024×2048且满行秩，一般E不能从V唯一恢复。"
+    },
+    {
+      "id": "C14",
+      "title": "同权重旧KV恢复旧Q",
+      "status": "mixed_result",
+      "status_label": "已完成 局部证据",
+      "chapter": "cache-reconstruction",
+      "finding": "FP32联合方向约束可近似恢复，BF16缓存量化使病态逆误差很大。"
+    },
+    {
+      "id": "C15",
+      "title": "Pythia无GQA的方阵Wv",
+      "status": "observed_rank_only",
+      "status_label": "已完成 局部证据",
+      "chapter": "cache-reconstruction",
+      "finding": "FP64阈值满秩但高条件数；没有端到端恢复Q结果。"
+    },
+    {
+      "id": "C16",
+      "title": "K/V相邻变化的口径复核",
+      "status": "observed",
+      "status_label": "已完成 局部证据",
+      "chapter": "cache-reconstruction",
+      "finding": "两模型被测相邻权重的K相对变化均小于V；绝对RMS和相对误差不同。"
+    },
+    {
+      "id": "C17",
+      "title": "Q侧变化与局部attention敏感性",
+      "status": "observed_local_component_test",
+      "status_label": "已完成 局部证据",
+      "chapter": "cache-reconstruction",
+      "finding": "Q/K/V共同输入E已核对；分别替换旧Q/K/V改变attention输出；Q/K得分贡献范数不可相加。"
+    },
+    {
+      "id": "G-01",
+      "title": "固定权重八同发与4+4生成微实验",
+      "status": "completed_fixed_weight_microbenchmark",
+      "status_label": "已完成 局部证据",
+      "chapter": "group-sampling",
+      "finding": "固定权重4+4耗时为八同发的1.373倍；首四全对仍可能丢掉有效G8组。"
+    },
+    {
+      "id": "G-02",
+      "title": "APRIL调度与pending窗口2×2短训",
+      "status": "completed_five_rounds_per_arm",
+      "status_label": "已完成 局部证据",
+      "chapter": "group-sampling",
+      "finding": "扩大pending窗口可补并发，但5轮筛选不证明稳态速度或质量收益。"
+    },
+    {
+      "id": "G-03",
+      "title": "旧1.7B/4k八同发与4+4舍弃约20h长跑",
+      "status": "completed_single_trajectory_per_arm",
+      "status_label": "已完成 局部证据",
+      "chapter": "group-sampling",
+      "finding": "旧1.7B设置的4+4多提交约6.4%轮次，不能外推到8B。"
+    },
+    {
+      "id": "G-04",
+      "title": "8B APRIL eight、nodiscard44、discard44三组长跑",
+      "status": "completed_original_runs_continuation_tracked_separately",
+      "status_label": "已完成 局部证据",
+      "chapter": "group-sampling",
+      "finding": "三组输出长度和工作量不同；质量没有单一排序。"
+    },
+    {
+      "id": "G-05",
+      "title": "8B四种组策略的长度演化",
+      "status": "completed_descriptive_analysis",
+      "status_label": "已完成 局部证据",
+      "chapter": "group-sampling",
+      "finding": "不同组策略都出现固定题评测长度增长，发生阶段不同。"
+    },
+    {
+      "id": "G-06",
+      "title": "race4 v1取消失效与排除",
+      "status": "invalid_for_targeted_cancellation_performance",
+      "status_label": "实现无效 已排除",
+      "chapter": "group-sampling",
+      "finding": "目标取消未生效；首版不得用于有效取消加速的性能结论。"
+    },
+    {
+      "id": "G-07",
+      "title": "seqfirst串行至首个正确的可变组实验",
+      "status": "implementation_and_formal_runtime_audited",
+      "status_label": "核验或复核",
+      "chapter": "group-sampling",
+      "finding": "串行至首次正确保留可变大小0…01组，改变了组分布。"
+    },
+    {
+      "id": "G-08",
+      "title": "0.6B GSM8K三策略1000轮稳定性筛选",
+      "status": "all_three_completed_one_seed_not_replicated",
+      "status_label": "已完成 局部证据",
+      "chapter": "group-sampling",
+      "finding": "三组各1000轮均未触发既定失稳筛选门槛，单种子。"
+    },
+    {
+      "id": "G-09",
+      "title": "超过已正确短回答2倍长度时停止的离线估算",
+      "status": "offline_counterfactual_only",
+      "status_label": "离线估算",
+      "chapter": "group-sampling",
+      "finding": "离线2L停止能省token，也会截掉原本正确的回答。"
+    },
+    {
+      "id": "G-10",
+      "title": "APRIL跨轮跨度与重复前缀重建统计",
+      "status": "completed_snapshot_analysis",
+      "status_label": "已完成 局部证据",
+      "chapter": "group-sampling",
+      "finding": "反复短续写再暂停不是该快照主流；仍有前缀重建开销。"
+    },
+    {
+      "id": "G-11",
+      "title": "8B正式setup迁移与生成/反向基础检查",
+      "status": "completed_infrastructure_checks",
+      "status_label": "已完成 局部证据",
+      "chapter": "group-sampling",
+      "finding": "设置与奖励链经过基础核验；基准就绪不意味着算法更优。"
+    },
+    {
+      "id": "G-12",
+      "title": "Base与discard44 step503的首中次数和采样覆盖",
+      "status": "completed_max100_paired_seed_schedule",
+      "status_label": "已完成 局部证据",
+      "chapter": "group-sampling",
+      "finding": "首答和100次覆盖提高，总生成token却增加约85.2%。"
+    },
+    {
+      "id": "G-13",
+      "title": "8B候选与组内rollout长度分布",
+      "status": "completed_snapshot_analysis",
+      "status_label": "已完成 局部证据",
+      "chapter": "group-sampling",
+      "finding": "回答长度与组内最大值呈长尾，训练选中组与全部候选分母不同。"
+    },
+    {
+      "id": "S01",
+      "title": "实验设置与指标边界",
+      "status": "audited_setup",
+      "status_label": "核验或复核",
+      "chapter": "training-stability",
+      "finding": "early formal、late nodiscard44、full8 eight分别处理；裁剪前范数不同于Adam参数更新幅度。"
+    },
+    {
+      "id": "S02",
+      "title": "早期首token直接损失干预",
+      "status": "causal_intervention_fixed_replay",
+      "status_label": "受控干预",
+      "chapter": "training-stability",
+      "finding": "首token置零降低端点自然长度与Alright比例，随机/NLLmatched单token对照无相同效果。"
+    },
+    {
+      "id": "S03",
+      "title": "Base与早期checkpoint的强制开头正确率和方差",
+      "status": "forced_prefix_evaluation",
+      "status_label": "已完成 局部证据",
+      "chapter": "training-stability",
+      "finding": "Base的Alright正确率高于To；G4方差差异的区间跨零，不能推出更好梯度信号。"
+    },
+    {
+      "id": "S04",
+      "title": "实际训练中开头收益和长度惩罚的信号反转",
+      "status": "observational_reward_reconstruction",
+      "status_label": "已完成 局部证据",
+      "chapter": "training-stability",
+      "finding": "early Alright平均优势为正，late另一轨迹为负；移除长度惩罚仍负，正确率/内容也在改变。"
+    },
+    {
+      "id": "S05",
+      "title": "Base一万条异常筛选",
+      "status": "ai_assisted_screening",
+      "status_label": "已完成 局部证据",
+      "chapter": "training-stability",
+      "finding": "Base已有乱码、漂移、对话与重复；单次输出异常不等于题目稳定诱发。"
+    },
+    {
+      "id": "S06",
+      "title": "Base长度与重复、盲审误报复核",
+      "status": "association_and_selected_blind_audit",
+      "status_label": "核验或复核",
+      "chapter": "training-stability",
+      "finding": "更长回答有更高重复标签率，但因果方向未识别；盲审发现正常进展与轻度冗余被混入。"
+    },
+    {
+      "id": "S07",
+      "title": "异常前缀、checkpoint与数据触发检查",
+      "status": "selected_case_causal_interventions",
+      "status_label": "受控干预",
+      "chapter": "training-stability",
+      "finding": "相同失败前缀更换checkpoint强烈改变循环；局部重采样支持题目×权重×轨迹交互而非单一坏题解释。"
+    },
+    {
+      "id": "S08",
+      "title": "屏蔽@的缓解尝试",
+      "status": "negative_rescue_result",
+      "status_label": "已完成 阴性结果",
+      "chapter": "training-stability",
+      "finding": "符号屏蔽消除@但没有恢复失败边界的正常停止或准确率，可能换为其他重复。"
+    },
+    {
+      "id": "S09",
+      "title": "PPL尾部与时间顺序",
+      "status": "measurement_audit",
+      "status_label": "核验或复核",
+      "chapter": "training-stability",
+      "finding": "算术平均PPL可被极少回答主导；不能从总曲线推断单token触发或普通回答整体恶化。"
+    },
+    {
+      "id": "S10",
+      "title": "负优势校正和token权重对应关系",
+      "status": "causal_intervention_fixed_replay",
+      "status_label": "受控干预",
+      "chapter": "training-stability",
+      "finding": "负优势TIS在共同10轮抑制峰值；20轮中正确token对应的TIS显著优于均值/乱序权重。"
+    },
+    {
+      "id": "S11",
+      "title": "最高NLL/失配token的梯度净投影",
+      "status": "selected_peak_attribution",
+      "status_label": "已完成 局部证据",
+      "chapter": "training-stability",
+      "finding": "最高少量token并未解释主要净梯度，低p0/q的大集合贡献约59%。"
+    },
+    {
+      "id": "S12",
+      "title": "固定信号下的状态响应、FP32和块回退",
+      "status": "local_causal_parameter_intervention",
+      "status_label": "受控干预",
+      "chapter": "training-stability",
+      "finding": "同一输入与固定系数的梯度随模型状态增大；FP32 master仍大；部分中间层回退降低响应但未验证修复质量。"
+    },
+    {
+      "id": "S13",
+      "title": "full8 eight长度、开头与后期梯度",
+      "status": "same_run_observation",
+      "status_label": "已完成 局部证据",
+      "chapter": "training-stability",
+      "finding": "350→400长度翻倍而梯度仍小；600→650评测长度和机械重复下降但梯度上涨。"
+    },
+    {
+      "id": "S14",
+      "title": "在线TIS/同步分支与输出质量",
+      "status": "online_single_trajectory_comparison",
+      "status_label": "在线单轨迹对照",
+      "chapter": "training-stability",
+      "finding": "从500启用TIS大幅压低梯度，但64题端点异常标签更多；低梯度不保证好质量。"
+    },
+    {
+      "id": "S15",
+      "title": "full8 650→850续训",
+      "status": "in_progress_at_curation",
+      "status_label": "运行中",
+      "chapter": "training-stability",
+      "finding": "从完整650恢复，继续200轮；首轮651验证通过，后期趋势待运行结束后分析。"
+    }
+  ]
+}

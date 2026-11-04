@@ -1,0 +1,85 @@
+{
+  "id": "S05",
+  "title": "Base一万条异常筛选",
+  "status": "ai_assisted_screening",
+  "status_label": "已完成 局部证据",
+  "chapter": "training-stability",
+  "finding": "Base已有乱码、漂移、对话与重复；单次输出异常不等于题目稳定诱发。",
+  "limitations": [
+    "AI review is not a human gold standard.",
+    "A single response is observed per prompt; this does not estimate per-prompt repeatability.",
+    "No correctness or nonzero-advantage filter was applied.",
+    "Partial reviewed subsets may be selection biased; counts remain snapshot counts.",
+    "Types overlap; capped status alone is never an anomaly verdict."
+  ],
+  "source_fingerprints": [
+    {
+      "artifact_name": "summary.json",
+      "sha256": "2ca205bb1e0685137facedf33280733ad4a91e014c10d7797a1a592e58b1a16e"
+    }
+  ],
+  "results": {
+    "complete": true,
+    "expected_total": 10000,
+    "corpus_count": 10000,
+    "unique_qids": 10000,
+    "reviewed_count": 10000,
+    "label_counts": {
+      "abnormal": 2555,
+      "uncertain": 73,
+      "normal": 7372,
+      "error": 0,
+      "pending": 0
+    },
+    "program_abnormal_count": 39,
+    "llm_reviewed_count": 9961,
+    "original_candidate_count": 1482,
+    "llm_abnormal_outside_original_candidates": 1340,
+    "abnormal_types_overlap": {
+      "task_drift": 1727,
+      "invented_dialogue": 1599,
+      "gibberish": 703,
+      "repetition": 308
+    },
+    "abnormal_types_by_method_overlap": {
+      "llm": {
+        "task_drift": 1727,
+        "invented_dialogue": 1599,
+        "gibberish": 703,
+        "repetition": 269
+      },
+      "program": {
+        "repetition": 39
+      }
+    },
+    "capped_by_label": {
+      "abnormal": {
+        "count": 2555,
+        "capped_count": 96,
+        "capped_fraction": 0.037573385518591
+      },
+      "uncertain": {
+        "count": 73,
+        "capped_count": 0,
+        "capped_fraction": 0.0
+      },
+      "normal": {
+        "count": 7372,
+        "capped_count": 3,
+        "capped_fraction": 0.00040694519804666303
+      },
+      "error": {
+        "count": 0,
+        "capped_count": 0,
+        "capped_fraction": null
+      },
+      "pending": {
+        "count": 0,
+        "capped_count": 0,
+        "capped_fraction": null
+      }
+    },
+    "all_capped_count": 99,
+    "interpretation": "这是程序规则与 AI 内容复核，不是人工金标准。数学答案对错不作为异常标准；单次输出异常不能证明该题稳定诱发异常。未检出异常不等于回答正确；待复核或出错的记录不计为正常。"
+  }
+}

@@ -1,0 +1,236 @@
+{
+  "id": "C12",
+  "title": "均值尾部补偿",
+  "status": "mixed_result",
+  "status_label": "已完成 局部证据",
+  "chapter": "cache-reconstruction",
+  "finding": "top100+均值未稳定改善续写；99.9%+均值平均误差进一步下降。",
+  "limitations": [
+    "q/K/V来自新逐层近似状态；均值logit无法精确得到exp平均；尾部权重与V相关性被近似。"
+  ],
+  "source_fingerprints": [
+    {
+      "artifact_name": "summary.json",
+      "sha256": "6ee6db0292e2fe58c2c85decdf46b2381b3beb9abbeff00768b7d104ccc90313"
+    },
+    {
+      "artifact_name": "summary.json",
+      "sha256": "6d32ceb61cae9f289bc36ab316fa8cdb86705d607c3c591c17052a160f8745d6"
+    }
+  ],
+  "results": {
+    "mass999": {
+      "truncate": {
+        "K_error": 0.0010016973316577492,
+        "V_error": 0.0022420501753671624,
+        "prefill_response": {
+          "mean_tv": 0.0005010002049259881,
+          "p95_tv": 0.002419763048240677,
+          "max_tv": 0.0137760174010599,
+          "mean_kl": 4.3661857908674855e-06,
+          "top1_agreement": 1.0
+        },
+        "last_prefill_token": {
+          "mean_tv": 0.00042215384445417427,
+          "p95_tv": 0.0016304578248430338,
+          "max_tv": 0.0017151736236298036,
+          "mean_kl": 1.6230595252831498e-06,
+          "top1_agreement": 1.0
+        },
+        "continuation_32": {
+          "mean_tv": 0.000269480718944484,
+          "p95_tv": 0.0016362273711950715,
+          "max_tv": 0.0035366227686359467,
+          "mean_kl": 1.3851407016017695e-06,
+          "top1_agreement": 0.9973958333333334
+        },
+        "qk_pair_fraction": 0.46475205733059094
+      },
+      "tail_mean": {
+        "K_error": 0.0007252974907773626,
+        "V_error": 0.0015855706509956035,
+        "prefill_response": {
+          "mean_tv": 0.0003308515141244634,
+          "p95_tv": 0.0015746400320628942,
+          "max_tv": 0.004680100707277109,
+          "mean_kl": 1.6506609413382677e-06,
+          "top1_agreement": 1.0
+        },
+        "last_prefill_token": {
+          "mean_tv": 0.0003167869809796356,
+          "p95_tv": 0.0012114441179163096,
+          "max_tv": 0.0012643769687051573,
+          "mean_kl": 8.983392899177646e-07,
+          "top1_agreement": 1.0
+        },
+        "continuation_32": {
+          "mean_tv": 0.00021900433636277863,
+          "p95_tv": 0.0013087624137366229,
+          "max_tv": 0.0025254229109542324,
+          "mean_kl": 8.250615593679234e-07,
+          "top1_agreement": 1.0
+        },
+        "qk_pair_fraction": 0.4650300042269506
+      },
+      "new_dense_reference_tail_mass": 0.000993078380843948,
+      "estimated_tail_mass": 0.0004804628609670349,
+      "case_wins": {
+        "prefill_response": 12,
+        "last_prefill_token": 9,
+        "continuation_32": 9
+      },
+      "controls": {
+        "all_keys_control": {
+          "max_kv_error": 5.756208798999229e-06,
+          "max_probability_tv": 5.442404098010796e-06,
+          "passed": true
+        },
+        "uniform_tail_control": {
+          "passed": true,
+          "relative_error": 9.08227677404923e-08,
+          "test": "Exact when omitted K are identical; arbitrary omitted V; includes causal counts and zero-tail rows"
+        }
+      },
+      "scope": {
+        "model": "Qwen3-1.7B",
+        "heldout_questions": 4,
+        "heldout_pair_cases": 12,
+        "total_pair_cases": 24,
+        "pairs": [
+          "000→001",
+          "001→002",
+          "002→003"
+        ],
+        "prefix_length": [
+          1950,
+          8160
+        ],
+        "inputs": "Identical saved tokens; selection from old native attention; q/K/V and means from new progressively approximated states",
+        "continuation": "32 fixed tokens using ordinary dense attention and each reconstructed cache",
+        "cost": "Logical selected QK pairs plus one q·meanK for each nonempty tail; prefix sums and model operations excluded. Accuracy implementation uses dense masked products; no speedup claim."
+      }
+    },
+    "top100": {
+      "truncate": {
+        "K_error": 0.08323137122393295,
+        "V_error": 0.1693585931556945,
+        "prefill_response": {
+          "mean_tv": 0.04749750471437953,
+          "p95_tv": 0.2703124622665114,
+          "max_tv": 0.719108574666618,
+          "mean_kl": 0.04110412530058341,
+          "top1_agreement": 0.947265625
+        },
+        "last_prefill_token": {
+          "mean_tv": 0.0600841409504698,
+          "p95_tv": 0.22917009680887362,
+          "max_tv": 0.23027442944492224,
+          "mean_kl": 0.033995211358584514,
+          "top1_agreement": 1.0
+        },
+        "continuation_32": {
+          "mean_tv": 0.03789044421780794,
+          "p95_tv": 0.24225523361344067,
+          "max_tv": 0.6443574959662756,
+          "mean_kl": 0.041009479674276435,
+          "top1_agreement": 0.9583333333333334
+        },
+        "qk_dot_fraction": 0.027624972852817557,
+        "used_mean_tail_mass": 0
+      },
+      "mean_logit": {
+        "K_error": 0.056199440827747145,
+        "V_error": 0.12380673925622614,
+        "prefill_response": {
+          "mean_tv": 0.033271402889470864,
+          "p95_tv": 0.184097948803809,
+          "max_tv": 0.7764371029769379,
+          "mean_kl": 0.02350996342456943,
+          "top1_agreement": 0.95703125
+        },
+        "last_prefill_token": {
+          "mean_tv": 0.07386912695756369,
+          "p95_tv": 0.27213591847239377,
+          "max_tv": 0.2727915795271213,
+          "mean_kl": 0.04586854737356932,
+          "top1_agreement": 0.75
+        },
+        "continuation_32": {
+          "mean_tv": 0.038190919143639056,
+          "p95_tv": 0.2542665886749116,
+          "max_tv": 0.5957552185300959,
+          "mean_kl": 0.032657633787386155,
+          "top1_agreement": 0.9427083333333334
+        },
+        "qk_dot_fraction": 0.02789892873314568,
+        "used_mean_tail_mass": 0.03148491210248765
+      },
+      "old_mass": {
+        "K_error": 0.08192783004143837,
+        "V_error": 0.17204258564535152,
+        "prefill_response": {
+          "mean_tv": 0.047928635748747395,
+          "p95_tv": 0.2783856687294618,
+          "max_tv": 0.7896355071591367,
+          "mean_kl": 0.043863882960755496,
+          "top1_agreement": 0.9485677083333334
+        },
+        "last_prefill_token": {
+          "mean_tv": 0.0844489559730796,
+          "p95_tv": 0.2702701670627663,
+          "max_tv": 0.27052463610930905,
+          "mean_kl": 0.07144051485836717,
+          "top1_agreement": 1.0
+        },
+        "continuation_32": {
+          "mean_tv": 0.046580608861059664,
+          "p95_tv": 0.31393379539406074,
+          "max_tv": 0.7867873218659882,
+          "mean_kl": 0.05536203267571774,
+          "top1_agreement": 0.9270833333333334
+        },
+        "qk_dot_fraction": 0.027624972852817557,
+        "used_mean_tail_mass": 0.10032232930063315
+      },
+      "full_new_reference_tail_mass": 0.10029071480745366,
+      "controls": {
+        "uniform_tail": {
+          "passed": true,
+          "relative_errors": {
+            "mean_logit": 9.093873148504402e-08,
+            "old_mass": 2.4566624632378617e-07
+          },
+          "test": "All omitted K are identical, omitted V vary. Mean correction must equal exact attention including causal multiplicity."
+        },
+        "all_keys_mean_logit": {
+          "passed": true,
+          "max_kv_error": 2.535547636481996e-06,
+          "max_probability_tv": 5.8328194445745e-06
+        },
+        "all_keys_old_mass": {
+          "passed": true,
+          "max_kv_error": 2.535547636481996e-06,
+          "max_probability_tv": 5.8328194445745e-06
+        }
+      },
+      "scope": {
+        "model": "Qwen3-1.7B",
+        "matched_heldout_cases": 12,
+        "unique_heldout_questions": 4,
+        "pairs": [
+          "000→001",
+          "001→002",
+          "002→003"
+        ],
+        "prefix_tokens": [
+          1950,
+          8160
+        ],
+        "kv_metric": "Mean per-layer / probe / pair Frobenius error relative to native new cache",
+        "probability_metric": "Full-vocabulary TV on 128 sampled response positions; final prefix prediction; 32 fixed continuation tokens",
+        "continuation": "Normal full new attention with reconstructed prefix KV",
+        "costs": "Selected QK dots plus one mean-K dot per nonempty tail for mean_logit; prefix sums, aggregation and other model operations excluded. No wall-clock speed claim."
+      }
+    }
+  }
+}

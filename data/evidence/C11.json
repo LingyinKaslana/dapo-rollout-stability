@@ -1,0 +1,135 @@
+{
+  "id": "C11",
+  "title": "按累计attention质量选择",
+  "status": "observed",
+  "status_label": "已完成 局部证据",
+  "chapter": "cache-reconstruction",
+  "finding": "99%/99.9%改善重建质量；99.9%仍需保留约46.48%的QK对。",
+  "limitations": [
+    "当前为dense logits再mask；减少逻辑QK对不等于端到端省时；仅旧质量选择，新权重实际覆盖并非逐行保证。"
+  ],
+  "source_fingerprints": [
+    {
+      "artifact_name": "summary.json",
+      "sha256": "82400ef4f4454d8a7d26e8e77500179dac05e6a9a9d491363f6ea5f1a9026bd4"
+    }
+  ],
+  "results": {
+    "top100": {
+      "K_error": 0.08323137122393295,
+      "V_error": 0.1693585931556945,
+      "mean_selected_tokens": 99.19266055045871,
+      "retained_pair_fraction": 0.027624972852817557,
+      "theoretical_attention_pair_reduction": 0.9723750271471825,
+      "mean_new_attention_mass": 0.8997092851925463,
+      "min_new_attention_mass": 0.08590847998857498,
+      "prefill_response": {
+        "mean_tv": 0.04749750471437953,
+        "p95_tv": 0.2703124622665114,
+        "max_tv": 0.719108574666618,
+        "mean_kl": 0.04110412530058341,
+        "top1_agreement": 0.947265625
+      },
+      "last_prefill_token": {
+        "mean_tv": 0.0600841409504698,
+        "p95_tv": 0.22917009680887362,
+        "max_tv": 0.23027442944492224,
+        "mean_kl": 0.033995211358584514,
+        "top1_agreement": 1.0
+      },
+      "continuation_32": {
+        "mean_tv": 0.03789044421780794,
+        "p95_tv": 0.24225523361344067,
+        "max_tv": 0.6443574959662756,
+        "mean_kl": 0.041009479674276435,
+        "top1_agreement": 0.9583333333333334
+      }
+    },
+    "99%": {
+      "K_error": 0.009807242543417732,
+      "V_error": 0.022127437231473562,
+      "mean_selected_tokens": 782.6182009975244,
+      "retained_pair_fraction": 0.21795772425803278,
+      "theoretical_attention_pair_reduction": 0.7820422757419672,
+      "mean_new_attention_mass": 0.9901264906688428,
+      "min_new_attention_mass": 0.8244162107938848,
+      "max_selected_tokens": 7608,
+      "prefill_response": {
+        "mean_tv": 0.004703818013292098,
+        "p95_tv": 0.024162793397971904,
+        "max_tv": 0.10150406075317282,
+        "mean_kl": 0.00037829760556030534,
+        "top1_agreement": 1.0
+      },
+      "last_prefill_token": {
+        "mean_tv": 0.0038702194129973506,
+        "p95_tv": 0.015056378332902683,
+        "max_tv": 0.015215309856937125,
+        "mean_kl": 0.00018308271094875838,
+        "top1_agreement": 1.0
+      },
+      "continuation_32": {
+        "mean_tv": 0.0027723255848891245,
+        "p95_tv": 0.015123797789818582,
+        "max_tv": 0.03461402782568447,
+        "mean_kl": 0.00012431302887149615,
+        "top1_agreement": 0.9947916666666666
+      }
+    },
+    "99.9%": {
+      "K_error": 0.0010016973316577492,
+      "V_error": 0.0022420501753671624,
+      "mean_selected_tokens": 1668.7796693425075,
+      "retained_pair_fraction": 0.46475205733059094,
+      "theoretical_attention_pair_reduction": 0.535247942669409,
+      "mean_new_attention_mass": 0.999006921619156,
+      "min_new_attention_mass": 0.9756050965844971,
+      "max_selected_tokens": 8057,
+      "prefill_response": {
+        "mean_tv": 0.0005010002049259881,
+        "p95_tv": 0.002419763048240677,
+        "max_tv": 0.0137760174010599,
+        "mean_kl": 4.3661857908674855e-06,
+        "top1_agreement": 1.0
+      },
+      "last_prefill_token": {
+        "mean_tv": 0.00042215384445417427,
+        "p95_tv": 0.0016304578248430338,
+        "max_tv": 0.0017151736236298036,
+        "mean_kl": 1.6230595252831498e-06,
+        "top1_agreement": 1.0
+      },
+      "continuation_32": {
+        "mean_tv": 0.000269480718944484,
+        "p95_tv": 0.0016362273711950715,
+        "max_tv": 0.0035366227686359467,
+        "mean_kl": 1.3851407016017695e-06,
+        "top1_agreement": 0.9973958333333334
+      }
+    },
+    "control": {
+      "max_kv_error": 5.756208798999229e-06,
+      "max_probability_tv": 5.442404098010796e-06,
+      "passed": true
+    },
+    "scope": {
+      "model": "Qwen3-1.7B",
+      "pairs": [
+        "000→001",
+        "001→002",
+        "002→003"
+      ],
+      "heldout_prompts": 4,
+      "matched_heldout_cases": 12,
+      "full_cases": 48,
+      "prefix_length_range": [
+        1950,
+        8160
+      ],
+      "mean_selected_tokens": "Weighted by ALL query/head/layer instances across matched heldout prefixes",
+      "retained_pair_fraction": "Sum of selected causal pairs / sum of full causal pairs across layers, heads and heldout cases",
+      "accuracy_average": "Equal probe, pair and layer weighting for KV; 128 sampled response positions for prefill TV",
+      "implementation": "Adaptive reconstruction computes dense chunked logits then masks. Pair reductions are theoretical, not actual speedups."
+    }
+  }
+}

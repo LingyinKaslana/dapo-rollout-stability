@@ -1,0 +1,214 @@
+{
+  "id": "C17",
+  "title": "Q侧变化与局部attention敏感性",
+  "status": "observed_local_component_test",
+  "status_label": "已完成 局部证据",
+  "chapter": "cache-reconstruction",
+  "finding": "Q/K/V共同输入E已核对；分别替换旧Q/K/V改变attention输出；Q/K得分贡献范数不可相加。",
+  "limitations": [
+    "Q is an attention query, not a persistent autoregressive KV cache.",
+    "Q/K/V projection inputs are the same tensor in each layer; pointer/shape equality is checked during every captured forward.",
+    "Q statistics cover exactly the earlier 24 probe/update cases and 512 sampled positions, with full causal forwards of up to 8192 tokens.",
+    "Q has 16 heads while K/V have 8 GQA heads. Concatenated Q dimension is 2048 and K/V dimension is 1024; per-head spectra compare equal 128-channel shapes.",
+    "Q after RoPE is computed using the actual q_norm output and actual position embeddings from the same attention forward.",
+    "Attention diagnostics sample 32 query positions per layer and retain all causal keys, mapping each KV head to its two query heads.",
+    "Old/new Q/K/V are native components from old/new model forwards; component replacement isolates a local effect, not a complete hybrid-model forward or final answer.",
+    "Q-term and K-term score ratios can exceed one because contributions can cancel; they are not percentages that sum to 100.",
+    "Primary model compute is FP32 with TF32 disabled. Spectra and attention-score algebra use float64.",
+    "Grayscale images show absolute deltas, shared/local 99.5th-percentile scales. Signed float32 delta arrays are retained.",
+    "The four heldout questions recur across updates; observations are not independent questions. This study does not test training convergence."
+  ],
+  "source_fingerprints": [
+    {
+      "artifact_name": "summary.json",
+      "sha256": "6de7fbf2820193cf9aa6c37a0beae91978028b44b0b4b1b166e73294512202b2"
+    }
+  ],
+  "results": {
+    "tensors": [
+      {
+        "family": "E",
+        "split": "all",
+        "n": 672,
+        "median_relative_change": 0.0027929464133085603,
+        "median_delta_rms": 0.006208571392351217,
+        "median_rank8_error": 0.616782230821501,
+        "median_rank16_error": 0.5420163610100501,
+        "median_rank64_error": 0.3664481447117701,
+        "median_r99": 340.0
+      },
+      {
+        "family": "Q_raw",
+        "split": "all",
+        "n": 672,
+        "median_relative_change": 0.0021684746985493816,
+        "median_delta_rms": 0.010389923515345467,
+        "median_rank8_error": 0.5580359359930847,
+        "median_rank16_error": 0.47644965246740767,
+        "median_rank64_error": 0.29361886187473685,
+        "median_r99": 256.0
+      },
+      {
+        "family": "K_raw",
+        "split": "all",
+        "n": 672,
+        "median_relative_change": 0.0027046970370822815,
+        "median_delta_rms": 0.014088287258343359,
+        "median_rank8_error": 0.5202005714723545,
+        "median_rank16_error": 0.43432990573363417,
+        "median_rank64_error": 0.25907857133932,
+        "median_r99": 215.0
+      },
+      {
+        "family": "Q_norm",
+        "split": "all",
+        "n": 672,
+        "median_relative_change": 0.0026317382151660696,
+        "median_delta_rms": 0.0037303484162010164,
+        "median_rank8_error": 0.5702888171230599,
+        "median_rank16_error": 0.4874105476623887,
+        "median_rank64_error": 0.3018641548822668,
+        "median_r99": 262.5
+      },
+      {
+        "family": "K_norm",
+        "split": "all",
+        "n": 672,
+        "median_relative_change": 0.001962394409419496,
+        "median_delta_rms": 0.0059143861865769915,
+        "median_rank8_error": 0.4953848855853047,
+        "median_rank16_error": 0.40898048532605435,
+        "median_rank64_error": 0.2342576429315224,
+        "median_r99": 191.0
+      },
+      {
+        "family": "Q",
+        "split": "all",
+        "n": 672,
+        "median_relative_change": 0.002631738331453048,
+        "median_delta_rms": 0.0037303483248264436,
+        "median_rank8_error": 0.7128467285022049,
+        "median_rank16_error": 0.6333235020367336,
+        "median_rank64_error": 0.4410421373940727,
+        "median_r99": 366.0
+      },
+      {
+        "family": "K",
+        "split": "all",
+        "n": 672,
+        "median_relative_change": 0.0019623944230717626,
+        "median_delta_rms": 0.005914385952283581,
+        "median_rank8_error": 0.5622940164108169,
+        "median_rank16_error": 0.48523957234066106,
+        "median_rank64_error": 0.3167122268254593,
+        "median_r99": 277.0
+      },
+      {
+        "family": "V",
+        "split": "all",
+        "n": 672,
+        "median_relative_change": 0.00380610045169458,
+        "median_delta_rms": 0.011603034514388823,
+        "median_rank8_error": 0.6099126103228887,
+        "median_rank16_error": 0.5279851853157179,
+        "median_rank64_error": 0.33392704468459194,
+        "median_r99": 273.0
+      }
+    ],
+    "weights": [
+      {
+        "family": "W_Q",
+        "shape": [
+          2048,
+          2048
+        ],
+        "n": 84,
+        "median_relative_change": 1.941779250558849e-05,
+        "median_delta_rms": 6.830378264433082e-07,
+        "median_rank8_error": 0.909595615203188,
+        "median_rank16_error": 0.861819665824386,
+        "median_rank64_error": 0.7219567952353945,
+        "median_r99": 1337.5
+      },
+      {
+        "family": "W_K",
+        "shape": [
+          1024,
+          2048
+        ],
+        "n": 84,
+        "median_relative_change": 2.1922211157569265e-05,
+        "median_delta_rms": 6.941578342451476e-07,
+        "median_rank8_error": 0.904930517933267,
+        "median_rank16_error": 0.8507276438243923,
+        "median_rank64_error": 0.7014330118321059,
+        "median_r99": 859.0
+      },
+      {
+        "family": "W_V",
+        "shape": [
+          1024,
+          2048
+        ],
+        "n": 84,
+        "median_relative_change": 2.032032324072822e-05,
+        "median_delta_rms": 7.02306710652807e-07,
+        "median_rank8_error": 0.8772692932438637,
+        "median_rank16_error": 0.8307631561065003,
+        "median_rank64_error": 0.6864289038246484,
+        "median_r99": 863.5
+      }
+    ],
+    "per_head": [
+      {
+        "family": "Q",
+        "n": 10752,
+        "median_relative_change": 0.002644647095332772,
+        "median_delta_rms": 0.0035524890468147143,
+        "median_rank8_error": 0.637743679821601,
+        "median_rank16_error": 0.5238487521785282,
+        "median_rank64_error": 0.21668655765951514,
+        "median_r99": 97.0
+      },
+      {
+        "family": "K",
+        "n": 5376,
+        "median_relative_change": 0.001959437359500032,
+        "median_delta_rms": 0.005645523045097945,
+        "median_rank8_error": 0.5045178436974882,
+        "median_rank16_error": 0.4008007888908785,
+        "median_rank64_error": 0.159345316338606,
+        "median_r99": 86.0
+      },
+      {
+        "family": "V",
+        "n": 5376,
+        "median_relative_change": 0.003767263081550296,
+        "median_delta_rms": 0.010877525236699472,
+        "median_rank8_error": 0.5979729155903603,
+        "median_rank16_error": 0.4974072744721734,
+        "median_rank64_error": 0.2313701576708438,
+        "median_r99": 105.0
+      }
+    ],
+    "attention": [
+      {
+        "layer": -1,
+        "n": 672,
+        "score_delta_relative_to_new": 0.002665745906076979,
+        "Q_term_over_score_delta": 0.780496764269969,
+        "K_term_over_score_delta": 0.7103130649995064,
+        "cross_term_over_score_delta": 0.0027913315035819975,
+        "decomposition_error": 1.2841924300496284e-13,
+        "old_Q_new_KV_attention_output_error": 0.0026273051919969443,
+        "old_Q_new_KV_attention_kl": 1.0302444063065286e-05,
+        "new_Q_old_K_new_V_attention_output_error": 0.001697794629885516,
+        "new_Q_old_K_new_V_attention_kl": 7.404067032367047e-06,
+        "old_QK_new_V_attention_output_error": 0.0027805513375498006,
+        "old_QK_new_V_attention_kl": 1.4414398690515245e-05,
+        "new_QK_old_V_attention_output_error": 0.00310631194244052,
+        "new_Q_old_KV_attention_output_error": 0.0034322159372587435
+      }
+    ]
+  }
+}

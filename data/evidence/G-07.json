@@ -1,0 +1,44 @@
+{
+  "id": "G-07",
+  "title": "seqfirst串行至首个正确的可变组实验",
+  "status": "implementation_and_formal_runtime_audited",
+  "status_label": "核验或复核",
+  "chapter": "group-sampling",
+  "finding": "串行至首次正确保留可变大小0…01组，改变了组分布。",
+  "limitations": [
+    "只保留0...01；首答即对和8次全错舍弃。",
+    "selection_correction=none；不是full8对照。",
+    "本索引不推断正式轨迹最终停止轮数。"
+  ],
+  "source_fingerprints": [
+    {
+      "artifact_name": "seqfirst_protocol_audit.json",
+      "sha256": "da9454fe11af68799baab06e20ede17542b0cb463711372e640b0a25e0cf8ec7"
+    },
+    {
+      "artifact_name": "seqfirst-v2-pretest-measured-20261103.json",
+      "sha256": "3abc981af450da053630829bcefbc33e55e5cdab2fed8d0386003c22c3ae4a12"
+    }
+  ],
+  "results": {
+    "target_response_rows": 512,
+    "group_sizes": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "formal_window": 512,
+    "pretest_windows": [
+      512,
+      768,
+      1024
+    ],
+    "pretest_rounds_per_window": 5,
+    "historical_fixeddev_length_round100": 1462.0798237022527,
+    "historical_fixeddev_length_round150": 2831.275954946131
+  }
+}

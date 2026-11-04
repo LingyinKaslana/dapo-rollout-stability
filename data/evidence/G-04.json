@@ -1,0 +1,64 @@
+{
+  "id": "G-04",
+  "title": "8B APRIL eight、nodiscard44、discard44三组长跑",
+  "status": "completed_original_runs_continuation_tracked_separately",
+  "status_label": "已完成 局部证据",
+  "chapter": "group-sampling",
+  "finding": "三组输出长度和工作量不同；质量没有单一排序。",
+  "limitations": [
+    "均为APRIL跨轮续写，没有同步DAPO对照。",
+    "每组单轨迹，输出长度工作量不同。",
+    "discard44轮503有actor提交但无完整轮次指标。"
+  ],
+  "source_fingerprints": [
+    {
+      "artifact_name": "performance_quality_summary.json",
+      "sha256": "0d8e6a4e2f97342ed0fff1ab94ddaf4663660fd7529251bd6e16b5b4706af2b4"
+    },
+    {
+      "artifact_name": "setup2_formal_v4.json",
+      "sha256": "b10c965a7e2c397782df4b22c601472d8339460a14857b134385ea5baff22f56"
+    }
+  ],
+  "results": {
+    "nodiscard44": {
+      "round_commits": 541,
+      "complete_metric_rounds": 541,
+      "first500_selected_response_mean_tokens": 2035.1957421875,
+      "first500_eventwall_mean_s": 63.02707095617079,
+      "quality_step500": {
+        "harddev": 0.7448579823702253,
+        "math500": 0.8595,
+        "aime24": 0.225,
+        "aime25": 0.21666666666666667,
+        "amc23": 0.6875
+      }
+    },
+    "eight": {
+      "round_commits": 662,
+      "complete_metric_rounds": 662,
+      "first500_selected_response_mean_tokens": 1483.14962890625,
+      "first500_eventwall_mean_s": 48.13082712917309,
+      "quality_step500": {
+        "harddev": 0.767384916748286,
+        "math500": 0.883,
+        "aime24": 0.31666666666666665,
+        "aime25": 0.225,
+        "amc23": 0.6875
+      }
+    },
+    "discard44": {
+      "round_commits": 503,
+      "complete_metric_rounds": 502,
+      "first500_selected_response_mean_tokens": 2420.9531171875,
+      "first500_eventwall_mean_s": 70.08630932522507,
+      "quality_step500": {
+        "harddev": 0.7531831537708129,
+        "math500": 0.8975,
+        "aime24": 0.2916666666666667,
+        "aime25": 0.25,
+        "amc23": 0.75
+      }
+    }
+  }
+}

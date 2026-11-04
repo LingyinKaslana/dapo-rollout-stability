@@ -1,0 +1,55 @@
+{
+  "id": "C03",
+  "title": "Fourier与坐标函数拟合",
+  "status": "negative_result",
+  "status_label": "已完成 阴性结果",
+  "chapter": "cache-reconstruction",
+  "finding": "带符号增量的二维Fourier留出行误差接近100%；绝对值图规律不等于可预测符号。",
+  "limitations": [
+    "同矩阵内插值，不是跨题泛化；非均匀实际token位置；adaptive FFT无heldout。"
+  ],
+  "source_fingerprints": [
+    {
+      "artifact_name": "summary.json",
+      "sha256": "8203b14ca6f00c5c67e524711b6aaca8cd1ad3fcccb3c8234cc17c70427ec712"
+    }
+  ],
+  "results": [
+    {
+      "family": "E",
+      "mode": "signed",
+      "method": "fourier2d",
+      "order": 32,
+      "n": 168,
+      "coefficients_median": 4225.0,
+      "parameter_fraction_median": 0.004029273986816406,
+      "full_error_median": 0.9945889902068548,
+      "heldout_error_median": 0.9985302646002396,
+      "train_error_median": 0.9942913756648686
+    },
+    {
+      "family": "K",
+      "mode": "signed",
+      "method": "fourier2d",
+      "order": 32,
+      "n": 168,
+      "coefficients_median": 4225.0,
+      "parameter_fraction_median": 0.008058547973632812,
+      "full_error_median": 0.9894878882648828,
+      "heldout_error_median": 0.9965427448819333,
+      "train_error_median": 0.9889510580751346
+    },
+    {
+      "family": "V",
+      "mode": "signed",
+      "method": "fourier2d",
+      "order": 32,
+      "n": 168,
+      "coefficients_median": 4225.0,
+      "parameter_fraction_median": 0.008058547973632812,
+      "full_error_median": 0.9930515397231028,
+      "heldout_error_median": 1.001383189629194,
+      "train_error_median": 0.9921053146574997
+    }
+  ]
+}

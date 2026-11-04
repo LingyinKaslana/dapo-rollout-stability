@@ -1,150 +1,75 @@
-# Qwen3-8B Base APRIL sequential-first-success + DAPO 训练进度
+# RL Rollout 与训练稳定性研究
 
-更新时间：2026-11-03T12:04:04+00:00（UTC，计划每 10 分钟同步；网络失败时顺延）
+这个项目研究数学推理强化学习中的一个共同问题：**怎样减少 rollout 的重复计算和长尾开销，同时理解采样规则对训练信号、输出行为和稳定性的影响？**
 
-方法：同一题每次只生成 **1 条独立回答**，判分后若错误则继续；首次成功或最多 8 次后停止。首条就正确的 G1 组与 8 条全错组不训练；有效组为 **×…×√，G=2–8**。后一次仍输入原题，不把前次错误回答拼进 prompt。
+研究从相邻 checkpoint 的 KV-cache 变化开始，经过浅层复用、稀疏 attention、4+4 分组采样与 APRIL 长跑，逐步进入长度跃升、首 token 模式选择、异常输出和后期梯度放大的诊断。这里保留实验结果，也保留没有奏效的方案、实现问题和解释发生变化的过程。
 
-**8 张 GPU · pending 窗口 W=512 组 · 每次更新恰好 512 条真实回答 · 有效组数可变**。同一题固定路由到同一张 GPU，沿用同权重的原生前缀缓存；不复用跨权重 KV。并行的是不同题，每题最多一条回答在途。
+## 从哪里开始
 
-按完整有效组装箱；不截组、不重复回答、不补假奖励。ready 池独立，剩余完整组留到后续。原生 optimizer 仍为 **4 × 128 条回答**；配置中的 nominal n=8 / train_batch=64 / mini_batch=16 只是训练几何，不代表每轮选中 64 组或每题实际生成 8 条。
+| 研究线 | 想回答的问题 | 内容 |
+|---|---|---|
+| [跨权重缓存重建](docs/cache-reconstruction.md) | 已知权重更新，能否避免完整重算旧前缀？ | E/K/V/Q 增量、低秩与函数拟合、一阶近似、浅层复用、attention 截尾、逆推 Q |
+| [分组采样与效率](docs/group-sampling.md) | 哪些回答值得继续生成，省下的生成是否变成真实收益？ | full8、4+4、race4、seqfirst、小模型筛选、跨轮成本、100 次首中测试 |
+| [长度与梯度稳定性](docs/training-stability.md) | 长度、PPL、异常输出和梯度峰值分别由什么驱动？ | 首 token 干预、Base 异常、负优势、旧数据校正、固定输入反传、统一 full8 主线 |
 
-独立实验：从同一个 Qwen3-8B-Base 重新开始，全参数训练。总上限 **10 小时（80 GPUh）**，包含初始化、训练、测评、保存与收尾；**9 小时 45 分开始边界收尾**，不追加预算。
+建议先读这三章中的一章，再进入[实验索引](experiments/README.md)核对设置和证据。研究中的数学问题单独整理在[优化目标与采样偏差](docs/theory-notes.md)。
 
-DeepMath open-v4 train 40,299 · 回答上限 8192 tokens · 学习率 5e-7。启动时初始评估，之后每 **50 轮评估**、每 **50 轮保存**，保留最近 2 个检查点。
+## 当前最重要的认识
 
-**运行异常 · 已记录 307 轮完整训练指标 · 实际分配 7.07 小时**
+1. **缓存增量有结构，不意味着已有便宜的在线重建器。** 浅层 E/V 小变化给出了复用方向；oracle 低秩拟合、实际网络 JVP 和真实加速仍是不同层次的问题。[缓存研究](docs/cache-reconstruction.md)
+2. **少生成回答不一定更快。** 4+4 的阶段等待、不同输出长度和筛选分布共同影响成本。首版 race4 的取消未真正生效，该结果被排除出有效加速比较。[采样研究](docs/group-sampling.md)
+3. **长度跃升不等于梯度爆炸。** full8 同一条轨迹在 350→400 轮长度约翻倍，梯度仍较小；600→650 轮固定评测长度和机械重复下降，梯度却明显增长。[统一主线](docs/training-stability.md)
+4. **降低梯度范数不等于修复输出质量。** 历史 batch 重放和在线分支说明旧回答权重与负优势通道有作用，但 TIS 带来的梯度改善没有自动转化为更少的异常文本。[稳定性对照](docs/training-stability.md)
 
-当前轮次：308；阶段：训练生命周期。
-收尾时间：**2026-11-03T14:44:12+00:00**；最晚截止：**2026-11-03T14:59:12+00:00**。
-预测试：W=512 / 768 / 1024 各 5 轮均通过功能校验，按第 2–5 轮实测吞吐、版本落后及逐卡请求负载选择 **W=512**；这不等同于已证明训练质量更优。
+![同一 full8 轨迹的长度、开头模式与梯度](figures/eight-course.png)
 
-最新 checkpoint：**300**，必需非空文件 **25/25**（仅文件存在性检查）。
-最近 10 轮平均耗时：**136.66 秒/轮**（含验证；不含启动、停机空档）。
+图中固定验证与训练指标分别标明。所有梯度范数均为裁剪前；不能把它们当作 Adam 的实际更新大小。
 
-## 顺序停止与组大小
+## 实验与思路如何串起来
 
-已闭合 **171872** 组：首条正确舍弃 **102619** 组（59.71%），8 条全错舍弃 **22361** 组（13.01%），有效完成 **46892** 组。
-总舍弃率 **72.72%**；分母仅为实际已闭合组，不含 pending，不重复计入 carry/ready。
-实际采样完成 **438696** 条；训练选中 **46890** 个完整组 / **157184** 条回答，组均 G=3.35。
-口径：截至第 **307** 轮完整指标；不含未完成当前轮。未生成的回答长度未知，不把舍弃组数直接折算成 token 节省。
+```mermaid
+flowchart LR
+    A[跨权重缓存变化] --> B[低秩 一阶近似 浅层复用]
+    B --> C[attention 截尾与尾部补偿]
+    A --> D[APRIL 跨轮续写的重建成本]
+    D --> E[full8 与 4加4采样]
+    E --> F[长度跃升与开头模式]
+    F --> G[区分早期长度与后期梯度]
+    G --> H[旧数据 负优势 token权重 模型反向响应]
+```
 
-| 真实 G | 累计选中组数 |
-|---:|---:|
-| 2 | 21540 |
-| 3 | 9539 |
-| 4 | 5499 |
-| 5 | 3823 |
-| 6 | 2703 |
-| 7 | 2130 |
-| 8 | 1656 |
+完整过程见[问题与决策](docs/questions-and-decisions.md)，实验身份与模型区别见[设置对照](docs/setup-comparison.md)。
 
-记录到的组/批次不变量：**passed**；无正式指标时显示 not_observed，而不是已通过。无需定向取消 canary：本方法不启动同题剩余请求，因此没有主动取消它们的步骤。
+## 正在进行
 
-## 验证集
+**Qwen3-8B-Base、APRIL full8：从完整第 650 轮恢复，计划再训练 200 轮至 850。** 模型、Adam、随机状态和续写池一并恢复；新增逐次更新梯度与实际训练 batch 记录，每 10 轮保存模型，并保留最近 3 个完整恢复点。
 
-固定 DeepMath hard-dev **1,021 题**；AIME24 / AIME25 / AMC23 / MATH500 共 **600 题**。每题 4 次采样，报告 **mean@4**，不是 pass@4；unknown 计错。
-最新完整测评：第 **300** 轮。
+原 run 完成至 662，但没有该点的完整恢复状态，因此 651–662 会重新执行。当前状态是一次有时间戳的快照，见[续训记录](progress/continuation.md)，不与原轨迹拼成逐样本连续复现。
 
-| 验证分组 | 题数 × 回答数 | mean@4 |
-|---|---:|---:|
-| DeepMath hard-dev | 1021 × 4 | 68.36% |
-| DeepMath D5-6 | 128 × 4 | 69.92% |
-| DeepMath D6-7 | 255 × 4 | 66.08% |
-| DeepMath D7-8 | 319 × 4 | 70.14% |
-| DeepMath D8-9 | 272 × 4 | 68.01% |
-| DeepMath D9-10 | 47 × 4 | 66.49% |
-| AIME24 | 30 × 4 | 12.50% |
-| AIME25 | 30 × 4 | 14.17% |
-| AMC23 | 40 × 4 | 61.88% |
-| MATH500 | 500 × 4 | 82.50% |
+## 仓库结构
 
-![验证 mean@4](validation.svg?v=6617d4f6f780)
+| 目录 | 用途 |
+|---|---|
+| [docs](docs/README.md) | 研究章节、指标定义、理论笔记和下一步问题 |
+| [experiments](experiments/README.md) | 实验与证据单元索引，包含设置、结果、状态和限制 |
+| [data](data/README.md) | 可发布的聚合数据、来源摘要与 SHA256 |
+| [figures](figures/README.md) | 从仓库内聚合数据生成的研究图 |
+| [tools](tools/README.md) | 重绘图表、核对文档链接与证据编号 |
+| [progress](progress/README.md) | 当前研究进度与旧进度页入口 |
+| [history](history) | 原有实验进度归档，保留历史内容 |
 
-hard-dev 按五个难度桶真实题数加权；四个公共测评不合成总分。仅连接实测检查点，无平滑。
+当前版本整理了 **45 个实验与证据单元**，并保留原有 **17 份历史实验目录**。一个单元可能包含多组对照，不能将单元数当作独立训练重复次数。
 
-<details>
-<summary>各项历史最佳 mean@4</summary>
+## 如何复核
 
-| 验证分组 | 最佳轮次 | mean@4 |
-|---|---:|---:|
-| DeepMath hard-dev | 200 | 70.35% |
-| DeepMath D5-6 | 150 | 74.22% |
-| DeepMath D6-7 | 150 | 72.16% |
-| DeepMath D7-8 | 200 | 72.96% |
-| DeepMath D8-9 | 300 | 68.01% |
-| DeepMath D9-10 | 300 | 66.49% |
-| AIME24 | 200 | 25.00% |
-| AIME25 | 250 | 20.00% |
-| AMC23 | 200 | 65.00% |
-| MATH500 | 200 | 86.30% |
+```bash
+python tools/check_project.py
+python -m pip install -r requirements-analysis.txt
+python tools/render_figures.py
+```
 
-各项分别取最佳，不代表同一个 checkpoint 同时达到，也不保证该轮权重仍保留。
+脚本使用仓库内的聚合数据，不需要模型或 GPU。[指标与证据说明](docs/measurement-guide.md)解释了 PPL、概率差、梯度、首中覆盖及异常标签的不同口径。
 
-</details>
+完整训练状态、权重和逐题回答不放入这个仓库，因此当前交付范围是研究记录、聚合证据与图表重绘，完整训练复现包仍待整理。继续添加实验时，沿用[记录模板](experiments/TEMPLATE.md)与[维护约定](CONTRIBUTING.md)。
 
-## 最近十轮
-
-| 轮次 | 总秒数（含验证） | 采集秒数 | 更新秒数 | 真实组数 / 回答数 | 回答均长 | 跨权重回答 | stale tokens |
-|---:|---:|---:|---:|---:|---:|---:|---:|
-| 298 | 36.90 | 21.66 | 8.51 | 152 / 512 | 749 | 24.80% | 53.26% |
-| 299 | 50.71 | 35.19 | 8.05 | 151 / 512 | 967 | 25.20% | 50.06% |
-| 300 | 247.36 | 51.63 | 14.22 | 142 / 512 | 1599 | 26.56% | 60.84% |
-| 301 | 104.59 | 76.98 | 17.15 | 148 / 512 | 2161 | 32.03% | 59.30% |
-| 302 | 158.55 | 119.60 | 26.85 | 147 / 512 | 3212 | 34.77% | 55.63% |
-| 303 | 156.59 | 115.05 | 30.23 | 140 / 512 | 3560 | 31.84% | 62.53% |
-| 304 | 164.31 | 115.56 | 34.73 | 137 / 512 | 4176 | 38.87% | 70.52% |
-| 305 | 155.61 | 107.20 | 35.65 | 150 / 512 | 4276 | 38.67% | 68.76% |
-| 306 | 155.30 | 110.84 | 31.24 | 153 / 512 | 3827 | 35.74% | 66.78% |
-| 307 | 136.67 | 93.55 | 31.62 | 138 / 512 | 3729 | 36.52% | 76.28% |
-
-回答均长仅为选入训练的真实完整回答；跨权重比例指同一回答包含多个策略版本，stale token 比例指来自早于当前更新前策略的 token。collect 包括生成、续写、CPU 判分与队列处理，不是纯 decode。
-
-## GPU 0–7
-
-| GPU | 利用率 | 已用 / 总显存 GiB | 最新采样（UTC） | 状态 |
-|---:|---:|---:|---|---|
-| 0 | 100% | 189.57 / 268.59 | 2026-11-03T12:03:13+00:00 | ok |
-| 1 | 100% | 190.51 / 268.59 | 2026-11-03T12:03:13+00:00 | ok |
-| 2 | 100% | 190.61 / 268.59 | 2026-11-03T12:03:13+00:00 | ok |
-| 3 | 100% | 190.50 / 268.59 | 2026-11-03T12:03:13+00:00 | ok |
-| 4 | 100% | 190.50 / 268.59 | 2026-11-03T12:03:13+00:00 | ok |
-| 5 | 100% | 190.50 / 268.59 | 2026-11-03T12:03:13+00:00 | ok |
-| 6 | 100% | 190.50 / 268.59 | 2026-11-03T12:03:13+00:00 | ok |
-| 7 | 100% | 190.50 / 268.59 | 2026-11-03T12:03:13+00:00 | ok |
-
-## 最近十分钟 GPU 利用率
-
-每秒采样，实际覆盖 **598.0/600 秒**；采样距页面生成 **50.9 秒**。缺测留空，无插值、无平滑。
-
-![最近十分钟 GPU 利用率](gpu_utilization_10m.svg?v=ec4893908440)
-
-![最近十分钟 GPU 显存](gpu_memory_10m.svg?v=3ff1d6e43298)
-
-[状态 JSON](status.json) · [验证 CSV](validation.csv) · [训练 CSV](training.csv) · [GPU 最新](gpu_latest.csv) · [GPU 秒级窗口](gpu_10m.csv) · [GPU 分钟历史](gpu_history.csv)
-
-<details>
-<summary>发布范围与历史口径</summary>
-
-只发布汇总数字和图，不发布题目、回答、CoT、题目 ID、请求 ID、权重、设备标识或私有路径。校准集不参与训练；规则筛查不保证每道题金标无误。旧历史文件保持原样，当前独立曲线不并入任何旧组。
-
-</details>
-
-## 历史实验
-
-- [20261021-dapo-deepmath7-scalar-400](history/20261021-dapo-deepmath7-scalar-400/README.md)
-- [20261022-base-deepmath-20k-24h](history/20261022-base-deepmath-20k-24h/README.md)
-- [20261023-april-deepmath-20k-24h](history/20261023-april-deepmath-20k-24h/README.md)
-- [20261025-rollpacker-deepmath-20k-24h](history/20261025-rollpacker-deepmath-20k-24h/README.md)
-- [20261025-rollpacker-deepmath-70-fresh-24h](history/20261025-rollpacker-deepmath-70-fresh-24h/README.md)
-- [20261026-tailsieve-deepmath-64-fresh-24h](history/20261026-tailsieve-deepmath-64-fresh-24h/README.md)
-- [20261027-rollverify-deepmath-112-fresh-24h](history/20261027-rollverify-deepmath-112-fresh-24h/README.md)
-- [20261029-april-discard8-w256-g64-from0-24h](history/20261029-april-discard8-w256-g64-from0-24h/README.md)
-- [20261030-april-cpuopt-discard8-w256-g64-eval50-from0-24h](history/20261030-april-cpuopt-discard8-w256-g64-eval50-from0-24h/README.md)
-- [20261030-april-cpuopt-discard8-w256-g64-from0-24h](history/20261030-april-cpuopt-discard8-w256-g64-from0-24h/README.md)
-- [20261030-april-eight-w256-g64-eval50-from0-20h](history/20261030-april-eight-w256-g64-eval50-from0-20h/README.md)
-- [20261031-setup2-qwen3-8b-april-eight-w256-g64-8k-from0-12h](history/20261031-setup2-qwen3-8b-april-eight-w256-g64-8k-from0-12h/README.md)
-- [20261101-setup2-qwen3-8b-april-discard44-w256-g64-8k-from0-10h](history/20261101-setup2-qwen3-8b-april-discard44-w256-g64-8k-from0-10h/README.md)
-- [20261102-setup2-qwen3-8b-april-nodiscard44-w256-g64-8k-from0-10h](history/20261102-setup2-qwen3-8b-april-nodiscard44-w256-g64-8k-from0-10h/README.md)
-- [20261102-setup2-qwen3-8b-april-race4-w256-g64-8k-from0-10h](history/20261102-setup2-qwen3-8b-april-race4-w256-g64-8k-from0-10h/README.md)
-- [20261102-setup2-qwen3-8b-april-race4v2-w256-g64-8k-from0-remaining](history/20261102-setup2-qwen3-8b-april-race4v2-w256-g64-8k-from0-remaining/README.md)
-- [20261103-setup2-qwen3-8b-april-seqfirst-w512-r512-8k-from0-10h-v2](history/20261103-setup2-qwen3-8b-april-seqfirst-w512-r512-8k-from0-10h-v2/README.md)
+相关论文及与本项目的区别见[相关工作](docs/related-work.md)。仓库沿用 `dapo-training-progress` 的地址，项目入口现已覆盖整个研究过程。

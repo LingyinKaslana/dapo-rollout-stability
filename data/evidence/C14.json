@@ -1,0 +1,212 @@
+{
+  "id": "C14",
+  "title": "同权重旧KV恢复旧Q",
+  "status": "mixed_result",
+  "status_label": "已完成 局部证据",
+  "chapter": "cache-reconstruction",
+  "finding": "FP32联合方向约束可近似恢复，BF16缓存量化使病态逆误差很大。",
+  "limitations": [
+    "同checkpoint，不是跨权重；bf16_round是存储量化模拟，非原生BF16模型推理；raw K positive control使用额外未缓存信息；epsilon_inverse只在少量有效token有结果不能直接比较。"
+  ],
+  "source_fingerprints": [
+    {
+      "artifact_name": "summary.json",
+      "sha256": "a0c5a54884e469758f21bae9b7af7d26ca8f8db373093ad1c32a0b571c601013"
+    },
+    {
+      "artifact_name": "summary.json",
+      "sha256": "b8c1be4dc0bb37aae233b8e23d596608a18a652bb3e03957fd61f458277e325e"
+    }
+  ],
+  "results": {
+    "fp32": {
+      "V_min_norm": {
+        "E_relative_error": 0.8530861080055316,
+        "Qraw_relative_error": 0.6903358849848116,
+        "Q_relative_error": 0.7653428027033377,
+        "Q_cosine_mean": 0.7039695531831691,
+        "attention_tv": 0.4945141066818821,
+        "attention_tv_p95": 0.8219932678047633,
+        "valid_token_fraction": 1.0,
+        "valid_cases": 112,
+        "total_cases": 112,
+        "note": "All sampled token positions included"
+      },
+      "direction_min_norm": {
+        "E_relative_error": 0.14204521926794228,
+        "Qraw_relative_error": 0.08944537812917673,
+        "Q_relative_error": 0.10987104400577673,
+        "Q_cosine_mean": 0.9930492295071046,
+        "attention_tv": 0.03905952936843412,
+        "attention_tv_p95": 0.09308242687459489,
+        "valid_token_fraction": 1.0,
+        "valid_cases": 112,
+        "total_cases": 112,
+        "note": "All sampled token positions included"
+      },
+      "direction_ridge_1e-2": {
+        "E_relative_error": 0.4201872011213413,
+        "Qraw_relative_error": 0.2740237098405586,
+        "Q_relative_error": 0.284399164076481,
+        "Q_cosine_mean": 0.9561713771818903,
+        "attention_tv": 0.11901840211974646,
+        "attention_tv_p95": 0.2619801520146891,
+        "valid_token_fraction": 1.0,
+        "valid_cases": 112,
+        "total_cases": 112,
+        "note": "All sampled token positions included"
+      },
+      "direction_ridge_1e-3": {
+        "E_relative_error": 0.18038864979739375,
+        "Qraw_relative_error": 0.11347545778859026,
+        "Q_relative_error": 0.1370325108743034,
+        "Q_cosine_mean": 0.9891457307708108,
+        "attention_tv": 0.049826417134503684,
+        "attention_tv_p95": 0.11364398257457974,
+        "valid_token_fraction": 1.0,
+        "valid_cases": 112,
+        "total_cases": 112,
+        "note": "All sampled token positions included"
+      },
+      "epsilon_inverse": {
+        "E_relative_error": 97.18169635309519,
+        "Qraw_relative_error": 63.31883082458719,
+        "Q_relative_error": 1.325786520210508,
+        "Q_cosine_mean": 0.15870984893295928,
+        "attention_tv": 0.7291656761823148,
+        "attention_tv_p95": 0.9420300707737965,
+        "valid_token_fraction": 0.19845145089285715,
+        "valid_cases": 92,
+        "total_cases": 112,
+        "note": "Errors are conditional on valid inverse rows; do not compare attention TV to full-coverage methods"
+      },
+      "raw_KV_positive_control": {
+        "E_relative_error": 0.00020640295629917313,
+        "Qraw_relative_error": 0.00014671422276647174,
+        "Q_relative_error": 0.00017513474636276675,
+        "Q_cosine_mean": 0.9999998590474741,
+        "attention_tv": 4.978797571240488e-05,
+        "attention_tv_p95": 0.0001649230382410554,
+        "valid_token_fraction": 1.0,
+        "valid_cases": 112,
+        "total_cases": 112,
+        "note": "All sampled token positions included"
+      }
+    },
+    "bf16_round": {
+      "V_min_norm": {
+        "E_relative_error": 0.8530877687209439,
+        "Qraw_relative_error": 0.6903331532744955,
+        "Q_relative_error": 0.7653436697792132,
+        "Q_cosine_mean": 0.7039690060734486,
+        "attention_tv": 0.494498602225472,
+        "attention_tv_p95": 0.8219776963674733,
+        "valid_token_fraction": 1.0,
+        "valid_cases": 112,
+        "total_cases": 112,
+        "note": "All sampled token positions included"
+      },
+      "direction_min_norm": {
+        "E_relative_error": 4.484156032134695,
+        "Qraw_relative_error": 2.787883673433469,
+        "Q_relative_error": 1.0380507233162213,
+        "Q_cosine_mean": 0.4311003955570007,
+        "attention_tv": 0.6180684178118216,
+        "attention_tv_p95": 0.8670800397719015,
+        "valid_token_fraction": 1.0,
+        "valid_cases": 112,
+        "total_cases": 112,
+        "note": "All sampled token positions included"
+      },
+      "direction_ridge_1e-2": {
+        "E_relative_error": 0.837172744501726,
+        "Qraw_relative_error": 0.5892654721348095,
+        "Q_relative_error": 0.6659342870081321,
+        "Q_cosine_mean": 0.7412639337494987,
+        "attention_tv": 0.3837679859611158,
+        "attention_tv_p95": 0.6685673190817933,
+        "valid_token_fraction": 1.0,
+        "valid_cases": 112,
+        "total_cases": 112,
+        "note": "All sampled token positions included"
+      },
+      "direction_ridge_1e-3": {
+        "E_relative_error": 2.0308188488653114,
+        "Qraw_relative_error": 1.2821517587520401,
+        "Q_relative_error": 0.8790296385000066,
+        "Q_cosine_mean": 0.5619418939986303,
+        "attention_tv": 0.5182065979321581,
+        "attention_tv_p95": 0.7794975919896553,
+        "valid_token_fraction": 1.0,
+        "valid_cases": 112,
+        "total_cases": 112,
+        "note": "All sampled token positions included"
+      },
+      "epsilon_inverse": {
+        "E_relative_error": 57.441607898738305,
+        "Qraw_relative_error": 31.232731699389618,
+        "Q_relative_error": 1.516335656528761,
+        "Q_cosine_mean": -0.04345838064506654,
+        "attention_tv": 0.9239309651410674,
+        "attention_tv_p95": 0.9876290224131887,
+        "valid_token_fraction": 0.0009765625,
+        "valid_cases": 12,
+        "total_cases": 112,
+        "note": "Errors are conditional on valid inverse rows; do not compare attention TV to full-coverage methods"
+      }
+    },
+    "aggregation": "Equal mean over layer/probe Frobenius relative errors. Cosines average per-token/head. Epsilon inverse errors only on valid subsets; its attention TV is selection-biased.",
+    "inverse_metrics": {
+      "condition_number": {
+        "min": 7114.714444417554,
+        "mean": 97508.06950598229,
+        "max": 1379282.8188406501
+      },
+      "joint_rank_fp64_tol": {
+        "min": 2048,
+        "mean": 2048.0,
+        "max": 2048
+      },
+      "joint_rank_fp32_tol": {
+        "min": 2043,
+        "mean": 2045.357142857143,
+        "max": 2047
+      },
+      "V_only_min_norm_E_error": {
+        "min": 0.6844743263814209,
+        "mean": 0.8414890434683348,
+        "max": 0.8861572231314312
+      },
+      "raw_KV_E_error": {
+        "min": 1.1501744193108747e-05,
+        "mean": 0.00010770289649745504,
+        "max": 0.0013501586978245256
+      },
+      "cached_KV_plus_exact_scale_E_error": {
+        "min": 2.5421252603070354e-05,
+        "mean": 0.003656190625279634,
+        "max": 0.034385523873902035
+      },
+      "bf16_cache_plus_exact_scale_E_error": {
+        "min": 0.3285177974446723,
+        "mean": 160.9078318107197,
+        "max": 1522.2569759490054
+      },
+      "epsilon_inverse_invalid_head_fraction": {
+        "min": 0.0,
+        "mean": 0.3168422154017857,
+        "max": 0.51416015625
+      },
+      "epsilon_inverse_valid_token_fraction": {
+        "min": 0.0,
+        "mean": 0.20228794642857142,
+        "max": 1.0
+      },
+      "epsilon_inverse_E_error_valid_tokens": {
+        "min": 1.219809384167791,
+        "mean": 233.52032767316314,
+        "max": 3755.513000175204
+      }
+    }
+  }
+}

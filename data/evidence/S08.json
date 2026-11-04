@@ -1,0 +1,261 @@
+{
+  "id": "S08",
+  "title": "屏蔽@的缓解尝试",
+  "status": "negative_rescue_result",
+  "status_label": "已完成 阴性结果",
+  "chapter": "training-stability",
+  "finding": "符号屏蔽消除@但没有恢复失败边界的正常停止或准确率，可能换为其他重复。",
+  "limitations": [
+    "Late checkpoints 500/541, not the early length surge.",
+    "Four selected failure trajectories do not estimate population prevalence.",
+    "64 dev questions have limited power for rare failures.",
+    "Hard masking may remove almost all probability at a boundary; rescue would not identify the training cause."
+  ],
+  "source_fingerprints": [
+    {
+      "artifact_name": "findings.json",
+      "sha256": "c51200b2ff41dc43168ad97ae87f2400e830af44a8fb599e336aa8c860698fbf"
+    }
+  ],
+  "results": {
+    "complete": true,
+    "responses": 640,
+    "cells": [
+      {
+        "model": "keep500",
+        "panel": "boundary",
+        "arm": "natural",
+        "n": 32,
+        "stopped": 19,
+        "capped": 13,
+        "correct": 7,
+        "at_loop": 0,
+        "high_repeat20": 0,
+        "high_non_at_repeat20": 0,
+        "non_at_repeat20_observed": 32,
+        "mean_non_at_repeat20": 0.0095207412410656,
+        "mean_total_tokens": 5008.3125,
+        "median_total_tokens": 3882.5,
+        "grader_unknown": 1
+      },
+      {
+        "model": "keep500",
+        "panel": "boundary",
+        "arm": "ban_at",
+        "n": 32,
+        "stopped": 18,
+        "capped": 14,
+        "correct": 7,
+        "at_loop": 0,
+        "high_repeat20": 0,
+        "high_non_at_repeat20": 0,
+        "non_at_repeat20_observed": 32,
+        "mean_non_at_repeat20": 0.005295865403401146,
+        "mean_total_tokens": 5232.375,
+        "median_total_tokens": 5107.0,
+        "grader_unknown": 2
+      },
+      {
+        "model": "keep500",
+        "panel": "fresh",
+        "arm": "natural",
+        "n": 128,
+        "stopped": 125,
+        "capped": 3,
+        "correct": 87,
+        "at_loop": 0,
+        "high_repeat20": 0,
+        "high_non_at_repeat20": 0,
+        "non_at_repeat20_observed": 128,
+        "mean_non_at_repeat20": 0.01777393064964815,
+        "mean_total_tokens": 2362.859375,
+        "median_total_tokens": 1979.0,
+        "grader_unknown": 2
+      },
+      {
+        "model": "keep500",
+        "panel": "fresh",
+        "arm": "ban_at",
+        "n": 128,
+        "stopped": 124,
+        "capped": 4,
+        "correct": 83,
+        "at_loop": 0,
+        "high_repeat20": 0,
+        "high_non_at_repeat20": 0,
+        "non_at_repeat20_observed": 128,
+        "mean_non_at_repeat20": 0.017234664583871497,
+        "mean_total_tokens": 2338.1015625,
+        "median_total_tokens": 1708.0,
+        "grader_unknown": 1
+      },
+      {
+        "model": "keep541",
+        "panel": "boundary",
+        "arm": "natural",
+        "n": 32,
+        "stopped": 2,
+        "capped": 30,
+        "correct": 0,
+        "at_loop": 32,
+        "high_repeat20": 32,
+        "high_non_at_repeat20": 0,
+        "non_at_repeat20_observed": 7,
+        "mean_non_at_repeat20": 0.0021321961620469143,
+        "mean_total_tokens": 8104.40625,
+        "median_total_tokens": 8192.0,
+        "grader_unknown": 0
+      },
+      {
+        "model": "keep541",
+        "panel": "boundary",
+        "arm": "ban_at",
+        "n": 32,
+        "stopped": 2,
+        "capped": 30,
+        "correct": 0,
+        "at_loop": 0,
+        "high_repeat20": 7,
+        "high_non_at_repeat20": 7,
+        "non_at_repeat20_observed": 32,
+        "mean_non_at_repeat20": 0.3006332273603053,
+        "mean_total_tokens": 7725.875,
+        "median_total_tokens": 8192.0,
+        "grader_unknown": 0
+      },
+      {
+        "model": "keep541",
+        "panel": "fresh",
+        "arm": "natural",
+        "n": 128,
+        "stopped": 96,
+        "capped": 32,
+        "correct": 83,
+        "at_loop": 32,
+        "high_repeat20": 32,
+        "high_non_at_repeat20": 0,
+        "non_at_repeat20_observed": 128,
+        "mean_non_at_repeat20": 0.031046159625765988,
+        "mean_total_tokens": 2745.6875,
+        "median_total_tokens": 1133.0,
+        "grader_unknown": 0
+      },
+      {
+        "model": "keep541",
+        "panel": "fresh",
+        "arm": "ban_at",
+        "n": 128,
+        "stopped": 98,
+        "capped": 30,
+        "correct": 86,
+        "at_loop": 0,
+        "high_repeat20": 4,
+        "high_non_at_repeat20": 4,
+        "non_at_repeat20_observed": 128,
+        "mean_non_at_repeat20": 0.08725925555727004,
+        "mean_total_tokens": 2670.3203125,
+        "median_total_tokens": 1168.0,
+        "grader_unknown": 0
+      }
+    ],
+    "paired_question_bootstrap_effects": [
+      {
+        "model": "keep500",
+        "panel": "fresh",
+        "metric": "correct",
+        "difference_ban_minus_natural": -0.03125,
+        "question_cluster_bootstrap_ci95": [
+          -0.0859375,
+          0.03125
+        ],
+        "clusters": 64
+      },
+      {
+        "model": "keep500",
+        "panel": "fresh",
+        "metric": "capped",
+        "difference_ban_minus_natural": 0.0078125,
+        "question_cluster_bootstrap_ci95": [
+          -0.0234375,
+          0.0390625
+        ],
+        "clusters": 64
+      },
+      {
+        "model": "keep500",
+        "panel": "fresh",
+        "metric": "stopped",
+        "difference_ban_minus_natural": -0.0078125,
+        "question_cluster_bootstrap_ci95": [
+          -0.0390625,
+          0.0234375
+        ],
+        "clusters": 64
+      },
+      {
+        "model": "keep500",
+        "panel": "fresh",
+        "metric": "total_response_tokens",
+        "difference_ban_minus_natural": -24.7578125,
+        "question_cluster_bootstrap_ci95": [
+          -281.498828125,
+          231.52988281249992
+        ],
+        "clusters": 64
+      },
+      {
+        "model": "keep541",
+        "panel": "fresh",
+        "metric": "correct",
+        "difference_ban_minus_natural": 0.0234375,
+        "question_cluster_bootstrap_ci95": [
+          -0.015625,
+          0.0625
+        ],
+        "clusters": 64
+      },
+      {
+        "model": "keep541",
+        "panel": "fresh",
+        "metric": "capped",
+        "difference_ban_minus_natural": -0.015625,
+        "question_cluster_bootstrap_ci95": [
+          -0.0546875,
+          0.0234375
+        ],
+        "clusters": 64
+      },
+      {
+        "model": "keep541",
+        "panel": "fresh",
+        "metric": "stopped",
+        "difference_ban_minus_natural": 0.015625,
+        "question_cluster_bootstrap_ci95": [
+          -0.0234375,
+          0.0546875
+        ],
+        "clusters": 64
+      },
+      {
+        "model": "keep541",
+        "panel": "fresh",
+        "metric": "total_response_tokens",
+        "difference_ban_minus_natural": -75.3671875,
+        "question_cluster_bootstrap_ci95": [
+          -322.7947265625,
+          162.95117187499991
+        ],
+        "clusters": 64
+      }
+    ],
+    "validation": {
+      "unique_records": true,
+      "paired_inputs_seeds_budgets": true,
+      "ban_at_zero_tokens": true
+    },
+    "grader_unknown": {
+      "count": 6,
+      "handling": "Original frozen grader acc=0; all six are unparseable predictions from keep500, not scoring timeouts."
+    }
+  }
+}

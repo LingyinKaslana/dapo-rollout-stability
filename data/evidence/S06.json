@@ -1,0 +1,118 @@
+{
+  "id": "S06",
+  "title": "Base长度与重复、盲审误报复核",
+  "status": "association_and_selected_blind_audit",
+  "status_label": "核验或复核",
+  "chapter": "training-stability",
+  "finding": "更长回答有更高重复标签率，但因果方向未识别；盲审发现正常进展与轻度冗余被混入。",
+  "limitations": [
+    "Generated length is post-outcome; association does not establish long output causes loops.",
+    "Different questions in each bin, one draw per question; cannot estimate per-question persistent risk.",
+    "LLM labeling can falsely flag legitimate checking/alternate reasoning; examples and independent review required.",
+    "Natural opening comparisons are confounded by problem selection and generation length.",
+    "八条盲审样例经过选择，不能当成代表总体的误报率；不发布原题/回答/案例文本。"
+  ],
+  "source_fingerprints": [
+    {
+      "artifact_name": "base_length_summary.json",
+      "sha256": "603dcc859d121405aa639ee24216585f62e33c403a6775b382f6890073e252c4"
+    },
+    {
+      "artifact_name": "blind_repeat_review.json",
+      "sha256": "326e3d1c2a10fe0e13a53bfa063ef31b4ac61299b515d20da1bb4df7182c5e0a"
+    }
+  ],
+  "results": {
+    "model": "Qwen3-8B-Base",
+    "n": 10000,
+    "one_response_per_question": true,
+    "selection": "Fixed SHA256 ordering of eligible unique training questions, 10000 new questions excluding first1000 and dev; no reward or outcome selection. Source train40299/dev1621.",
+    "sampling": {
+      "temperature": 1,
+      "top_p": 1,
+      "top_k": -1,
+      "max_tokens": 8192,
+      "stop_token_ids": [
+        151643,
+        151645
+      ],
+      "forced_opening": false
+    },
+    "engine": {
+      "backend": "vLLM",
+      "version": "0.29.0",
+      "dtype": "bfloat16",
+      "tensor_parallel_size": 1
+    },
+    "definition": "label abnormal AND judgment.types contains repetition; strict program plus full-text LLM. This is pre-existing AI-assisted annotation, not a human gold standard.",
+    "by_length": [
+      {
+        "min_tokens_inclusive": 0,
+        "max_tokens_exclusive": 1024,
+        "n": 6306,
+        "confirmed_repetition": 30,
+        "confirmed_repetition_rate": 0.004757373929590866,
+        "strict_program_repetition": 2,
+        "strict_program_rate": 0.0003171582619727244,
+        "llm_repetition": 28,
+        "uncertain_any_type": 49,
+        "capped": 0
+      },
+      {
+        "min_tokens_inclusive": 1024,
+        "max_tokens_exclusive": 2048,
+        "n": 2540,
+        "confirmed_repetition": 50,
+        "confirmed_repetition_rate": 0.01968503937007874,
+        "strict_program_repetition": 3,
+        "strict_program_rate": 0.0011811023622047244,
+        "llm_repetition": 47,
+        "uncertain_any_type": 23,
+        "capped": 0
+      },
+      {
+        "min_tokens_inclusive": 2048,
+        "max_tokens_exclusive": 4096,
+        "n": 763,
+        "confirmed_repetition": 117,
+        "confirmed_repetition_rate": 0.15334207077326342,
+        "strict_program_repetition": 11,
+        "strict_program_rate": 0.014416775884665793,
+        "llm_repetition": 106,
+        "uncertain_any_type": 1,
+        "capped": 0
+      },
+      {
+        "min_tokens_inclusive": 4096,
+        "max_tokens_exclusive": 8193,
+        "n": 391,
+        "confirmed_repetition": 111,
+        "confirmed_repetition_rate": 0.28388746803069054,
+        "strict_program_repetition": 23,
+        "strict_program_rate": 0.058823529411764705,
+        "llm_repetition": 88,
+        "uncertain_any_type": 0,
+        "capped": 99
+      }
+    ],
+    "overall": {
+      "min_tokens_inclusive": 0,
+      "max_tokens_exclusive": 8193,
+      "n": 10000,
+      "confirmed_repetition": 308,
+      "confirmed_repetition_rate": 0.0308,
+      "strict_program_repetition": 39,
+      "strict_program_rate": 0.0039,
+      "llm_repetition": 269,
+      "uncertain_any_type": 73,
+      "capped": 99
+    },
+    "blind_criteria": "clear_loop需要持续重复且无实质新增信息；长证明、不同case、新方法、带新计算的自我修正不因此标为循环；仅2次重述或简短结尾复核不标严重循环。数学正确性不参与分类。",
+    "blind_counts": {
+      "clear_loop": 3,
+      "mild_redundancy": 3,
+      "normal_progress": 2,
+      "uncertain": 0
+    }
+  }
+}
