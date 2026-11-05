@@ -22,3 +22,5 @@
 运行 `python tools/check_project.py`；如果修改聚合数据，再运行 `python tools/render_figures.py` 并查看图像。脚本检查本地链接、证据编号、聚合数据和新增内容中的机器路径；最终仍需要人工检查科学表述与图表分母。
 
 本仓库当前不为尚未发布的完整训练代码承诺可一键复现。新增可运行训练入口时，应同步提交依赖版本、数据准备流程和完整恢复状态说明，并写明与历史训练环境的差异。
+
+稳定性总报告另遵守：`data/investigation/manifest.json`记录发布字节与归档原字节的不同哈希；图表输入由`data/investigation/figures.json`固定。修改聚合后重绘并运行`python tools/check_investigation.py`。52项主张与旧45项有重叠，不按相加数量宣传实验规模。

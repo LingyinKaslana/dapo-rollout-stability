@@ -1,0 +1,2391 @@
+{
+  "schema_version": 1,
+  "chapter": "late_gradient_mechanisms",
+  "complete": true,
+  "generated_utc": "2026-11-05T17:29:14.088993+00:00",
+  "scope": "Read-only local evidence curation. No GPU/model/API calls, no new experiments, no GitHub writes. Primary full8 lineage is kept separate from older nodiscard44 probes.",
+  "publication_note": "Internal provenance includes machine paths and hashes. Public prose should link repository artifacts and avoid publishing raw questions/responses or infrastructure identifiers.",
+  "definitions": {
+    "p_theta": "当前训练执行路径在固定已观测prefix上的所选token条件概率；随轮内Adam更新改变。",
+    "p0": "本轮更新开始时用训练路径算出的固定旧log-prob锚点；不是rollout采样q。",
+    "q": "实际生成时记录的所选token概率；跨轮回答的不同token可来自不同policy版本。T1/top_p1/top_k-1时无需额外温度修正，但执行路径仍可能不同。",
+    "d_t": "abs(ln p_theta_t − ln q_t)，单位nats；不是PPL、abs(p−q)、全词表KL或完整分布距离。冻结对照使用own-anchor p0替代p_theta时必须注明。",
+    "signed_gap": "s_t=lnp−lnq；p↓表示s<−0.5，p↑表示s>0.5。",
+    "PPO_ratio": "rho=exp(clamp(lnp_theta−lnp0,−20,20))；与mismatch ratio p0/q不同。",
+    "log_PPL_response": "−(1/T_i)Σ_t ln p_it；PPL_i=exp(logPPL_i)≥1。",
+    "aggregation": "mean_i(logPPL_i)与ln(mean_i(PPL_i))不同；mean_iPPL会被极少回答指数放大。原生response-level abs logPPL gap可因token正负抵消，小于token-level mean abs loggap。",
+    "threshold_metrics": "fraction=mean(1[d>.5])，conditional_mean=sum(d*1[d>.5])/count，positive_excess=mean(max(d−.5,0))；RMS=sqrt(mean d²)。L2受token数sqrt(D)影响。",
+    "no_hit_conventions": "早期threshold05文件按用户约定no-hit返回0；后来的实际训练coefficient表用null/曲线留空。不得把两种编码当成不同科学测量。",
+    "gradient": "本文关键范数为裁剪前全局参数梯度L2。生产actor/grad_norm常为4次更新均值，峰值需单独看B1..B4。clip1后Adam还使用moment、epsilon和weight decay。",
+    "A": "由shaped reward在G8组内中心化/sample-std产生，含长度惩罚；A<0不是简单等价答错。",
+    "population": "allrollout、已完成候选、mixed筛选后实际入训、固定dev验证是不同总体，不能横轴同轮便混用。"
+  },
+  "claims": [
+    {
+      "id": "LG01",
+      "title": "同一full8主线与重启边界",
+      "evidence_level": "provenance_and_restore_audit",
+      "supported_claim": "原20261031 full8/APRIL主线从0训练；原650完整状态续跑651–850，共200轮800次更新。完整actor/Adam/scheduler/RNG与逻辑collector可恢复，但live推理RNG、KV和异步到达顺序不等价于历史原地继续。",
+      "quantitative_evidence": {
+        "lineage": [
+          "20261031-setup2-qwen3-8b-april-eight-w256-g64-8k-from0-12h",
+          "original full650",
+          "eight650to850-v1",
+          "preserved source720"
+        ],
+        "same_signature": "865506d002f0f29c608cc7843bd0888c95b15a2d852d1e09e3927411fe66ea47",
+        "rounds": [
+          651,
+          850
+        ],
+        "updates": 800,
+        "original600_complete": {
+          "passed": true,
+          "completed_step": 600,
+          "signature": "865506d002f0f29c608cc7843bd0888c95b15a2d852d1e09e3927411fe66ea47",
+          "owner": "dapo.april.checkpoint.v1",
+          "protocol_mode": "eight",
+          "group_size": 8,
+          "stage_size": 8,
+          "discard_pilot": false,
+          "selection_correction": "none",
+          "input_epoch": 1,
+          "verified_ranks": 8,
+          "optimizer_parameter_states_per_rank": 37,
+          "all_Adam_steps": 2400,
+          "all_scheduler_last_epoch": 600,
+          "all_scheduler_lrs": [
+            5e-07
+          ],
+          "extra_keys": [
+            "lr_scheduler",
+            "rng"
+          ],
+          "cuda_initialized": false,
+          "validation_scope": "All 8 optimizers and extra states deserialized on CPU; data.pt joint metadata loaded. Native model payload central-directory and file sizes checked; no GPU model restore or complete tensor checksum scan performed."
+        },
+        "early50_to550_original_actor_shards_pruned": true
+      },
+      "source_keys": {
+        "timeline": [
+          "rounds",
+          "round_count",
+          "updates"
+        ],
+        "runtime600": [
+          "lineage",
+          "CPU_internal_state_verification",
+          "earliest_full_resume",
+          "earlier_original_steps"
+        ],
+        "restart": [
+          "original"
+        ]
+      },
+      "limits": [
+        "重跑651–662与原历史重叠，不能当作新增独立实验轮数。",
+        "重启生成顺序/随机状态差异不止一个可由全局seed和轮数推得的计数；对照需记录实际入训数据。",
+        "full8 baseline指未校正APRIL，不是同步DAPO。"
+      ],
+      "reject_or_revise": [
+        "“只恢复模型就能准确续跑”不成立；“从同一seed模拟到600即可重建在线生成状态”未验证。"
+      ]
+    },
+    {
+      "id": "LG02",
+      "title": "峰值集中B2/B3，但不是第2/3次执行本身导致",
+      "evidence_level": "observation_plus_order_intervention",
+      "supported_claim": "800次实际更新中，所有>100的59次峰值都在B2/B3。交换执行顺序后B2第一执行仍很大；冻结轮初状态不做前序Adam也能出现大范数。批次身份与当前状态重要，顺序进一步调制幅度。",
+      "quantitative_evidence": {
+        "position_summary": {
+          "1": {
+            "n": 200,
+            "median": 0.691656768321991,
+            "mean": 1.3721253038942813,
+            "p90": 2.616202974319458,
+            "max": 13.090644836425781
+          },
+          "2": {
+            "n": 200,
+            "median": 2.7220109701156616,
+            "mean": 77.73728253886104,
+            "p90": 261.376235961914,
+            "max": 2363.146728515625
+          },
+          "3": {
+            "n": 200,
+            "median": 1.710322916507721,
+            "mean": 31.46478074528277,
+            "p90": 124.50445556640621,
+            "max": 621.813232421875
+          },
+          "4": {
+            "n": 200,
+            "median": 0.6375721395015717,
+            "mean": 0.7033824916183948,
+            "p90": 0.9444551408290862,
+            "max": 1.6551613807678223
+          }
+        },
+        "threshold_counts": {
+          "10": {
+            "total": 117,
+            "by_position": {
+              "1": 1,
+              "2": 65,
+              "3": 51,
+              "4": 0
+            }
+          },
+          "100": {
+            "total": 59,
+            "by_position": {
+              "1": 0,
+              "2": 36,
+              "3": 23,
+              "4": 0
+            }
+          },
+          "500": {
+            "total": 7,
+            "by_position": {
+              "1": 0,
+              "2": 6,
+              "3": 1,
+              "4": 0
+            }
+          },
+          "1000": {
+            "total": 2,
+            "by_position": {
+              "1": 0,
+              "2": 2,
+              "3": 0,
+              "4": 0
+            }
+          }
+        },
+        "native8_reconstructed_frozen726": {
+          "B1": 0.7406083643436432,
+          "B2": 633.5088195800781,
+          "B3": 487.57745361328125,
+          "B4": 0.8254846334457397
+        },
+        "native8_order726_norms": {
+          "original": [
+            0.7404691576957703,
+            292.5400695800781,
+            27.91396141052246,
+            1.1148985624313354
+          ],
+          "swapped": [
+            633.5214233398438,
+            0.606066882610321,
+            0.9405352473258972,
+            60.41310501098633
+          ],
+          "swapped_repeat2": [
+            633.59716796875,
+            0.5954068303108215,
+            0.864677369594574,
+            62.64481735229492
+          ],
+          "original_repeat2": [
+            0.7400572896003723,
+            287.4198303222656,
+            15.896658897399902,
+            0.9994094371795654
+          ]
+        },
+        "original726_peak_B2": 2363.146728515625,
+        "actual_round726_update_records": [
+          {
+            "round": 726,
+            "update_in_round": 1,
+            "preclip_norm": 0.8040947914123535,
+            "adam_step": 2901.0,
+            "lr": 5e-07
+          },
+          {
+            "round": 726,
+            "update_in_round": 2,
+            "preclip_norm": 2363.146728515625,
+            "adam_step": 2902.0,
+            "lr": 5e-07
+          },
+          {
+            "round": 726,
+            "update_in_round": 3,
+            "preclip_norm": 144.96066284179688,
+            "adam_step": 2903.0,
+            "lr": 5e-07
+          },
+          {
+            "round": 726,
+            "update_in_round": 4,
+            "preclip_norm": 0.8753274083137512,
+            "adam_step": 2904.0,
+            "lr": 5e-07
+          }
+        ]
+      },
+      "source_keys": {
+        "timeline": [
+          "by_position",
+          "threshold_counts"
+        ],
+        "order": [
+          "frozen726",
+          "order726_norms",
+          "scope",
+          "warmup_anchor_drift"
+        ],
+        "trajectory_full": [
+          "optimizer_updates",
+          "metrics",
+          "exit.json"
+        ]
+      },
+      "limits": [
+        "native8顺序实验使用重建状态，非原生产pre726；两次重复衡量数值重复性，不是训练种子置信区间。",
+        "B1先执行在该native8重建状态抑制B2；另一1GPU状态曾增强，方向不是普遍固定。"
+      ],
+      "reject_or_revise": [
+        "“B1刚更新损坏模型，所以B2必然爆炸”被固定轮初大梯度与B2提前执行反例否定。"
+      ]
+    },
+    {
+      "id": "LG03",
+      "title": "同样输入的反向响应随权重显著改变",
+      "evidence_level": "controlled_frozen_backward",
+      "supported_claim": "相同batch726、A、mask、D，分别用实际保存720/730权重并强制own-anchor rho=1，B2/B3梯度相差约11.2/9.1倍。",
+      "quantitative_evidence": {
+        "B1": {
+          "cp720": {
+            "values": [
+              0.5980662107467651,
+              0.5972804427146912
+            ],
+            "mean": 0.5976733267307281,
+            "relative_range": 0.0013138478950229253
+          },
+          "cp730": {
+            "values": [
+              1.4973833560943604,
+              1.4941089153289795
+            ],
+            "mean": 1.49574613571167,
+            "relative_range": 0.002186775184894278
+          },
+          "mean_norm_ratio730_over720": 2.50261483793061
+        },
+        "B2": {
+          "cp720": {
+            "values": [
+              90.57000732421875,
+              90.57196807861328
+            ],
+            "mean": 90.57098770141602,
+            "relative_range": 2.1648578871879918e-05
+          },
+          "cp730": {
+            "values": [
+              1015.760986328125,
+              1015.7810668945312
+            ],
+            "mean": 1015.7710266113281,
+            "relative_range": 1.976859685684117e-05
+          },
+          "mean_norm_ratio730_over720": 11.215192109420347
+        },
+        "B3": {
+          "cp720": {
+            "values": [
+              98.46115112304688,
+              98.5146255493164
+            ],
+            "mean": 98.48788833618164,
+            "relative_range": 0.000542806978876065
+          },
+          "cp730": {
+            "values": [
+              895.809326171875,
+              895.8193359375
+            ],
+            "mean": 895.8143310546875,
+            "relative_range": 1.117386645212843e-05
+          },
+          "mean_norm_ratio730_over720": 9.095680151013969
+        },
+        "B4": {
+          "cp720": {
+            "values": [
+              0.5488097667694092,
+              0.5487234592437744
+            ],
+            "mean": 0.5487666130065918,
+            "relative_range": 0.000157263100733098
+          },
+          "cp730": {
+            "values": [
+              6.060310363769531,
+              6.046897888183594
+            ],
+            "mean": 6.0536041259765625,
+            "relative_range": 0.0022131664520222524
+          },
+          "mean_norm_ratio730_over720": 11.031290866639962
+        }
+      },
+      "source_keys": {
+        "savedstates": [
+          "B_stats",
+          "all16_backwards_rho_exactly1",
+          "optimizer_steps",
+          "fixed_input_q_advantages_mask_fingerprints_match"
+        ]
+      },
+      "limits": [
+        "这不是原始726峰值时间定位。",
+        "相同logp系数只排除了该系数差异；softmax残差和logits Jacobian同时可变，不能称纯Jacobian放大测量。"
+      ],
+      "reject_or_revise": []
+    },
+    {
+      "id": "LG04",
+      "title": "B2负优势梯度主导，范数不是可相加百分比",
+      "evidence_level": "controlled_sign_decomposition",
+      "supported_claim": "batch726 B2在720/730两个真实保存状态的负优势分量几乎对齐完整梯度，正优势分量小很多。",
+      "quantitative_evidence": {
+        "720": {
+          "mean_norms": {
+            "full": 90.57875414453395,
+            "positive": 0.08925742257682522,
+            "negative": 90.597001683678
+          },
+          "negative_over_positive_norm": 1015.0080415519482,
+          "cos_negative_full": [
+            0.999981831661329,
+            0.9999807948753593
+          ],
+          "cos_positive_negative": [
+            -0.04059092608003502,
+            -0.04134249717932217
+          ],
+          "closure_over_full": [
+            0.006056830319153633,
+            0.00606750983116168
+          ],
+          "vector_repeat_errors": {
+            "full": 0.006095853971973452,
+            "positive": 0.006925560176559193,
+            "negative": 0.006084890711121594
+          }
+        },
+        "730": {
+          "mean_norms": {
+            "full": 1015.7556173484338,
+            "positive": 1.888229569054023,
+            "negative": 1015.8643491273831
+          },
+          "negative_over_positive_norm": 537.9983269917318,
+          "cos_negative_full": [
+            0.9999975789867326,
+            0.9999974351585763
+          ],
+          "cos_positive_negative": [
+            -0.056047675325916646,
+            -0.056248919884744834
+          ],
+          "closure_over_full": [
+            0.0013020967907872293,
+            0.0013444879403209451
+          ],
+          "vector_repeat_errors": {
+            "full": 0.0013480893206891695,
+            "positive": 0.007100061586918625,
+            "negative": 0.0013235848055496674
+          }
+        }
+      },
+      "source_keys": {
+        "sign": [
+          "summary",
+          "D",
+          "same_full_denominator_rows_and_microbatches",
+          "all_rho_strictly_one",
+          "optimizer_steps"
+        ]
+      },
+      "limits": [
+        "全分母D=596129，未分别重归一化；只讨论裁剪前参数梯度。",
+        "闭合误差约0.13%–0.61%，不能精确解释比它更小的分量投影。",
+        "负优势不等同错误回答，原reward含长度惩罚。",
+        "尚未由该分解定位E字符本身的因果贡献。"
+      ],
+      "reject_or_revise": []
+    },
+    {
+      "id": "LG05",
+      "title": "501/601/701数据×600/700权重交叉",
+      "evidence_level": "controlled_fixed_input_state_comparison",
+      "supported_claim": "相同历史回答在不同权重上的d和冻结梯度显著改变；数据批次也有独立影响。实际完成的是三批数据×两份权重，不存在这里可引用的full8 500权重完整矩阵。",
+      "quantitative_evidence": {
+        "cells": [
+          {
+            "cohort": "full501_168",
+            "actual_training_round": 501,
+            "weight_after_step": 600,
+            "responses": 168,
+            "valid_response_tokens": 362658,
+            "q_mean_response_PPL": 2.5738204735727233,
+            "p_mean_response_PPL": 2.702358474467797,
+            "p_mean_response_logPPL": 0.8724207517366083,
+            "token_abs_logprob_gap_mean": 0.1352372996706208,
+            "token_abs_logprob_gap_RMS": 0.2822179990141592,
+            "gap_exceed_count": 22438,
+            "gap_exceed_fraction": 0.06187096382817972,
+            "gap_exceed_conditional_mean": 0.8631940861522761,
+            "frozen_full_gradient_norm_mean": 0.4718432277441025
+          },
+          {
+            "cohort": "full501_168",
+            "actual_training_round": 501,
+            "weight_after_step": 700,
+            "responses": 168,
+            "valid_response_tokens": 362658,
+            "q_mean_response_PPL": 2.5738204735727233,
+            "p_mean_response_PPL": 3.4611446938626647,
+            "p_mean_response_logPPL": 1.002212032370175,
+            "token_abs_logprob_gap_mean": 0.3015960913161958,
+            "token_abs_logprob_gap_RMS": 1.1807734906888774,
+            "gap_exceed_count": 48769,
+            "gap_exceed_fraction": 0.13447655918248047,
+            "gap_exceed_conditional_mean": 1.690317574724915,
+            "frozen_full_gradient_norm_mean": 6.987428665161133
+          },
+          {
+            "cohort": "full601_512",
+            "actual_training_round": 601,
+            "weight_after_step": 600,
+            "responses": 512,
+            "valid_response_tokens": 1297006,
+            "q_mean_response_PPL": 7.331884982908675,
+            "p_mean_response_PPL": 7.37062696744699,
+            "p_mean_response_logPPL": 1.7108477751777984,
+            "token_abs_logprob_gap_mean": 0.06241937171608012,
+            "token_abs_logprob_gap_RMS": 0.09981448725998389,
+            "gap_exceed_count": 1893,
+            "gap_exceed_fraction": 0.001459515221980469,
+            "gap_exceed_conditional_mean": 0.6378509737137947,
+            "frozen_full_gradient_norm_mean": 0.5099430680274963
+          },
+          {
+            "cohort": "full601_512",
+            "actual_training_round": 601,
+            "weight_after_step": 700,
+            "responses": 512,
+            "valid_response_tokens": 1297006,
+            "q_mean_response_PPL": 7.331884982908675,
+            "p_mean_response_PPL": 68170.3853563663,
+            "p_mean_response_logPPL": 3.8307357594035514,
+            "token_abs_logprob_gap_mean": 3.852366151226722,
+            "token_abs_logprob_gap_RMS": 8.180755789687334,
+            "gap_exceed_count": 592253,
+            "gap_exceed_fraction": 0.4566308868270463,
+            "gap_exceed_conditional_mean": 8.296118539667036,
+            "frozen_full_gradient_norm_mean": 77.34978866577148
+          },
+          {
+            "cohort": "full701_512",
+            "actual_training_round": 701,
+            "weight_after_step": 600,
+            "responses": 512,
+            "valid_response_tokens": 1181386,
+            "q_mean_response_PPL": 2.60444225459978,
+            "p_mean_response_PPL": 3.034161176370233,
+            "p_mean_response_logPPL": 0.973048951657927,
+            "token_abs_logprob_gap_mean": 0.47246813566279594,
+            "token_abs_logprob_gap_RMS": 1.1180789111742617,
+            "gap_exceed_count": 281430,
+            "gap_exceed_fraction": 0.2382201922149069,
+            "gap_exceed_conditional_mean": 1.633360657441495,
+            "frozen_full_gradient_norm_mean": 32.8543701171875
+          },
+          {
+            "cohort": "full701_512",
+            "actual_training_round": 701,
+            "weight_after_step": 700,
+            "responses": 512,
+            "valid_response_tokens": 1181386,
+            "q_mean_response_PPL": 2.60444225459978,
+            "p_mean_response_PPL": 6.315569541072058,
+            "p_mean_response_logPPL": 1.087078927875357,
+            "token_abs_logprob_gap_mean": 0.9797610330374715,
+            "token_abs_logprob_gap_RMS": 3.2065812709023893,
+            "gap_exceed_count": 261052,
+            "gap_exceed_fraction": 0.2209709612268979,
+            "gap_exceed_conditional_mean": 4.192133104269865,
+            "frozen_full_gradient_norm_mean": 142.64795684814453
+          }
+        ],
+        "cohorts": [
+          {
+            "cohort": "full501_168",
+            "actual_training_round": 501,
+            "responses": 168,
+            "groups": 21,
+            "valid_response_tokens": 362658,
+            "mean_response_tokens": 2158.6785714285716,
+            "q_mean_response_PPL": 2.5738204735727233,
+            "q_mean_response_logPPL": 0.8267687876037699,
+            "alright_count": 168,
+            "alright_fraction": 1.0,
+            "semantic_abnormal_count": 28,
+            "semantic_abnormal_fraction": 0.16666666666666666,
+            "semantic_uncertain_count": 3,
+            "semantic_repeat_count": 2,
+            "semantic_repeat_fraction": 0.011904761904761904,
+            "semantic_gibberish_count": 26,
+            "semantic_gibberish_fraction": 0.15476190476190477
+          },
+          {
+            "cohort": "full601_512",
+            "actual_training_round": 601,
+            "responses": 512,
+            "groups": 64,
+            "valid_response_tokens": 1297006,
+            "mean_response_tokens": 2533.21484375,
+            "q_mean_response_PPL": 7.331884982908675,
+            "q_mean_response_logPPL": 1.7065872033861256,
+            "alright_count": 414,
+            "alright_fraction": 0.80859375,
+            "semantic_abnormal_count": 197,
+            "semantic_abnormal_fraction": 0.384765625,
+            "semantic_uncertain_count": 4,
+            "semantic_repeat_count": 30,
+            "semantic_repeat_fraction": 0.05859375,
+            "semantic_gibberish_count": 180,
+            "semantic_gibberish_fraction": 0.3515625
+          },
+          {
+            "cohort": "full701_512",
+            "actual_training_round": 701,
+            "responses": 512,
+            "groups": 64,
+            "valid_response_tokens": 1181386,
+            "mean_response_tokens": 2307.39453125,
+            "q_mean_response_PPL": 2.60444225459978,
+            "q_mean_response_logPPL": 0.8493450102187674,
+            "alright_count": 18,
+            "alright_fraction": 0.03515625,
+            "semantic_abnormal_count": 98,
+            "semantic_abnormal_fraction": 0.19140625,
+            "semantic_uncertain_count": 1,
+            "semantic_repeat_count": 76,
+            "semantic_repeat_fraction": 0.1484375,
+            "semantic_gibberish_count": 97,
+            "semantic_gibberish_fraction": 0.189453125
+          }
+        ],
+        "weight500": "not available in this full8 six-cell experiment"
+      },
+      "source_keys": {
+        "cross": [
+          "cells",
+          "cohorts",
+          "definitions",
+          "limits"
+        ],
+        "crossreview": [
+          "join_keys_exact_full6",
+          "all_numeric_json_fields_checked_against_sources_or_independent_reduction",
+          "semantic_label_source"
+        ]
+      },
+      "limits": [
+        "501只有168条/21组；601与701各512条/64组。另有matched168校验，不把全量范数当样本数匹配。",
+        "损失为固定A的线性似然-sum(A logp)/D、0次Adam，不是生产轮4次顺序PPO范数平均。",
+        "q沿用历史采样，p600打分701含反事实跨权重差异；d只相关不直接输入该冻结损失。",
+        "使用最终aligned701语义标签，重复/乱码标签重叠且AI标签不是人工真值。"
+      ],
+      "reject_or_revise": [
+        "“原回答本身就一定异常梯度”不成立，同批在不同状态的响应差异很大。"
+      ]
+    },
+    {
+      "id": "LG06",
+      "title": "大d token的定位与删除干预",
+      "evidence_level": "controlled_loss_mask_intervention",
+      "supported_claim": "同状态保持上下文和原D，仅去掉d>0.5位置的loss系数，会大幅改变并降低冻结全批梯度；效果强于同等删量随机对照。",
+      "quantitative_evidence": {
+        "comparisons": [
+          {
+            "state": 600,
+            "target": "high_gap",
+            "targeted_remaining_norm": 10.801077842712402,
+            "targeted_remaining_norm_ratio": 0.3287562754177787,
+            "random_remaining_norm_mean": 14.783571243286133,
+            "random_remaining_norm_min": 14.754146575927734,
+            "random_remaining_norm_max": 14.800232887268066,
+            "target_to_random_mean_remaining_norm_ratio": 0.7306135753644536,
+            "descriptive_only_no_population_p_value": true
+          },
+          {
+            "state": 600,
+            "target": "negative_down",
+            "targeted_remaining_norm": 12.539371490478516,
+            "targeted_remaining_norm_ratio": 0.381665341859472,
+            "random_remaining_norm_mean": 17.72225507100423,
+            "random_remaining_norm_min": 17.69118881225586,
+            "random_remaining_norm_max": 17.764070510864258,
+            "target_to_random_mean_remaining_norm_ratio": 0.7075494309408996,
+            "descriptive_only_no_population_p_value": true
+          },
+          {
+            "state": 700,
+            "target": "high_gap",
+            "targeted_remaining_norm": 16.623397827148438,
+            "targeted_remaining_norm_ratio": 0.11653258776277918,
+            "random_remaining_norm_mean": 50.70754877726237,
+            "random_remaining_norm_min": 50.4882926940918,
+            "random_remaining_norm_max": 50.82353591918945,
+            "target_to_random_mean_remaining_norm_ratio": 0.32782885838493714,
+            "descriptive_only_no_population_p_value": true
+          },
+          {
+            "state": 700,
+            "target": "negative_down",
+            "targeted_remaining_norm": 17.157772064208984,
+            "targeted_remaining_norm_ratio": 0.12027863374723652,
+            "random_remaining_norm_mean": 63.547157287597656,
+            "random_remaining_norm_min": 63.29462432861328,
+            "random_remaining_norm_max": 63.75874710083008,
+            "target_to_random_mean_remaining_norm_ratio": 0.2700006231050972,
+            "descriptive_only_no_population_p_value": true
+          }
+        ],
+        "full_norms": {
+          "600": 32.85436248779297,
+          "700": 142.65020751953125
+        },
+        "removed_fractions": [
+          {
+            "weight_step": 600,
+            "variant": "remove_high_gap",
+            "deleted_fraction": 0.2382201922149069,
+            "grad_norm": 10.801077842712402
+          },
+          {
+            "weight_step": 600,
+            "variant": "remove_negative_down",
+            "deleted_fraction": 0.17785634839078845,
+            "grad_norm": 12.539371490478516
+          },
+          {
+            "weight_step": 700,
+            "variant": "remove_high_gap",
+            "deleted_fraction": 0.2209709612268979,
+            "grad_norm": 16.623397827148438
+          },
+          {
+            "weight_step": 700,
+            "variant": "remove_negative_down",
+            "deleted_fraction": 0.17411413373782997,
+            "grad_norm": 17.157772064208984
+          }
+        ]
+      },
+      "source_keys": {
+        "mask": [
+          "comparisons",
+          "records",
+          "random_controls_are_not_independent_training_runs",
+          "projection_is_signed_not_a_causal_percentage"
+        ]
+      },
+      "limits": [
+        "这是改loss支持的干预，不是直接操纵d而保持其余不变。",
+        "随机对照只有3次固定mask，不是3条独立训练轨迹。",
+        "分量可相消，部分only范数超过full；有符号投影不是正的因果贡献百分比。"
+      ],
+      "reject_or_revise": []
+    },
+    {
+      "id": "LG07",
+      "title": "p下降/上升×正负优势四象限",
+      "evidence_level": "controlled_frozen_component_intervention",
+      "supported_claim": "在701批次、600和700两状态，主要大梯度来自负优势且p相对q下降的token。两方向不能只按数量或d大小合并。",
+      "quantitative_evidence": {
+        "600": {
+          "full_norm": 32.854393005371094,
+          "components": [
+            {
+              "component": "positive_down",
+              "count": 15447,
+              "fraction_all_valid": 0.013075320005485083,
+              "only_norm": 0.8954368829727173,
+              "remove_norm": 33.6341552734375,
+              "only_cosine_to_full": -0.8674346227292722,
+              "signed_projection_on_full": -0.023641676081424434
+            },
+            {
+              "component": "positive_up",
+              "count": 9234,
+              "fraction_all_valid": 0.007816242955308425,
+              "only_norm": 0.22468255460262299,
+              "remove_norm": 32.8154182434082,
+              "only_cosine_to_full": 0.17811557559737326,
+              "signed_projection_on_full": 0.0012180854240625553
+            },
+            {
+              "component": "negative_down",
+              "count": 210117,
+              "fraction_all_valid": 0.17785634839078845,
+              "only_norm": 39.990333557128906,
+              "remove_norm": 12.539348602294922,
+              "only_cosine_to_full": 0.9595631900722285,
+              "signed_projection_on_full": 1.1679792768501223
+            },
+            {
+              "component": "negative_up",
+              "count": 46314,
+              "fraction_all_valid": 0.03920310550489002,
+              "only_norm": 1.967376708984375,
+              "remove_norm": 34.6707763671875,
+              "only_cosine_to_full": -0.918451932029892,
+              "signed_projection_on_full": -0.05499845036777136
+            },
+            {
+              "component": "residual",
+              "count": 900274,
+              "fraction_all_valid": 0.762048983143528,
+              "only_norm": 10.801054000854492,
+              "remove_norm": null,
+              "only_cosine_to_full": -0.2754688358067912,
+              "signed_projection_on_full": -0.09056181291307429
+            }
+          ]
+        },
+        "700": {
+          "full_norm": 142.6461944580078,
+          "components": [
+            {
+              "component": "positive_down",
+              "count": 4918,
+              "fraction_all_valid": 0.004162906958436955,
+              "only_norm": 8.171345710754395,
+              "remove_norm": 148.1506805419922,
+              "only_cosine_to_full": -0.6578563038545734,
+              "signed_projection_on_full": -0.03768464545404995
+            },
+            {
+              "component": "positive_up",
+              "count": 1032,
+              "fraction_all_valid": 0.0008735502198265428,
+              "only_norm": 0.08532082289457321,
+              "remove_norm": 142.65277099609375,
+              "only_cosine_to_full": -0.06011378701827495,
+              "signed_projection_on_full": -3.5955799043944486e-05
+            },
+            {
+              "component": "negative_down",
+              "count": 205696,
+              "fraction_all_valid": 0.17411413373782997,
+              "only_norm": 141.25917053222656,
+              "remove_norm": 17.15973663330078,
+              "only_cosine_to_full": 0.9927367469062173,
+              "signed_projection_on_full": 0.9830838995366948
+            },
+            {
+              "component": "negative_up",
+              "count": 49403,
+              "fraction_all_valid": 0.04181783092063052,
+              "only_norm": 3.4252047538757324,
+              "remove_norm": 143.40170288085938,
+              "only_cosine_to_full": -0.2083489866573424,
+              "signed_projection_on_full": -0.005002852936336293
+            },
+            {
+              "component": "residual",
+              "count": 920337,
+              "fraction_all_valid": 0.7790315781632761,
+              "only_norm": 16.623077392578125,
+              "remove_norm": null,
+              "only_cosine_to_full": 0.5121416369131816,
+              "signed_projection_on_full": 0.05968171919419005
+            }
+          ]
+        }
+      },
+      "source_keys": {
+        "quad": [
+          "definitions",
+          "states",
+          "growth600to700",
+          "full_norm_ratio700to600",
+          "limitations"
+        ]
+      },
+      "limits": [
+        "s=lnp0−lnq；down<−0.5，up>0.5。0.5只相当于约1.65倍概率比，未必极端异常。",
+        "600/700的mask按各自概率定义，位置并非固定同一集合。",
+        "only/remove保留原A与D；固定own-anchor线性PG，不等同历史B2/B3实际PPO。"
+      ],
+      "reject_or_revise": [
+        "“TIS只处理p上升”不准确：p0/q很小时IS权重本身就抑制p下降token，upper cap只是限制另一侧的放大。"
+      ]
+    },
+    {
+      "id": "LG08",
+      "title": "持续重复与严重失配的强关联有边界",
+      "evidence_level": "observational_population_association",
+      "supported_claim": "在实际701入训512条、用700打分时，75/76重复标注回答满足严重失配定义，normal为0/413；但同一normal回答在600打分有230/413满足，表明关系依赖权重。",
+      "quantitative_evidence": {
+        "complete": true,
+        "cp700_repetition_high": [
+          75,
+          76
+        ],
+        "cp700_normal_high": [
+          0,
+          413
+        ],
+        "cp700_other_high": [
+          2,
+          22
+        ],
+        "cp700_uncertain_high": [
+          0,
+          1
+        ],
+        "nonrepeat_clear_without_high": [
+          433,
+          435
+        ],
+        "cp700_high_set_equals_cap8192_set": true,
+        "high_and_cap_count": 77,
+        "cp600_normal_high": [
+          230,
+          413
+        ],
+        "first512_high": [
+          0,
+          510
+        ],
+        "window1024_1536_repetition_high": [
+          58,
+          76
+        ],
+        "window1024_1536_normal_high": [
+          0,
+          73
+        ],
+        "counterexample166_d_gt05_count": 1,
+        "counterexample166_tokens": 1773,
+        "GPU_calls": 0,
+        "new_model_calls": 0
+      },
+      "source_keys": {
+        "population": [
+          "cp700_repetition_high",
+          "cp700_normal_high",
+          "cp600_normal_high",
+          "high_and_cap_count",
+          "counterexample166_d_gt05_count"
+        ],
+        "population_plan": [
+          "primary_mismatch",
+          "population",
+          "limitations"
+        ],
+        "population_full": [
+          "limitations"
+        ]
+      },
+      "limits": [
+        "严重失配定义是一个回答至少5% token的d>0.5，不是任何单token超过0.5。",
+        "75/76重复回答达8192，而normal最长2300，无等长晚段正常对照；长度强混杂。",
+        "这是实际入训群体，不是全rollout。",
+        "短重复后恢复的row166共1773token，仅1个d>0.5；不可把任何重复都判为失配。"
+      ],
+      "reject_or_revise": [
+        "“没有重复就必然p/q正常”以及“重复必然导致大d”均不能成立。"
+      ]
+    },
+    {
+      "id": "LG09",
+      "title": "跨权重续写边界及高d token的采样概率",
+      "evidence_level": "aligned_segment_observation",
+      "supported_claim": "对771历史token与770 collector段落做可验证对齐后，高d尾部大多是原生成时高概率token；不是普遍由偶然低概率采样触发。边界前后均可有大d，不能把所有突变定位到续写边界。",
+      "quantitative_evidence": {
+        "verified_rows": 478,
+        "cross_version_boundaries": 326,
+        "rows_with_cross_version_boundaries": 247,
+        "high_d_gt10": {
+          "n": 298816,
+          "d_sum": 21382847.29859692,
+          "d_sq_sum": 1685686118.974852,
+          "mean_d": 71.558575506656,
+          "median_d": 76.92893887683749,
+          "max_d": 115.37190246582031,
+          "mean_signed_logp_minus_logq": -71.558575506656,
+          "q_sum": 296081.2129050403,
+          "mean_q": 0.9908479228188595,
+          "median_q": 1.0,
+          "q_gt0_5": 297276,
+          "q_gt0_9": 292498,
+          "q_lt0_01": 115,
+          "d_gt0_5": 298816,
+          "d_gt5": 298816,
+          "d_gt10": 298816,
+          "d_gt50": 231681
+        },
+        "before64_mean_d": 28.388286669991007,
+        "after64_mean_d": 16.708017893027115,
+        "scoring_state": "original recorded round-start p0 at theta770 before any step771 actor updates; not actual B2 post-B1 ptheta"
+      },
+      "source_keys": {
+        "boundary": [
+          "scoring_state",
+          "all_verified_d_subsets",
+          "pooled_boundary_windows",
+          "verified_rows",
+          "cross_version_boundaries",
+          "cross_version_windows_note"
+        ]
+      },
+      "limits": [
+        "仅已核对segments的子集；前后窗口长度/版本构成不同，均值比较不是续写边界随机干预。",
+        "p为原round-start p0，不是B1更新后的实际B2 ptheta。"
+      ],
+      "reject_or_revise": []
+    },
+    {
+      "id": "LG10",
+      "title": "零权重落后仍能严重失配",
+      "evidence_level": "same_weight_native_forward_counterexample",
+      "supported_claim": "最终740模型生成的完整token，拿同一份权重用原生训练前向重算，仍出现q≈0.98而p≈10^-7的E；权重落后不是严重失配的必要条件。",
+      "quantitative_evidence": {
+        "native_repeat2_examples": [
+          {
+            "point_id": "pair0_case_order0017",
+            "response_index": 4772,
+            "target_token_id": 36,
+            "logp": -14.777315139770508,
+            "logq": -0.015642914921045303,
+            "p": 3.822025475128011e-07,
+            "q": 0.9844787999874535
+          },
+          {
+            "point_id": "pair1_case_order0020",
+            "response_index": 3122,
+            "target_token_id": 36,
+            "logp": -14.245540618896484,
+            "logq": -0.020112037658691406,
+            "p": 6.504895401074344e-07,
+            "q": 0.9800888602940568
+          }
+        ],
+        "native_repeat2_pooled": {
+          "tokens": 76769,
+          "mean_abs_d": 0.09254388450922313,
+          "RMS_d": 0.5195377260946336,
+          "L2_d": 143.94945698980192,
+          "max_abs_d": 14.785088568925858,
+          "mean_signed_p_minus_q": -0.05782426939447754,
+          "abs_d_gt_0_5_count": 2880,
+          "abs_d_gt_0_5_fraction": 0.03751514283109068,
+          "conditional_mean_abs_d_gt_0_5": 1.8567113794598438,
+          "q_ge_0_9_and_native_p_le_1e_6_count": 2,
+          "mean_chosen_probability_p": 0.8548366847825453,
+          "mean_chosen_probability_q": 0.8691527561930439,
+          "ratio_of_mean_chosen_probabilities": 0.9835287050423632
+        },
+        "tis_pooled": {
+          "tokens": 75105,
+          "mean_abs_d": 0.07736700655794995,
+          "RMS_d": 0.140772608810622,
+          "L2_d": 38.57914374020272,
+          "max_abs_d": 11.984028983861208,
+          "mean_signed_p_minus_q": -0.0076752688492095775,
+          "abs_d_gt_0_5_count": 492,
+          "abs_d_gt_0_5_fraction": 0.006550828839624526,
+          "conditional_mean_abs_d_gt_0_5": 0.7446504702518989,
+          "q_ge_0_9_and_native_p_le_1e_6_count": 0,
+          "mean_chosen_probability_p": 0.37581518846179096,
+          "mean_chosen_probability_q": 0.37432048924597844,
+          "ratio_of_mean_chosen_probabilities": 1.0039931001875515
+        },
+        "unique_inputs": 32,
+        "forward_passes": 64
+      },
+      "source_keys": {
+        "zeroage": [
+          "passed",
+          "complete_for_oracle",
+          "results",
+          "all32_frozen_rank_proofs_RNG_unchanged",
+          "limitations"
+        ]
+      },
+      "limits": [
+        "cached decode与完整前向仍有精度、布局、后端、cache执行差异，尚未分离各因素份额。",
+        "选择了每模型8截断+8非截断；不是总体发生率。",
+        "这里未测这些具体token的参数梯度，不可凭d直接断言梯度爆炸。"
+      ],
+      "reject_or_revise": []
+    },
+    {
+      "id": "LG11",
+      "title": "反例：长循环也可有很小d和很小似然梯度",
+      "evidence_level": "counterexample_and_fixed_objective_backward",
+      "supported_claim": "当前长9循环能够对坏输出高度确信、p≈q，NLL反向信号极弱；这否定“持续重复与严重失配普遍绑定”的无条件表述。",
+      "quantitative_evidence": {
+        "selected_cases": 8,
+        "last_response_tokens_per_backward": 16,
+        "NLL_gradient_range": [
+          7.043977431916119e-14,
+          1.0837396349035357e-11
+        ],
+        "NLL_actual_cotangent_range": [
+          8.106580781308468e-18,
+          1.5273248727684642e-15
+        ],
+        "NLL_directional_gain_range": [
+          5390.275744421813,
+          9571.885545871095
+        ],
+        "fixed_margin_gradient_range": [
+          1845.8810729322938,
+          3313.86652674716
+        ],
+        "backwards": 36,
+        "low_gap_reference_scope": "Native740/fixedD740 selected current-weight case cohorts; see lowgap review. 1x selected16 rows and native32 rows are not identical cohorts."
+      },
+      "source_keys": {
+        "saturation": [
+          "points",
+          "backwards",
+          "interpretation",
+          "limitations"
+        ],
+        "lowgap": [
+          "results",
+          "limitations"
+        ]
+      },
+      "limits": [
+        "NLL与固定selected-token-vs-EOS margin方向不同，norm比值不是Jacobian算子范数。",
+        "这些末16token反向不是实际G8 PPO全批梯度。",
+        "数值NLL=0不等于精确零梯度；实际全8长循环梯度极小但非零。"
+      ],
+      "reject_or_revise": [
+        "“把d压小就说明恢复正常”被高确信长9循环反例否定。"
+      ]
+    },
+    {
+      "id": "LG12",
+      "title": "实际目标审计：这里没有逐回答1/T",
+      "evidence_level": "source_and_math_audit",
+      "supported_claim": "这条运行使用global minibatch token-mean，D_j=ΣT；同组A广播至response token。不是原始sequence-mean GRPO的每回答1/T。长回答会改变全局分母与总系数质量，不能直接套逐回答惩罚被稀释的解释。",
+      "quantitative_evidence": {
+        "normalization_comparison": [
+          {
+            "method": "Original sequence-mean GRPO",
+            "token_coefficient_at_anchor": "-A_i/(N*T_i)",
+            "sum_absolute_coefficients_in_response": "|A_i|/N",
+            "length_effect_holding_A_context_scores_fixed": "Changing only T_i changes that response's per-token coefficient as1/T_i. Other responses retain their coefficients."
+          },
+          {
+            "method": "This runtime / token-mean DAPO family",
+            "token_coefficient_at_anchor": "-A_i/D_j",
+            "sum_absolute_coefficients_in_response": "|A_i|*T_i/D_j",
+            "length_effect_holding_A_context_scores_fixed": "Within one fixed minibatch, all equal-A tokens have equal scalar coefficients. Increasing T_i by Delta changes every old token coefficient by D_j/(D_j+Delta); response i total coefficient mass rises from |A_i|T_i/D_j to |A_i|(T_i+Delta)/(D_j+Delta) if other tokens exist."
+          },
+          {
+            "method": "Constant-denominator Dr. GRPO-style reduction",
+            "token_coefficient_at_anchor": "-(R_i-mean_group_R)/(N*C)",
+            "sum_absolute_coefficients_in_response": "|R_i-mean_group_R|*T_i/(N*C)",
+            "length_effect_holding_A_context_scores_fixed": "No actual-length denominator; C must be fixed. Full Dr. GRPO also removes group reward std, so changing both at once does not isolate length normalization."
+          }
+        ],
+        "loss_and_derivative": {
+          "positive_token_loss": "max(-A_i*rho_it, -A_i*clip(rho_it,0.8,1.28)) / D_j",
+          "negative_token_loss": "min(10*(-A_i), max(-A_i*rho_it, -A_i*clip(rho_it,0.8,1.28))) / D_j",
+          "general_gradient": "g_j = -sum_{i in B_j,t} (A_i*rho_it*I_it/D_j) * grad_theta log p_theta_it",
+          "active_positive": "I=1 for rho<1.28, except when the [-20,20] log-ratio clamp saturates; I=0 above1.28. Boundary subgradients are implementation dependent.",
+          "active_negative": "I=1 for 0.8<rho<10; I=0 below0.8 or above10. Boundary subgradients are implementation dependent.",
+          "own_anchor": "At theta=theta0, rho=1 and all valid nonzero-A tokens are active: g_j=-sum A_i*grad log p0_it / D_j.",
+          "DP_and_microbatches": "Each local microbatch loss multiplies by DP size8 and divides by the same global minibatch D_j; DP averaging cancels8 and accumulated microbatches add. There is no extra mean over microbatch count.",
+          "frozen_probe": "The previous 20-point sign probe computes g_full=-sum over512 A_i*grad log p0_it/D at fixed theta0, with all contexts and original D retained.",
+          "whole_inner_identity": "At identical theta0, anchor, coefficients, and arithmetic: g_full = sum_j (D_j/D)*g_j. This identity concerns vectors, not norms.",
+          "historical_timing": "Actual updates2–4 use changed theta after preceding Adam steps, original p0, clipping, and their own D_j. Mean_j ||g_j(theta_j)|| is neither ||g_full(theta0)|| nor a sign decomposition."
+        },
+        "reward_sampling_truncation": {
+          "shaped_reward": "R_i = correctness_score_i + min(-(T_i-6144)/2048,0), for configured generation cap8192.",
+          "advantage": "A_i=(R_i-mean_{group8}R)/(sample_std_{group8}R+1e-6); copied to every valid token.",
+          "penalty_effect": "Length can change A_i, every group member's mean, and group std. Therefore even sign can differ from raw correctness. The penalty is zero up to6144 and reaches−1 at8192.",
+          "finite_group_advantage_bound": "For G=8 and sample std, every centered standardized |A_i| <= (G-1)/sqrt(G)=7/sqrt(8)≈2.474874; epsilon only reduces the bound. Small group std by itself cannot make individual standardized advantages arbitrarily large. This follows from zero-sum centered rewards and Cauchy–Schwarz.",
+          "selection": "APRIL retains complete G8 groups with mixed binary raw accuracy; full8 profile has discard_pilot=false. This conditions the training distribution and can retain stale behavior segments.",
+          "generation": "Training generation temperature1, top_p1, top_k−1, cap8192. Evaluation sampling settings differ and must not be substituted.",
+          "truncation": "This reward manager applies shaped reward to capped responses; it does not itself mask their loss. A separate mask override would require evidence from actual batch receipts.",
+          "source_ids": [
+            "config",
+            "reward",
+            "collector",
+            "core"
+          ]
+        }
+      },
+      "source_keys": {
+        "objective": [
+          "runtime",
+          "normalization_comparison",
+          "loss_and_derivative",
+          "reward_sampling_truncation",
+          "important_limits_to_the_math"
+        ]
+      },
+      "limits": [
+        "替换固定D在一个固定batch只缩放整批向量，跨更新的Adam、epsilon、clip、moment和数据变化使轨迹效果不同。",
+        "全局token-mean仍是随机分母ratio estimator，不能称完全长度无偏。"
+      ],
+      "reject_or_revise": [
+        "“GRPO组内标准差很小会使A无限大”在G8中心化sample-std下不成立，|A|≤7/√8≈2.474874。"
+      ]
+    },
+    {
+      "id": "LG13",
+      "title": "大d不是梯度爆炸的代数充分条件",
+      "evidence_level": "mathematical_audit_with_counterexamples",
+      "supported_claim": "原生未做rollout correction时q不是PPO loss显式输入；rho使用p/p0。own-anchor rho=1，即使p0/q极小，logp系数仍由A/D决定。梯度还取决于softmax残差、参数Jacobian、方向叠加及裁剪。",
+      "quantitative_evidence": {
+        "selected_logit_residual": "1-p_y bounded in[0,1]",
+        "full_logit_residual_L2_bound": "sqrt(2)",
+        "parameter_gradient": "-Σ(A_i*rho_it*I_it/D_j) J_it^T(e_y−π_it)",
+        "theta770_B2_d_gt50": {
+          "tokens": 113189,
+          "negative_tokens": 113189,
+          "positive_tokens": 0,
+          "zero_A_tokens": 0,
+          "mean_d": 82.15983944819823,
+          "mean_logp": -82.16472101568368,
+          "mean_logq": -0.004881567485448818,
+          "mean_selected_logit_residual": 1.0,
+          "current_less_likely_tokens": 113189,
+          "old_probability_gt_0p9": 112181,
+          "current_probability_lt_1em6": 113189,
+          "absolute_coefficient_mass": 0.44273628051452074,
+          "selected_logit_absolute_derivative_mass": 0.44273628051452074
+        },
+        "theta770_B2_negative": {
+          "tokens": 221346,
+          "negative_tokens": 221346,
+          "positive_tokens": 0,
+          "zero_A_tokens": 0,
+          "mean_d": 46.375048131656406,
+          "mean_logp": -46.5549115725862,
+          "mean_logq": -0.19827359562611205,
+          "mean_selected_logit_residual": 0.7035608828687822,
+          "current_less_likely_tokens": 171850,
+          "old_probability_gt_0p9": 191952,
+          "current_probability_lt_1em6": 139225,
+          "absolute_coefficient_mass": 0.819321363619024,
+          "selected_logit_absolute_derivative_mass": 0.6140417769301282
+        }
+      },
+      "source_keys": {
+        "objective": [
+          "why_large_d_does_not_algebraically_force_large_gradient"
+        ],
+        "geom": [
+          "definition",
+          "target_logit_residual",
+          "negative",
+          "d_gt_50",
+          "interpretation_limits"
+        ]
+      },
+      "limits": [
+        "q决定采样分布及哪些历史轨迹进入数据，不代表整体训练里无关。",
+        "p很小时1−p饱和，d从50增至100不把输出残差翻倍。",
+        "尚无普适的必要充分条件或precision/staleness/repetition因果百分比分解。"
+      ],
+      "reject_or_revise": [
+        "将之前“大量d异常是梯度异常直接原因”更正为：d是状态相关风险指示，定位了部分重要loss支持，但不是独立、单调或充分的因。"
+      ]
+    },
+    {
+      "id": "LG14",
+      "title": "精确725峰值：负token权重位置比同量缩放更重要",
+      "evidence_level": "verified_same_state_gradient_and_Adam_intervention",
+      "supported_claim": "新增受控固定历史轨迹实际725 B2峰值被完整保真复现。保持同状态，negative-TIS比匹配负系数总量的统一缩小更有效压低当前梯度；一步Adam后native原锚点梯度下降但线性梯度上升，刷新锚点又恢复大梯度。",
+      "quantitative_evidence": {
+        "norms": {
+          "pre/native_full_replay": 181.5467987060547,
+          "pre/native_coefficient_full_VJP": 181.5467987060547,
+          "pre/fixed_A_linear": 774.2667846679688,
+          "pre/PPO_bounds_removed_logguard20": 54772448.0,
+          "pre/native_coefficient_positive_only": 0.08022692054510117,
+          "pre/native_coefficient_negative_only": 181.55294799804688,
+          "pre/native_coefficient_full_negative_TIS": 12.640962600708008,
+          "pre/native_coefficient_full_negative_uniform_matched": 165.0736083984375,
+          "post/fixed_A_linear": 1152.7357177734375,
+          "post/PPO_bounds_removed_logguard20": 262041184.0,
+          "post/native_original_round_anchor": 15.352561950683594,
+          "post/native_refreshed_B2_anchor": 1152.7357177734375,
+          "post/native_B3_original_round_anchor_trajectory_check": 20.143705368041992
+        },
+        "uniform_over_native": 0.9092620171491473,
+        "TIS_over_native": 0.06962922337823864,
+        "native_post_over_pre": 0.08456531351754194,
+        "linear_post_over_pre": 1.4888094654192983,
+        "sign_closure_relative": 0.00024038687770015096
+      },
+      "source_keys": {
+        "peak725": [
+          "norms",
+          "uniform_over_native_norm",
+          "TIS_over_native_norm",
+          "native_post_over_pre",
+          "linear_post_over_pre",
+          "sign_closure",
+          "limits"
+        ]
+      },
+      "limits": [
+        "This is a verified new controlled trajectory actual peak, not a recovered original771 state.",
+        "Frozen coefficient weights identify a same-state loss intervention, not long-run generated quality.",
+        "PPO-bounds-removed branches retain native log-ratio clamp[-20,20]; not unbounded exponentials.",
+        "Negative and positive vector norms are not additive fractions; measured closure is approximate.",
+        "Post-native vs refreshed-anchor contrast includes ratio and clipping effects; it does not isolate one clip bound.",
+        "TIS uses own-round anchor vs historicalq, frozen weights; no claim a generic online TIS scheme improves quality."
+      ],
+      "reject_or_revise": [
+        "“更新后观测梯度下降，说明网络反向敏感度下降”被固定线性/刷新anchor对照否定。"
+      ]
+    },
+    {
+      "id": "LG15",
+      "title": "数值路径：同一Adam更新的非确定性及受控状态对",
+      "evidence_level": "controlled_numerical_intervention",
+      "supported_claim": "相同完整730状态重复一次B1：非确定性FA2反向向量差约1.2%；确定性FA2后3次gradient/Adam/post-logp逐位相同。但确定性训练仍可出现峰值。两近邻实际poststate的BF16路径可放大极小参数差，math attention也能出现，FA2不是必要条件。",
+      "quantitative_evidence": {
+        "nondeterministic_repeats": [
+          {
+            "repeat": 1,
+            "B1_norm": 1.178133249282837,
+            "B1_vector_relative_difference": 0.0,
+            "delta_relative_vector_difference": 0.0,
+            "post_BF16_difference_fraction": 0.0,
+            "post_logp_vs_repeat1": {
+              "max_abs": 0.0,
+              "mean_abs": 0.0,
+              "fraction_abs_gt_0_1": 0.0,
+              "exact": true
+            }
+          },
+          {
+            "repeat": 2,
+            "B1_norm": 1.1806211471557617,
+            "B1_vector_relative_difference": 0.01205944120678341,
+            "delta_relative_vector_difference": 0.00943965891592828,
+            "post_BF16_difference_fraction": 5.984322267250007e-05,
+            "post_logp_vs_repeat1": {
+              "max_abs": 67.36691284179688,
+              "mean_abs": 0.007162577768330396,
+              "fraction_abs_gt_0_1": 0.019157492913771126,
+              "exact": false
+            }
+          },
+          {
+            "repeat": 3,
+            "B1_norm": 1.1787052154541016,
+            "B1_vector_relative_difference": 0.012504779202807884,
+            "delta_relative_vector_difference": 0.00965072412758593,
+            "post_BF16_difference_fraction": 6.076414120648625e-05,
+            "post_logp_vs_repeat1": {
+              "max_abs": 78.40644836425781,
+              "mean_abs": 0.0073718915655943745,
+              "fraction_abs_gt_0_1": 0.019281215203106123,
+              "exact": false
+            }
+          }
+        ],
+        "deterministic_repeats": [
+          {
+            "repeat": 1,
+            "B1norm": 1.1778589487075806,
+            "B1vector_relative_difference": 0.0,
+            "post_FP32_exact": true,
+            "post_BF16_mismatch": 0.0,
+            "B2_logp_repeat": {
+              "max_abs": 0.0,
+              "mean_abs": 0.0,
+              "fraction_abs_gt_0_1": 0.0,
+              "exact": true
+            }
+          },
+          {
+            "repeat": 2,
+            "B1norm": 1.1778589487075806,
+            "B1vector_relative_difference": 0.0,
+            "post_FP32_exact": true,
+            "post_BF16_mismatch": 0.0,
+            "B2_logp_repeat": {
+              "max_abs": 0.0,
+              "mean_abs": 0.0,
+              "fraction_abs_gt_0_1": 0.0,
+              "exact": true
+            }
+          },
+          {
+            "repeat": 3,
+            "B1norm": 1.1778589487075806,
+            "B1vector_relative_difference": 0.0,
+            "post_FP32_exact": true,
+            "post_BF16_mismatch": 0.0,
+            "B2_logp_repeat": {
+              "max_abs": 0.0,
+              "mean_abs": 0.0,
+              "fraction_abs_gt_0_1": 0.0,
+              "exact": true
+            }
+          }
+        ],
+        "row150_contrasts": [
+          {
+            "row": 150,
+            "mode": "master_fp32_math",
+            "tokens": 8192,
+            "mean_abs_state_difference": 2.666679210960865e-05,
+            "max_abs_state_difference": 0.0274810791015625,
+            "L2_state_difference": 0.04911511440772194,
+            "largest_difference_response_position": 730,
+            "tokens_over_point1": 0
+          },
+          {
+            "row": 150,
+            "mode": "bf16_grid_fp32_math",
+            "tokens": 8192,
+            "mean_abs_state_difference": 5.257432349026203e-06,
+            "max_abs_state_difference": 0.0033283233642578125,
+            "L2_state_difference": 0.006181077841727964,
+            "largest_difference_response_position": 838,
+            "tokens_over_point1": 0
+          },
+          {
+            "row": 150,
+            "mode": "native_functional_bf16_fa2",
+            "tokens": 8192,
+            "mean_abs_state_difference": 0.012527968501672149,
+            "max_abs_state_difference": 67.67187309265137,
+            "L2_state_difference": 67.82330143492649,
+            "largest_difference_response_position": 6789,
+            "tokens_over_point1": 117
+          }
+        ],
+        "row150_attention_backend": [
+          {
+            "row": 150,
+            "mode": "bf16_leaf_fa2",
+            "mean_abs": 0.012527968501672149,
+            "max_abs": 67.67187309265137,
+            "maximum_position": 6789,
+            "primary": 6789,
+            "det": -17.87500207465666,
+            "flag0": -85.54687500000003,
+            "delta": -67.67187292534337
+          },
+          {
+            "row": 150,
+            "mode": "bf16_leaf_math",
+            "mean_abs": 0.013715843670070171,
+            "max_abs": 75.00778579711914,
+            "maximum_position": 6789,
+            "primary": 6789,
+            "det": -13.312526701094352,
+            "flag0": -88.3203125000001,
+            "delta": -75.00778579890574
+          }
+        ]
+      },
+      "source_keys": {
+        "repeat_nondet": [
+          "[0:3]"
+        ],
+        "repeat_det": [
+          "[0:3]"
+        ],
+        "statepair": [
+          "definitions",
+          "full_response_contrasts",
+          "limitations"
+        ],
+        "backend": [
+          "contrasts",
+          "scope"
+        ]
+      },
+      "limits": [
+        "poststates来自受控单B1结果，不是原生产后继权重。",
+        "row150罕见换行logp差67–75nats不等同整个词表分布同等幅度改变；两模型仍可都确信9。",
+        "FP32是反事实计算参考，不是“正确策略”或已证实的训练修复。"
+      ],
+      "reject_or_revise": []
+    },
+    {
+      "id": "LG16",
+      "title": "FP16并非已证实的通用修复",
+      "evidence_level": "supplementary_precision_counterexample",
+      "supported_claim": "辅助late nodiscard44的FP16探测包含非有限反向；改变loss scale后部分梯度稳定，但不能推出FP16训练整体稳定或优于BF16。",
+      "quantitative_evidence": [
+        {
+          "case_id": "native517_rank0",
+          "loss_scale": 1,
+          "gradient_norm": 1879.581265547782,
+          "nonfinite_parameter_count": 0,
+          "geometry_vs_scale1": {
+            "reference_norm": 1879.581265547782,
+            "variant_norm": 1879.581265547782,
+            "relative_gradient_L2": 0.0,
+            "cosine": 1.0
+          },
+          "max_abs_logp_difference_vs_scale1": 0.0,
+          "mean_logp": -12.989158407432114
+        },
+        {
+          "case_id": "native517_rank0",
+          "loss_scale": 16,
+          "gradient_norm": 1994.3044665535974,
+          "nonfinite_parameter_count": 0,
+          "geometry_vs_scale1": {
+            "reference_norm": 1879.581265547782,
+            "variant_norm": 1994.3044665535974,
+            "relative_gradient_L2": 0.0802658645503249,
+            "cosine": 0.9987195796484514
+          },
+          "max_abs_logp_difference_vs_scale1": 0.0,
+          "mean_logp": -12.989158407432114
+        },
+        {
+          "case_id": "native517_rank0",
+          "loss_scale": 128,
+          "gradient_norm": 2009.3037893937935,
+          "nonfinite_parameter_count": 0,
+          "geometry_vs_scale1": {
+            "reference_norm": 1879.581265547782,
+            "variant_norm": 2009.3037893937935,
+            "relative_gradient_L2": 0.09039840632366862,
+            "cosine": 0.998405747581152
+          },
+          "max_abs_logp_difference_vs_scale1": 0.0,
+          "mean_logp": -12.989158407432114
+        },
+        {
+          "case_id": "natural541_0087",
+          "loss_scale": 1,
+          "gradient_norm": 7810.151145757509,
+          "nonfinite_parameter_count": 0,
+          "geometry_vs_scale1": {
+            "reference_norm": 7810.151145757509,
+            "variant_norm": 7810.151145757509,
+            "relative_gradient_L2": 0.0,
+            "cosine": 1.0
+          },
+          "max_abs_logp_difference_vs_scale1": 0.0,
+          "mean_logp": -19.307522177696228
+        },
+        {
+          "case_id": "natural541_0087",
+          "loss_scale": 16,
+          "gradient_norm": 7816.990522745596,
+          "nonfinite_parameter_count": 0,
+          "geometry_vs_scale1": {
+            "reference_norm": 7810.151145757509,
+            "variant_norm": 7816.990522745596,
+            "relative_gradient_L2": 0.006481100443952003,
+            "cosine": 0.9999793991371101
+          },
+          "max_abs_logp_difference_vs_scale1": 0.0,
+          "mean_logp": -19.307522177696228
+        },
+        {
+          "case_id": "natural541_0087",
+          "loss_scale": 128,
+          "gradient_norm": null,
+          "nonfinite_parameter_count": 1,
+          "geometry_vs_scale1": null,
+          "max_abs_logp_difference_vs_scale1": 0.0,
+          "mean_logp": -19.307522177696228
+        }
+      ],
+      "source_keys": {
+        "fp16": [
+          "records",
+          "caveat"
+        ]
+      },
+      "limits": [
+        "native517/natural541属于另一条late分支，不把编号混成full8主线。",
+        "同前向logp、loss scale128时natural541_0087有非有限参数梯度；scale1/16有限也只是预选案例。"
+      ],
+      "reject_or_revise": []
+    },
+    {
+      "id": "LG17",
+      "title": "negative_mass与固定分母：同历史短训及Adam控制",
+      "evidence_level": "controlled_fixed_history_training",
+      "supported_claim": "720完整状态上721–730固定历史数据四臂，分别保持正/零A并调整负回答长度分配，或固定D。负系数总量匹配后位置仍变；真实Adam位移不按裁剪前范数比例变化。",
+      "quantitative_evidence": {
+        "arms": {
+          "native": {
+            "negative_weight": "1",
+            "D_loss": "D_j actual global128 valid response tokens"
+          },
+          "negative_sequence": {
+            "raw_negative_weight_u": "1/T_i",
+            "lambda": "sum_negative(|A_i| T_i)/sum_negative(|A_i| T_i u_i), across original global128 rows",
+            "D_loss": "D_j"
+          },
+          "negative_cap2048": {
+            "raw_negative_weight_u": "min(1,2048/T_i)",
+            "lambda": "sum_negative(|A_i| T_i)/sum_negative(|A_i| T_i u_i), across original global128 rows",
+            "D_loss": "D_j"
+          },
+          "fixed_global_D": {
+            "negative_weight": "1; original A all signs unchanged",
+            "D_loss": 354439.5,
+            "D_star_definition": "original actual721 full512 valid-token count1417758 /4; fixed before all branch outcomes",
+            "expected_common_state_gradient_scale": "D_j/D_star; finite-precision residual is measured, not assumed zero"
+          }
+        },
+        "fixed_history_results": [
+          {
+            "arm": "native",
+            "updates": 40,
+            "mean_preclip_norm": 216.59010579437017,
+            "median_preclip_norm": 1.469528079032898,
+            "max_preclip_norm": 2669.312744140625,
+            "max_at": [
+              728,
+              2
+            ],
+            "updates_norm_ge_1": 22,
+            "updates_norm_ge_10": 12,
+            "updates_norm_ge_100": 10,
+            "updates_norm_ge_1000": 3,
+            "mean_Adam_delta_L2": 0.013701410690609912,
+            "max_Adam_delta_L2": 0.015898239002540435,
+            "sum_step_Adam_delta_L2_not_net_distance": 0.5480564276243964,
+            "mean_BF16_flip_fraction": 0.005003458846947779,
+            "max_anchor_mass_relative_error": 0.0,
+            "all_positive_zero_A_exact": true,
+            "all_round_anchor_fixed": true,
+            "source_exact": true,
+            "final_Adam_step": 2920,
+            "final_scheduler_epoch": 730
+          },
+          {
+            "arm": "negative_sequence",
+            "updates": 40,
+            "mean_preclip_norm": 238.7045442700386,
+            "median_preclip_norm": 1.3661521077156067,
+            "max_preclip_norm": 2539.94970703125,
+            "max_at": [
+              729,
+              2
+            ],
+            "updates_norm_ge_1": 24,
+            "updates_norm_ge_10": 13,
+            "updates_norm_ge_100": 11,
+            "updates_norm_ge_1000": 4,
+            "mean_Adam_delta_L2": 0.013558169145385131,
+            "max_Adam_delta_L2": 0.015585337055309718,
+            "sum_step_Adam_delta_L2_not_net_distance": 0.5423267658154053,
+            "mean_BF16_flip_fraction": 0.004998884187487654,
+            "max_anchor_mass_relative_error": 4.125325432676447e-08,
+            "all_positive_zero_A_exact": true,
+            "all_round_anchor_fixed": true,
+            "source_exact": true,
+            "final_Adam_step": 2920,
+            "final_scheduler_epoch": 730
+          },
+          {
+            "arm": "negative_cap2048",
+            "updates": 40,
+            "mean_preclip_norm": 30.52779066860676,
+            "median_preclip_norm": 1.1067754626274109,
+            "max_preclip_norm": 528.913818359375,
+            "max_at": [
+              726,
+              2
+            ],
+            "updates_norm_ge_1": 25,
+            "updates_norm_ge_10": 9,
+            "updates_norm_ge_100": 4,
+            "updates_norm_ge_1000": 0,
+            "mean_Adam_delta_L2": 0.014373351005105513,
+            "max_Adam_delta_L2": 0.019111552428832338,
+            "sum_step_Adam_delta_L2_not_net_distance": 0.5749340402042206,
+            "mean_BF16_flip_fraction": 0.005264362890488992,
+            "max_anchor_mass_relative_error": 4.223428175976083e-08,
+            "all_positive_zero_A_exact": true,
+            "all_round_anchor_fixed": true,
+            "source_exact": true,
+            "final_Adam_step": 2920,
+            "final_scheduler_epoch": 730
+          },
+          {
+            "arm": "fixed_global_D",
+            "updates": 40,
+            "mean_preclip_norm": 249.78285794518888,
+            "median_preclip_norm": 0.7848536372184753,
+            "max_preclip_norm": 2185.880126953125,
+            "max_at": [
+              728,
+              2
+            ],
+            "updates_norm_ge_1": 19,
+            "updates_norm_ge_10": 15,
+            "updates_norm_ge_100": 11,
+            "updates_norm_ge_1000": 5,
+            "mean_Adam_delta_L2": 0.012474776467214675,
+            "max_Adam_delta_L2": 0.015591049205239417,
+            "sum_step_Adam_delta_L2_not_net_distance": 0.498991058688587,
+            "mean_BF16_flip_fraction": 0.00444715060052923,
+            "max_anchor_mass_relative_error": 0.0,
+            "all_positive_zero_A_exact": true,
+            "all_round_anchor_fixed": true,
+            "source_exact": true,
+            "final_Adam_step": 2920,
+            "final_scheduler_epoch": 730
+          }
+        ],
+        "orthogonal_Adam_control_design": {
+          "selection_locked_by_CPU_input_only_preflight": {
+            "negative_sequence": {
+              "round": 721,
+              "inner": 1
+            },
+            "negative_cap2048": {
+              "round": 721,
+              "inner": 2
+            },
+            "fixed_global_D": {
+              "round": 721,
+              "inner": 1
+            }
+          },
+          "common_state_design": "Retain baseline native pre-update full model/Adam/scheduler/RNG snapshot and raw nativegradient in RAM atB1/B2 ofround721. Sequence andfixedD are firstnontrivial atB1. CapB1 is bitwiseidentity(lambda1); requirecap preB2 state match baselinepreB2 exactly.",
+          "weighted_gradient": "Use already computed firstnontrivial arm gradient/norm; no new backward. Capture actual post-update model in RAM.",
+          "controls_after_arm_final_exports": "Restore corresponding exactbaseline snapshot. Firstinjectraw nativegradient atscale1 and requirepostmodel match actualnativepostmodel; theninjectnativegradient scaledto actualarmrawnorm. Execute nativeclip+Adam, compareactualdelta/BF16image vsweightedupdate.",
+          "planned_additional_backwards": 0,
+          "planned_additional_Adam_steps_max": 5,
+          "injection_norm_relative_tolerance": 1e-05,
+          "failure_policy": "Common-state prefix mismatch is a hard engineering stop. A scale1 injection replay failure invalidates onlyorthogonal-control interpretation; retain mainarms/results andallfailurereceipts.",
+          "no_gradient_vector_files": true
+        },
+        "actual_orthogonal_Adam_controls": [
+          {
+            "kind": "native_scale1_injection_replay",
+            "inner": 1,
+            "norm": 0.9620075821876526,
+            "post_parameters_byte_exact": true,
+            "Adam_before": 2880,
+            "Adam_after": 2881
+          },
+          {
+            "kind": "native_scale1_injection_replay",
+            "inner": 2,
+            "norm": 5.3188018798828125,
+            "post_parameters_byte_exact": true,
+            "Adam_before": 2881,
+            "Adam_after": 2882
+          },
+          {
+            "kind": "norm_matched_native_direction",
+            "arm": "negative_sequence",
+            "inner": 1,
+            "native_scale": 1.0099478492761926,
+            "matched_raw_norm": 0.9715774655342102,
+            "same_model_Adam_anchor_context_verified": true,
+            "weighted_arm_delta_L2": 0.014417909206806214,
+            "native_direction_norm_matched_delta_L2": 0.014434058159325148,
+            "poststate_L2_difference": 0.0005646907446597662,
+            "gradient_cosine_to_native": 0.9964403758892465
+          },
+          {
+            "kind": "norm_matched_native_direction",
+            "arm": "negative_cap2048",
+            "inner": 2,
+            "native_scale": 0.9856521000970514,
+            "matched_raw_norm": 5.242487907409668,
+            "same_model_Adam_anchor_context_verified": true,
+            "weighted_arm_delta_L2": 0.013359018588630646,
+            "native_direction_norm_matched_delta_L2": 0.013426967581610152,
+            "poststate_L2_difference": 0.0007295446037657581,
+            "gradient_cosine_to_native": 0.9954774941409049
+          },
+          {
+            "kind": "norm_matched_native_direction",
+            "arm": "fixed_global_D",
+            "inner": 1,
+            "native_scale": 0.35699047680898116,
+            "matched_raw_norm": 0.34342753887176514,
+            "same_model_Adam_anchor_context_verified": true,
+            "weighted_arm_delta_L2": 0.013108052713891673,
+            "native_direction_norm_matched_delta_L2": 0.013108408925697956,
+            "poststate_L2_difference": 6.319722860324043e-05,
+            "gradient_cosine_to_native": 0.999929300710222
+          }
+        ]
+      },
+      "source_keys": {
+        "massprotocol": [
+          "arms",
+          "orthogonal_controls",
+          "source_choice"
+        ],
+        "massresults": [
+          "arms",
+          "definitions",
+          "limits"
+        ],
+        "masscomplete": [
+          "orthogonal_controls",
+          "training_Adam_steps",
+          "complete"
+        ]
+      },
+      "limits": [
+        "这是固定历史数据训练，不是在线采集；own-p0每轮重算，各臂后续状态不同。",
+        "negative_sequence是按1/T重新分配负质量并匹配总量，不是把整套GRPO目标换成sequence-mean。",
+        "negative_cap2048缩放长负回答的总权重，不是裁掉2048之后上下文。",
+        "均值/最大裁剪前范数不代表Adam参数位移；总step位移L2之和也非起终点净距离。",
+        "同norm原生方向注入与真实加权方向的poststate仍不同；fixedD方向理论只缩放，BF16实测留有小数值残差。"
+      ],
+      "reject_or_revise": []
+    },
+    {
+      "id": "LG18",
+      "title": "真正在线20轮：原生复跑波动削弱TIS质量归因",
+      "evidence_level": "online_trajectory_comparison_not_replicated_treatment_effect",
+      "supported_claim": "同720起点两条原生轨迹的准确率差14.84个百分点；TIS相对第一次原生看似提升16.21点，相对第二次只有1.37点且题级区间跨零。固定D这次未见改善。",
+      "quantitative_evidence": {
+        "endpoint_summaries": {
+          "source720": {
+            "accuracy": 0.65234375,
+            "unknown": 0.001953125,
+            "length": 2121.09765625,
+            "cap_hit": 0.158203125,
+            "finish_length": 0.158203125,
+            "tokenizer_eos": 0.841796875,
+            "configured_stop": 0.841796875,
+            "strict_repetition": 0.158203125,
+            "failure_union": 0.158203125,
+            "run256_candidate": 0.158203125,
+            "run256_digit_candidate": 0.0,
+            "median_length": 1091.5,
+            "correct_count": 334,
+            "cap_count": 81,
+            "last_token_ids": {
+              "151643": 431,
+              "36": 81
+            }
+          },
+          "online_native740": {
+            "accuracy": 0.548828125,
+            "unknown": 0.0,
+            "length": 3388.98046875,
+            "cap_hit": 0.3515625,
+            "finish_length": 0.3515625,
+            "tokenizer_eos": 0.6484375,
+            "configured_stop": 0.6484375,
+            "strict_repetition": 0.0,
+            "failure_union": 0.3515625,
+            "run256_candidate": 0.3515625,
+            "run256_digit_candidate": 0.3515625,
+            "median_length": 1035.0,
+            "correct_count": 281,
+            "cap_count": 180,
+            "last_token_ids": {
+              "24": 180,
+              "151643": 332
+            }
+          },
+          "online_native740_repeat2": {
+            "accuracy": 0.697265625,
+            "unknown": 0.001953125,
+            "length": 1666.220703125,
+            "cap_hit": 0.095703125,
+            "finish_length": 0.095703125,
+            "tokenizer_eos": 0.904296875,
+            "configured_stop": 0.904296875,
+            "strict_repetition": 0.01953125,
+            "failure_union": 0.095703125,
+            "run256_candidate": 0.015625,
+            "run256_digit_candidate": 0.0,
+            "median_length": 1056.5,
+            "correct_count": 357,
+            "cap_count": 49,
+            "last_token_ids": {
+              "151643": 463,
+              "1570": 23,
+              "42": 26
+            }
+          },
+          "online_fixedD740": {
+            "accuracy": 0.560546875,
+            "unknown": 0.0,
+            "length": 3419.42578125,
+            "cap_hit": 0.35546875,
+            "finish_length": 0.35546875,
+            "tokenizer_eos": 0.64453125,
+            "configured_stop": 0.64453125,
+            "strict_repetition": 0.0,
+            "failure_union": 0.35546875,
+            "run256_candidate": 0.35546875,
+            "run256_digit_candidate": 0.35546875,
+            "median_length": 1035.5,
+            "correct_count": 287,
+            "cap_count": 182,
+            "last_token_ids": {
+              "151643": 330,
+              "24": 182
+            }
+          },
+          "online_negative_tis740": {
+            "accuracy": 0.7109375,
+            "unknown": 0.001953125,
+            "length": 1331.7578125,
+            "cap_hit": 0.044921875,
+            "finish_length": 0.044921875,
+            "tokenizer_eos": 0.955078125,
+            "configured_stop": 0.955078125,
+            "strict_repetition": 0.0,
+            "failure_union": 0.044921875,
+            "run256_candidate": 0.0,
+            "run256_digit_candidate": 0.0,
+            "median_length": 1023.5,
+            "correct_count": 364,
+            "cap_count": 23,
+            "last_token_ids": {
+              "151643": 489,
+              "15": 2,
+              "54275": 7,
+              "2014": 5,
+              "36": 2,
+              "1570": 1,
+              "304": 1,
+              "4017": 1,
+              "21387": 1,
+              "220": 1,
+              "488": 1,
+              "41233": 1
+            }
+          }
+        },
+        "TIS_vs_native_repeat2_qid_CI": [
+          {
+            "reference": "online_native740_repeat2",
+            "arm": "online_negative_tis740",
+            "metric": "accuracy",
+            "paired_qid_mean_difference": 0.013671875,
+            "ci95": [
+              -0.021484375,
+              0.048828125
+            ],
+            "questions": 128,
+            "responses_per_question": 4
+          },
+          {
+            "reference": "online_native740_repeat2",
+            "arm": "online_negative_tis740",
+            "metric": "cap_hit",
+            "paired_qid_mean_difference": -0.05078125,
+            "ci95": [
+              -0.078125,
+              -0.025341796875004263
+            ],
+            "questions": 128,
+            "responses_per_question": 4
+          }
+        ],
+        "N_per_endpoint": 512,
+        "questions": 128,
+        "replicates_per_question": 4,
+        "training_gradient_summary_reference": {
+          "native1_mean_max": [
+            25.09716844968498,
+            1277.7664794921875
+          ],
+          "native2_mean_max": [
+            118.96768178567291,
+            1956.784423828125
+          ],
+          "negativeTIS_mean_max": [
+            3.684332986921072,
+            34.16254425048828
+          ]
+        }
+      },
+      "source_keys": {
+        "endpoints": [
+          "summaries",
+          "paired_qid_contrasts",
+          "inference",
+          "limits"
+        ],
+        "online_native_fixedD": [
+          "arms"
+        ],
+        "online_native_repeat": [
+          "arms"
+        ],
+        "online_tis": [
+          "arms"
+        ]
+      },
+      "limits": [
+        "All comparisons condition on trained weights and reused128qid panel; qid-bootstrap intervals do not include training trajectory variability.",
+        "Only two native nominal-setting/runtime trajectories, and one TIS trajectory; no general treatment effect or training-seed distribution is established.",
+        "Intervals are exploratory and unadjusted across multiple comparisons.",
+        "No G8/advantages are reconstructed from four fresh answers.",
+        "Strict rule-negative does not mean normal language.",
+        "原生/fixedD首轮入训数据在首次更新前已经不同；不是只改分母的同数据在线随机对照。",
+        "严格规则排除数字，strict=0时仍可能全部截断回答都是长9；需看周期/截断和原文。"
+      ],
+      "reject_or_revise": [
+        "“TIS这次提升16.21点证明算法普适增益”必须撤回；只支持这些固定端点评测差异。",
+        "“梯度更大模型一定更差”被原生第二次范数更大但准确率更高反例否定。"
+      ]
+    },
+    {
+      "id": "LG19",
+      "title": "旧TIS控制与MIS讨论必须分清路线/实施状态",
+      "evidence_level": "supplementary_prior_branch_and_method_taxonomy",
+      "supported_claim": "另一条late nodiscard44在500→520/550做过full/negative-only/positive-onlyTIS、统一均值与位置打乱控制；支持权重对应位置重要，但不能并入full8轨迹或外推普遍质量收益。MIS是讨论/文献中的不同mask策略；本次已审源没有独立MIS在线效果证据。",
+      "quantitative_evidence": {
+        "implemented_TIS": "w_it=detach(min(exp(clamp(logp0_it−logq_it,−20,20)),2)); multiply native PPO/dual-clipped token loss by w, with original mask and D. No batch renormalization, rollout RS or bypass. The numerical guard supplies a floor exp(−20), so this is not exactly unclamped p0/q in extreme tails.",
+        "fixed_history500to520": {
+          "same_data_and_optimizer_start": true,
+          "own_p0_each_round": true,
+          "FA2_deterministic": true,
+          "arms": [
+            {
+              "run": "recorded_control500to520-v1",
+              "label": "Original PPO",
+              "rounds": 20,
+              "optimizer_updates": 80,
+              "max_preclip_norm": 1818.1220703125,
+              "mean_preclip_norm": 71.30555892400443,
+              "updates_above_clip1": 51,
+              "last_four_norms": [
+                0.6174272894859314,
+                9.980995178222656,
+                1.4284008741378784,
+                0.477857381105423
+              ],
+              "maximum_native_loss_reconstruction_error": 1.4901161193847656e-07,
+              "audit_kind": "Independent CPU actual-coefficient reconstruction; all20 rounds"
+            },
+            {
+              "run": "recorded_tis500to520-v1",
+              "label": "Full token TIS",
+              "rounds": 20,
+              "optimizer_updates": 80,
+              "max_preclip_norm": 12.691268920898438,
+              "mean_preclip_norm": 1.2234408237040042,
+              "updates_above_clip1": 17,
+              "last_four_norms": [
+                0.40708664059638977,
+                0.40403422713279724,
+                0.42162349820137024,
+                0.5041205883026123
+              ],
+              "maximum_native_loss_reconstruction_error": 5.960464477539063e-08,
+              "audit_kind": "Independent CPU actual-coefficient reconstruction; all20 rounds"
+            },
+            {
+              "run": "recorded_inner_mean500to520-v1",
+              "label": "Mean per optimizer update",
+              "rounds": 20,
+              "optimizer_updates": 80,
+              "max_preclip_norm": 598.552001953125,
+              "mean_preclip_norm": 27.218437656387685,
+              "updates_above_clip1": 53,
+              "last_four_norms": [
+                0.8957220315933228,
+                19.78801918029785,
+                11.073954582214355,
+                0.5222690105438232
+              ],
+              "maximum_native_loss_reconstruction_error": 8.940696716308594e-08,
+              "audit_kind": "Independent CPU actual-coefficient reconstruction; all20 rounds"
+            },
+            {
+              "run": "recorded_response_shuffle500to520-v1",
+              "label": "Within-response permutation",
+              "rounds": 20,
+              "optimizer_updates": 80,
+              "max_preclip_norm": 721.2144775390625,
+              "mean_preclip_norm": 22.80476824603975,
+              "updates_above_clip1": 43,
+              "last_four_norms": [
+                0.3700266480445862,
+                38.67158126831055,
+                0.3256317377090454,
+                0.4886164665222168
+              ],
+              "maximum_native_loss_reconstruction_error": 5.960464477539063e-08,
+              "audit_kind": "Independent CPU actual-coefficient reconstruction; all20 rounds"
+            }
+          ],
+          "limits": [
+            "Allnorms are before nativeclip1, not Adam input/update magnitude.",
+            "No newrollout, behavior evaluation or endpoint Jacobian conclusions for the addedarms.",
+            "Mean uses oneconstant per global128-response optimizer on allmaskvalid tokens, includingzeroA/laterclipped tokens; not an Adam learning-rate equivalence.",
+            "Permutation preserves eachresponse raww multiset and preclip signed/absoluteAw sums; post-PPO-clipping c neednot preserve mass.",
+            "Single fixedhistoricalstream and frozenpermutationseed; this doesnot establishgeneral convergence or online reward improvement."
+          ]
+        },
+        "first10_max_norm": {
+          "control": 33.954,
+          "full_TIS": 7.519,
+          "negative_only_TIS": 5.131,
+          "positive_only_TIS": 61.562
+        },
+        "MIS_status": "No separately audited local MIS experiment result located in this evidence package; do not label high-d loss-mask ablation as a trained MIS algorithm."
+      },
+      "source_keys": {
+        "prior_tis": [
+          "prior_TIS_formula",
+          "fixed_history_501_520",
+          "first10_40update_max_norm",
+          "design_and_transfer_limits",
+          "negative_advantage_mechanism"
+        ]
+      },
+      "limits": [
+        "TIS权重detach(min(exp(clamp(logp0−logq,−20,20)),2))，clamp带exp(−20)数值下限，极端处不等同无clamp的p0/q。",
+        "negative-only TIS保持正token权重1；非对称操作、group标准化与mixed筛选下不是无偏完整轨迹IS。",
+        "TIS保留被upper-cap截住的token；MIS常以mask拒绝超界token或sequence，粒度/上下界依论文与代码，不可只凭名字等同。",
+        "完整序列/prefix分布校正不同于逐token的局部ratio修正。"
+      ],
+      "reject_or_revise": []
+    },
+    {
+      "id": "LG20",
+      "title": "不能把失败保真重放当成生产机制证据",
+      "evidence_level": "failed_reproduction_boundary",
+      "supported_claim": "original771实际B2约4.07，但一些冻结/重建测量很大；对应原Adam状态及轨迹保真未通过的尝试被保留为失败，不冒称重现原始生产峰值。后来另选实际725完整状态做精确干预。",
+      "quantitative_evidence": {
+        "actual_original771_rank0_norms": [
+          0.48880913853645325,
+          4.071903228759766,
+          1.773146152496338,
+          0.5763701796531677
+        ],
+        "original771_inventory_Adam770_files_at_audit": 0,
+        "separate_validated_peak725_native_norm": 181.5467987060547
+      },
+      "source_keys": {
+        "original771": [
+          "rank_norms",
+          "Adam770_files",
+          "optimizer_removed_record"
+        ],
+        "frozen771": [
+          "complete"
+        ],
+        "peak725": [
+          "norms",
+          "limits"
+        ]
+      },
+      "limits": [
+        "“当时没有拿到可验证的原Adam”是该次attempt的可用性记录，不宣称后来所有备份永远不存在。",
+        "own-anchor冻结梯度与实际post-B1/clipped B2不是同一目标。",
+        "校准一批p0或第一步范数一致，不保证后面整条数值轨迹相同。"
+      ],
+      "reject_or_revise": []
+    }
+  ],
+  "revised_claims": [
+    {
+      "old": "大d直接且充分导致梯度异常",
+      "current": "重要风险指标和loss支持定位线索；q在原native目标非显式系数，残差饱和、模型状态、数值路径、方向叠加、PPO active-set同样关键。",
+      "claims": [
+        "LG05",
+        "LG06",
+        "LG13",
+        "LG14"
+      ]
+    },
+    {
+      "old": "持续重复和严重失配普遍绑定",
+      "current": "特定701/700群体强相关，但有短重复恢复与当前长9低d/极小NLL梯度反例，需限定状态、输入、长度和概率路径。",
+      "claims": [
+        "LG08",
+        "LG10",
+        "LG11"
+      ]
+    },
+    {
+      "old": "B2/B3异常由轮内第2/3次更新本身造成",
+      "current": "数据身份重要，提前B2/冻结轮初仍大；顺序影响可增强也可抑制。",
+      "claims": [
+        "LG02"
+      ]
+    },
+    {
+      "old": "本运行错误回答因逐回答1/T变长",
+      "current": "本实现是global token-mean，必须分别讨论全局D、reward长度惩罚、A与token位置。",
+      "claims": [
+        "LG12",
+        "LG17"
+      ]
+    },
+    {
+      "old": "TIS明显优于baseline且低梯度意味着质量好",
+      "current": "原生复跑变异与低d坏循环迫使降级为单轨迹结果；需更多独立在线重复与输出质量指标。",
+      "claims": [
+        "LG11",
+        "LG18",
+        "LG19"
+      ]
+    }
+  ],
+  "sources": {
+    "curation": {
+      "path": "archive:reports/project_curation_20261104/drafts/stability-evidence.json",
+      "repository_relative": "reports/project_curation_20261104/drafts/stability-evidence.json",
+      "sha256": "9e838377962fcc11beb31882961996a5a5185577bf972c97266a80e4a262bb74"
+    },
+    "restart": {
+      "path": "archive:reports/eight_continuation_20261104/restart_inventory.json",
+      "repository_relative": "reports/eight_continuation_20261104/restart_inventory.json",
+      "sha256": "a3f4bff32a0a713e4ea4c4cbaef8972815c48c78b86f8894eb5a0df43fcdc88a"
+    },
+    "timeline": {
+      "path": "archive:reports/update_order_tests_20261104/completed850_inner_position_summary.json",
+      "repository_relative": "reports/update_order_tests_20261104/completed850_inner_position_summary.json",
+      "sha256": "cf17e20fd670251b4f76c55d76f4e6e44de4ec79cf451677c084846b488e12b2"
+    },
+    "order": {
+      "path": "archive:reports/update_order_tests_20261104/native8/findings.json",
+      "repository_relative": "reports/update_order_tests_20261104/native8/findings.json",
+      "sha256": "8db5af3b91c12bbd9cd04666ed4267e084b2e53863e3c1e0abd6071cef1e7d07"
+    },
+    "savedstates": {
+      "path": "archive:reports/update_order_tests_20261104/native8_saved_states/findings.json",
+      "repository_relative": "reports/update_order_tests_20261104/native8_saved_states/findings.json",
+      "sha256": "c41295b950c5cfae98b13fca0ae26c7c0bc63a153b077479be043eeccc7a6987"
+    },
+    "sign": {
+      "path": "archive:reports/gradient_sign_decomposition_20261104/findings.json",
+      "repository_relative": "reports/gradient_sign_decomposition_20261104/findings.json",
+      "sha256": "bf67ce29dd68c0dd980d8ac5084c018dcc544bb950a6940bc0793ace78f8eb41"
+    },
+    "cross": {
+      "path": "archive:reports/cross_stage_500_600_700_20261105/metric_overview/full_metrics.json",
+      "repository_relative": "reports/cross_stage_500_600_700_20261105/metric_overview/full_metrics.json",
+      "sha256": "5767e4944f7e0ad2477616f5f9479f2cfbfcff5ce9fde6c951b5769322c27f5a"
+    },
+    "crossreview": {
+      "path": "archive:reports/cross_stage_500_600_700_20261105/metric_overview/independent_review.json",
+      "repository_relative": "reports/cross_stage_500_600_700_20261105/metric_overview/independent_review.json",
+      "sha256": "389a1fe756a677dc364c716aa69546f453e8f04a182d606ee10d03baff420aa9"
+    },
+    "quad": {
+      "path": "archive:reports/four_quadrant_gradient_20261105/summary.json",
+      "repository_relative": "reports/four_quadrant_gradient_20261105/summary.json",
+      "sha256": "fd1ea72fd9085513dbb94634687f9f792480dd534d8f94cfd121a79cb9cc5434"
+    },
+    "mask": {
+      "path": "archive:reports/high_gap_gradient_ablation_20261105/summary.json",
+      "repository_relative": "reports/high_gap_gradient_ablation_20261105/summary.json",
+      "sha256": "a6c6c0d8e8a447ee06ccc6f58946e73799930ef0f8cbc7e7378a56c1fb8df3b9"
+    },
+    "population": {
+      "path": "archive:reports/repetition_mismatch_population_20261105/main_findings.json",
+      "repository_relative": "reports/repetition_mismatch_population_20261105/main_findings.json",
+      "sha256": "d3230ce365130700178013aa795a1c22bd15d521bbecec3be4aaf4ae04051b42"
+    },
+    "population_plan": {
+      "path": "archive:reports/repetition_mismatch_population_20261105/plan.json",
+      "repository_relative": "reports/repetition_mismatch_population_20261105/plan.json",
+      "sha256": "28b5f12666a16fb57f8c9742a1dae695c14ca9d4c89217329d087fb424fb8ec1"
+    },
+    "population_full": {
+      "path": "archive:reports/repetition_mismatch_population_20261105/analysis/population_summary.json",
+      "repository_relative": "reports/repetition_mismatch_population_20261105/analysis/population_summary.json",
+      "sha256": "dd807554c46c6f5da45a7b565742ecf785763493ca9133b66de4122cd54e82ef"
+    },
+    "objective": {
+      "path": "archive:reports/rl_mechanism_8h_20261104/objective_audit/normalization_audit.json",
+      "repository_relative": "reports/rl_mechanism_8h_20261104/objective_audit/normalization_audit.json",
+      "sha256": "71290b093f5dcddb92824cd06f51e67b196f7c8caef7cfab8d92d093b5019788"
+    },
+    "geom": {
+      "path": "archive:reports/rl_mechanism_8h_20261104/logprob_geometry/summary.json",
+      "repository_relative": "reports/rl_mechanism_8h_20261104/logprob_geometry/summary.json",
+      "sha256": "6eabc9ac2bd8f7b6c4d66f61772d804386cfb45d4640dcb63db9b6cac2613d4a"
+    },
+    "peak725": {
+      "path": "archive:reports/rl_mechanism_8h_20261104/peak_analysis/summary.json",
+      "repository_relative": "reports/rl_mechanism_8h_20261104/peak_analysis/summary.json",
+      "sha256": "0364c3d01064f6c96405e4c34f0585aac87c6c079289c7fddc21cb0d2a661b34"
+    },
+    "massprotocol": {
+      "path": "archive:reports/rl_mechanism_8h_20261104/bbb/experiments/negative_mass720_10r_v2/protocol.json",
+      "repository_relative": "reports/rl_mechanism_8h_20261104/bbb/experiments/negative_mass720_10r_v2/protocol.json",
+      "sha256": "c9058d5e6bbd05679c7d8c12fcba6fa85bbd6c6fc2aa8ed8af10975e14a23a1c"
+    },
+    "massresults": {
+      "path": "archive:reports/rl_mechanism_8h_20261104/training_analysis/summary.json",
+      "repository_relative": "reports/rl_mechanism_8h_20261104/training_analysis/summary.json",
+      "sha256": "cec098154784a22bd05de30983641266c8c080913b0c10a6f29f82c63b821109"
+    },
+    "endpoints": {
+      "path": "archive:reports/rl_mechanism_8h_20261104/training_analysis/five_endpoint_comparison/summary.json",
+      "repository_relative": "reports/rl_mechanism_8h_20261104/training_analysis/five_endpoint_comparison/summary.json",
+      "sha256": "b4c38289ff5fe361400592daa16a5ea7ba66c75ac10c6bc0954a48c2c7336811"
+    },
+    "online_native_fixedD": {
+      "path": "archive:reports/rl_mechanism_8h_20261104/bbb/experiments/online720_native_fixedD_20r_v1/results/scalar_analysis/summary.json",
+      "repository_relative": "reports/rl_mechanism_8h_20261104/bbb/experiments/online720_native_fixedD_20r_v1/results/scalar_analysis/summary.json",
+      "sha256": "9704b669420f4c172e455965324c80fd6f9b5c33a102ac30105f1cf7d6c10aab"
+    },
+    "online_native_repeat": {
+      "path": "archive:reports/rl_mechanism_8h_20261104/bbb/experiments/online720_native_repeat_20r_v1/results/scalar_analysis/summary.json",
+      "repository_relative": "reports/rl_mechanism_8h_20261104/bbb/experiments/online720_native_repeat_20r_v1/results/scalar_analysis/summary.json",
+      "sha256": "af8096f34fee65626181191ab40e46fe65bc2a7a6c93cc57f5885c7d3dcbc4d6"
+    },
+    "online_tis": {
+      "path": "archive:reports/rl_mechanism_8h_20261104/bbb/experiments/online720_negative_tis_20r_v1/results/scalar_analysis/summary.json",
+      "repository_relative": "reports/rl_mechanism_8h_20261104/bbb/experiments/online720_negative_tis_20r_v1/results/scalar_analysis/summary.json",
+      "sha256": "3a2487a19f780b6c3f4502d312576021c410ae6309b3d9ae41a8b76fd854bb4c"
+    },
+    "prior_tis": {
+      "path": "archive:reports/rl_mechanism_8h_20261104/objective_audit/prior_TIS_and_logit_mechanism_review.json",
+      "repository_relative": "reports/rl_mechanism_8h_20261104/objective_audit/prior_TIS_and_logit_mechanism_review.json",
+      "sha256": "324ecde2d34b17a0198b8892882ce20447a3112913d3fd299fde6ba5c019c932"
+    },
+    "repeat_nondet": {
+      "path": "archive:reports/rl_mechanism_8h_20261104/bbb/experiments/one_b1_repeat730_v1/summary_compact.json",
+      "repository_relative": "reports/rl_mechanism_8h_20261104/bbb/experiments/one_b1_repeat730_v1/summary_compact.json",
+      "sha256": "b49396d672576a8240285830d3861b14f91a76fc0ba928d9a1b0b9111c247fef"
+    },
+    "repeat_det": {
+      "path": "archive:reports/rl_mechanism_8h_20261104/bbb/experiments/one_b1_repeat730_fa2det_v1/summary_compact.json",
+      "repository_relative": "reports/rl_mechanism_8h_20261104/bbb/experiments/one_b1_repeat730_fa2det_v1/summary_compact.json",
+      "sha256": "797de6e183e693988652bd22612bc4dcdecfc78bf49a2742136f7be5189aa634"
+    },
+    "statepair": {
+      "path": "archive:reports/rl_mechanism_8h_20261104/precision_repetition/poststate_pair/results_forward_v1/analysis_summary.json",
+      "repository_relative": "reports/rl_mechanism_8h_20261104/precision_repetition/poststate_pair/results_forward_v1/analysis_summary.json",
+      "sha256": "e11e75f93169b04a726bf8f3625795d22d7b7cc2ade1d8e42889e66b5b2f4db8"
+    },
+    "backend": {
+      "path": "archive:reports/rl_mechanism_8h_20261104/precision_repetition/poststate_pair/results_backend_v1/analysis_summary.json",
+      "repository_relative": "reports/rl_mechanism_8h_20261104/precision_repetition/poststate_pair/results_backend_v1/analysis_summary.json",
+      "sha256": "d458f74d28e8532bfd4f7ac7ebb9eee2ad15a99cc2737ccc409b7f2dd0fce2c9"
+    },
+    "zeroage": {
+      "path": "archive:reports/rl_mechanism_8h_20261104/objective_audit/independent_native2_tis740_current_q_oracle_review.json",
+      "repository_relative": "reports/rl_mechanism_8h_20261104/objective_audit/independent_native2_tis740_current_q_oracle_review.json",
+      "sha256": "70e3e2ba0db0251dad908292b4d6185ee48e5be6381dcd5d151f049e2d7d2b69"
+    },
+    "lowgap": {
+      "path": "archive:reports/rl_mechanism_8h_20261104/objective_audit/independent_native740_current_q_oracle_review.json",
+      "repository_relative": "reports/rl_mechanism_8h_20261104/objective_audit/independent_native740_current_q_oracle_review.json",
+      "sha256": "c1dbe4dafe2d3e5ea00348d316f33540fba82763bbb45766d71d94ef03702405"
+    },
+    "saturation": {
+      "path": "archive:reports/rl_mechanism_8h_20261104/precision_repetition/endpoint_repeat740/attempt_v2/natural_backward/results/analysis_summary.json",
+      "repository_relative": "reports/rl_mechanism_8h_20261104/precision_repetition/endpoint_repeat740/attempt_v2/natural_backward/results/analysis_summary.json",
+      "sha256": "a2cfb999fcfbbe23273d08206ddbba9c251737aa0d3c712fd81252c57905e71f"
+    },
+    "fp16": {
+      "path": "archive:reports/rl_mechanism_8h_20261104/precision_repetition/fp16_scale_followup/COMPLETE.json",
+      "repository_relative": "reports/rl_mechanism_8h_20261104/precision_repetition/fp16_scale_followup/COMPLETE.json",
+      "sha256": "47e83625578cb949d2b0f757d586c8e2418ad505497af8458b11f12990cb0c74"
+    },
+    "original771": {
+      "path": "archive:reports/rl_mechanism_8h_20261104/bbb/source_audit/original771_state_inventory.json",
+      "repository_relative": "reports/rl_mechanism_8h_20261104/bbb/source_audit/original771_state_inventory.json",
+      "sha256": "4f287f1f2b788ddc28bd52b38b7e9cbb37dd063b3cc8062eeede03216b8927ab"
+    },
+    "frozen771": {
+      "path": "archive:reports/rl_mechanism_8h_20261104/bbb/experiments/frozen771_v1/results/complete.json",
+      "repository_relative": "reports/rl_mechanism_8h_20261104/bbb/experiments/frozen771_v1/results/complete.json",
+      "sha256": "b810b106c67747cbe343cb1eebac13c3d3a1887007243a8930bcdbe263b38802"
+    },
+    "boundary": {
+      "path": "archive:reports/cross_weight_boundary_20261105/cross_data/summary.json",
+      "repository_relative": "reports/cross_weight_boundary_20261105/cross_data/summary.json",
+      "sha256": "d488a472b4164b1888bd48231d48c4398af4baa6b442810461bfee6ee51c7afc"
+    },
+    "optimizer_audit": {
+      "path": "archive:reports/update_order_tests_20261104/optimizer_independent_audit_summary.json",
+      "repository_relative": "reports/update_order_tests_20261104/optimizer_independent_audit_summary.json",
+      "sha256": "83d1bb25d590349f28a461f83d47aad44381492b98d72a0e00005641d7c158b6"
+    },
+    "positive_cap": {
+      "path": "archive:reports/rl_mechanism_8h_20261104/training_analysis/positive_cap_audit_v2/summary.json",
+      "repository_relative": "reports/rl_mechanism_8h_20261104/training_analysis/positive_cap_audit_v2/summary.json",
+      "sha256": "2f800d8c14a0e5c9ee8df0e2c0323992543d9af253889e23422c6692078e9492"
+    },
+    "pplnorms": {
+      "path": "archive:reports/cross_stage_500_600_700_20261105/ppl_norms/full_six_complete.json",
+      "repository_relative": "reports/cross_stage_500_600_700_20261105/ppl_norms/full_six_complete.json",
+      "sha256": "b8495934fba59a07cbf13a6e1872952a4f9ab8314d424f85cc12061beeb54a4b"
+    },
+    "thresholdreview": {
+      "path": "archive:reports/cross_stage_500_600_700_20261105/logprob_gap_threshold05/independent_review.json",
+      "repository_relative": "reports/cross_stage_500_600_700_20261105/logprob_gap_threshold05/independent_review.json",
+      "sha256": "b5bf7abebe4c413c5e760f5b8220a054a1b59ffc3f1b48e6a2b47177cd806fb2"
+    },
+    "runtime600": {
+      "path": "archive:reports/preventive_antiloop600_20261105/runtime_inventory_600.json",
+      "repository_relative": "reports/preventive_antiloop600_20261105/runtime_inventory_600.json",
+      "sha256": "4a538876b7d113e136cdab9755307f9022ea1f1a13369784b19a1b13d834990c"
+    },
+    "trajectory_full": {
+      "path": "archive:reports/eight_continuation_20261104/trajectory_snapshot.json",
+      "repository_relative": "reports/eight_continuation_20261104/trajectory_snapshot.json",
+      "sha256": "9767fb478d225fe3393e7b454767f93e210755d5335525b33f8877bed0ffc337"
+    },
+    "masscomplete": {
+      "path": "archive:reports/rl_mechanism_8h_20261104/bbb/experiments/negative_mass720_10r_v2/results/complete.json",
+      "repository_relative": "reports/rl_mechanism_8h_20261104/bbb/experiments/negative_mass720_10r_v2/results/complete.json",
+      "sha256": "d60ebfe62e4317b0013da4aef38193247ea81883879bc523e9e6ec5680091fd4"
+    }
+  },
+  "strongest_supported_synthesis": "负优势及实际loss系数决定更新哪些token；当前softmax残差决定输出端信号；模型状态与执行数值路径决定如何反传；token方向叠加、PPO裁剪与Adam决定最终更新。重复和长度改变输入与权重分配，但尚无单一单调因果链或统一根因。",
+  "remaining_questions": [
+    "多条受控在线重复能否确认TIS/其它修正的训练质量收益？",
+    "在固定输入/权重下分离精度、布局、backend和cached decode的份额。",
+    "持续重复是大d上游、共同结果还是特定状态的放大器？现证据不足以给统一方向。",
+    "全量候选与入训筛选、长度和罕见token之间的交互需独立干预。"
+  ],
+  "not_included_as_final_results": [
+    "最新反重复loss/预防600短跑由另一章节整理；不能把前几轮aux=0的校验当成算法效果。",
+    "MIS没有找到独立已审本地在线结果，不能由理论描述填出实验结论。"
+  ],
+  "validation": {
+    "passed": true,
+    "source_key_checks": 122,
+    "source_hashes_rechecked": 41,
+    "numeric_tables_extracted_from_existing_JSON_not_new_model_runs": true,
+    "large_d_mask_numbers_keep_frozen_fullbatch_scope": true
+  },
+  "publication": {
+    "scope": "Sanitized aggregates and source fingerprints; original archived files are not included.",
+    "original_draft_sha256": "d03dcb0765a63c3db33a80ae844ebae9a180f82841421be1e82cf3b0bf3eecc5",
+    "synthetic_test_data_excluded": true
+  }
+}

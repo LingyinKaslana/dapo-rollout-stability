@@ -4,6 +4,8 @@
 
 研究从相邻 checkpoint 的 KV-cache 变化开始，经过浅层复用、稀疏 attention、4+4 分组采样与 APRIL 长跑，逐步进入长度跃升、首 token 模式选择、异常输出和后期梯度放大的诊断。这里保留实验结果，也保留没有奏效的方案、实现问题和解释发生变化的过程。
 
+**最新研究报告：** [从输出长度跃升到梯度异常](reports/rl-length-gradient-investigation.md)（2026-11-06）。从最早的 BBB 长度跃升，串起首 token、数据与 Base、后期概率失配、负优势、循环机制和反重复训练；包含失败方案、实现混淆和结论修正。
+
 ## 从哪里开始
 
 | 研究线 | 想回答的问题 | 内容 |
@@ -40,16 +42,20 @@ flowchart LR
 
 完整过程见[问题与决策](docs/questions-and-decisions.md)，实验身份与模型区别见[设置对照](docs/setup-comparison.md)。
 
-## 正在进行
+## 最新状态
 
-**Qwen3-8B-Base、APRIL full8：从完整第 650 轮恢复，计划再训练 200 轮至 850。** 模型、Adam、随机状态和续写池一并恢复；新增逐次更新梯度与实际训练 batch 记录，每 10 轮保存模型，并保留最近 3 个完整恢复点。
+- **full8 650→850 已完成**：200轮、800次更新，实际入训失配与逐次梯度已纳入报告；这是新续训分支，不是原历史逐样本重演。
+- **720固定E-only辅助损失研究已完成训练**：共执行50轮，四个优先自然评测节点已齐；未显示优于baseline，旧strict指标还漏掉了数字循环。
+- **600→620在线循环bank短训已完成**：20轮、80次更新，循环候选0→43→117/512，正确率51.17%→49.61%→44.53%。没有匹配baseline，不能称成功预防，也不能把全部退化归因于UL。
 
-原 run 完成至 662，但没有该点的完整恢复状态，因此 651–662 会重新执行。当前状态是一次有时间戳的快照，见[续训记录](progress/continuation.md)，不与原轨迹拼成逐样本连续复现。
+[完整报告](reports/rl-length-gradient-investigation.md) · [52项证据主张](experiments/stability-investigation.md) · [当前状态快照](progress/investigation.md) · [检测与损失参考代码](reference/antiloop/README.md)
 
 ## 仓库结构
 
 | 目录 | 用途 |
 |---|---|
+| [reports](reports/README.md) | 连贯的研究报告，含关键对照、图表、局限与后续问题 |
+| [reference](reference/antiloop/README.md) | 实际使用过的检测/损失核心及CPU测试，不是完整训练框架 |
 | [docs](docs/README.md) | 研究章节、指标定义、理论笔记和下一步问题 |
 | [experiments](experiments/README.md) | 实验与证据单元索引，包含设置、结果、状态和限制 |
 | [data](data/README.md) | 可发布的聚合数据、来源摘要与 SHA256 |
@@ -58,18 +64,20 @@ flowchart LR
 | [progress](progress/README.md) | 当前研究进度与旧进度页入口 |
 | [history](history) | 原有实验进度归档，保留历史内容 |
 
-当前版本整理了 **45 个实验与证据单元**，并保留原有 **17 份历史实验目录**。一个单元可能包含多组对照，不能将单元数当作独立训练重复次数。
+早期版本整理了 **45 个实验与证据单元**，并保留原有 **17 份历史实验目录**。新报告另梳理 **52 项证据主张**，与旧索引有重叠；这些数量均不是独立训练重复次数。
 
 ## 如何复核
 
 ```bash
 python tools/check_project.py
+python tools/check_investigation.py
 python -m pip install -r requirements-analysis.txt
 python tools/render_figures.py
+python tools/render_investigation_figures.py
 ```
 
 脚本使用仓库内的聚合数据，不需要模型或 GPU。[指标与证据说明](docs/measurement-guide.md)解释了 PPL、概率差、梯度、首中覆盖及异常标签的不同口径。
 
-完整训练状态、权重和逐题回答不放入这个仓库，因此当前交付范围是研究记录、聚合证据与图表重绘，完整训练复现包仍待整理。继续添加实验时，沿用[记录模板](experiments/TEMPLATE.md)与[维护约定](CONTRIBUTING.md)。
+完整训练状态、权重和逐题回答不放入这个仓库，因此当前交付包含研究报告、聚合证据、图表重绘与两个实际使用的检测/损失核心模块；完整训练复现包仍待整理。继续添加实验时，沿用[记录模板](experiments/TEMPLATE.md)与[维护约定](CONTRIBUTING.md)。
 
 相关论文及与本项目的区别见[相关工作](docs/related-work.md)。仓库沿用 `dapo-training-progress` 的地址，项目入口现已覆盖整个研究过程。

@@ -1,5 +1,7 @@
 # 研究文档
 
+[最新完整研究报告](../reports/rl-length-gradient-investigation.md)。
+
 - [跨权重缓存重建](cache-reconstruction.md)
 - [分组采样与效率](group-sampling.md)
 - [长度与梯度稳定性](training-stability.md)

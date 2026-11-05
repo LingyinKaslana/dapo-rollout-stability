@@ -1,5 +1,7 @@
 # 研究图表
 
+[新报告的三组图表](../reports/rl-length-gradient-investigation.md)。
+
 所有图由 [render_figures.py](../tools/render_figures.py) 从仓库内聚合数据生成，数据指纹见 [generated-figures.json](../data/generated-figures.json)。
 
 | 图 | 证据与范围 |

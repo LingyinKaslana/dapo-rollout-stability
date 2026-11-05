@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "files": [
+    {
+      "published_file": "repeat_targets_v2.py",
+      "source_path_relative_to_project": "reports/preventive_antiloop600_20261105/short_code/repeat_targets_v2.py",
+      "sha256": "a1b78500e2f896f04b9c8f9804692321256df66fb07dd1c3236295c52612cfe6",
+      "packaging_changes": "none; byte-identical original algorithm"
+    },
+    {
+      "published_file": "ul_loss.py",
+      "source_path_relative_to_project": "reports/preventive_antiloop600_20261105/short_code/ul_loss.py",
+      "sha256": "41ef0141717385d12e0b5da6e88f1cface297c2819cfea7cf0466fc3e59edcd0",
+      "packaging_changes": "none; byte-identical original algorithm"
+    }
+  ],
+  "packaging_only_additions": [
+    "README.md",
+    "tests/test_reference_cpu.py"
+  ],
+  "excluded_online_adapter": "online_loop_bank.py depends on native APRIL collection/provenance/checkpoint contracts and is not presented as a portable trainer.",
+  "dependencies": {
+    "python_minimum": "3.10",
+    "numpy": "required",
+    "torch": "required; jagged nested tensor API used in sparse helper"
+  },
+  "local_CPU_test_environment": {
+    "python": "3.13.13",
+    "numpy": "2.5.0",
+    "torch": "2.12.1+cpu"
+  },
+  "scientific_evidence_is_separate": true,
+  "new_model_calls": 0,
+  "new_API_calls": 0
+}

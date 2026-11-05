@@ -1,5 +1,7 @@
 # 聚合数据
 
+[最新稳定性聚合数据](investigation/README.md)。
+
 - [catalog.json](catalog.json)：45 个研究单元与状态。
 - [evidence](evidence)：逐项结果、限制和原始归档 SHA256。
 - [eight-validation.csv](eight-validation.csv)：full8 固定 1021 道 DeepMath × 4 的验证聚合。

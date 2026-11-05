@@ -1,22 +1,31 @@
 {
-  "snapshot_utc": "2026-11-04T08:41:35.342190+00:00",
+  "snapshot_utc": "2026-11-05T17:36:41.789033+00:00",
   "source_step": 650,
   "target_step": 850,
-  "completed_step": 697,
-  "new_rounds_completed": 47,
-  "running": true,
-  "canary_passed": true,
-  "latest_complete_step": 690,
-  "last_metrics": {
-    "step": 697,
-    "data": {
-      "rollout_corr/training_ppl": 4.210799694061279,
-      "rollout_corr/rollout_ppl": 2.5213823318481445,
-      "rollout_corr/log_ppl_abs_diff": 0.17340132594108582,
-      "actor/grad_norm": 20.114051461219788,
-      "actor/lr": 5e-07,
-      "response_length/mean": 2281.890625
-    }
+  "completed_step": 850,
+  "new_rounds_completed": 200,
+  "optimizer_updates": 800,
+  "running": false,
+  "complete": true,
+  "source": "data/investigation/gap_gradient.csv",
+  "last_round": {
+    "run_id": "full8_resume650",
+    "step": "850",
+    "N": "512",
+    "D": "1295857",
+    "conditional_mean_d_gt05": "5.020294348863566",
+    "exceed_count": "2846",
+    "exceed_fraction": "0.0021962299852530025",
+    "d_mean": "0.020528729594712358",
+    "d_rms": "0.4414795980778821",
+    "grad_norm_round_mean": "5.389316618442535",
+    "grad_norm_inner_max": "14.343701362609863",
+    "grad_norm_B1": "1.7446569204330444",
+    "grad_norm_B2": "4.837208271026611",
+    "grad_norm_B3": "14.343701362609863",
+    "grad_norm_B4": "0.6316999197006226",
+    "mean_response_tokens": "2530.970703125",
+    "finite_status": "finite"
   },
-  "exit": {}
+  "limits": "New resumed branch, not an exact replay of historical651-662; previous live snapshot preserved separately."
 }

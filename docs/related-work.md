@@ -13,3 +13,12 @@
 | [Lazy Likelihood Displacement](https://arxiv.org/abs/2512.04220) | 在工具搜索 RL 中研究正确和错误回答的似然下降及训练崩溃 | 为负优势与旧回答似然诊断提供方向；纯数学、APRIL 跨轮设置与搜索代理不同，不能直接迁移全部因果结论 |
 
 已实现的实验与建议继续研究的方法，分别在[实验索引](../experiments/README.md)和[问题与决策](questions-and-decisions.md)中标注。项目没有将这些工作的报告数字当作自己的实验结果。
+
+## 后续循环诊断与损失设计参照（2026-11-06核对）
+
+| 工作 | 给我们的线索 | 当前边界 |
+|---|---|---|
+| [Circular Reasoning](https://arxiv.org/abs/2601.05693) | 讨论数字/语句循环、语义重复先于逐字重复，以及V形注意力机制 | 我们检查了正常对照与稳定循环的注意力；双端偏重并非异常专属，尚未做attention因果干预 |
+| [Neural Text Generation with Unlikelihood Training](https://arxiv.org/abs/1908.04319) | 通过token/序列unlikelihood直接降低不希望的重复概率 | 本项目将辅助目标限制到已确认循环位置与token家族，加入梯度预算；当前在线结果未证明有效，不能借用原论文成功结果替代本实验 |
+
+[Beyond Precision](https://arxiv.org/abs/2602.01826)将失配看作随优化动态发展的现象，并报告IS在长跑中可能不足。我们做了固定输入、同权重精度和实际Adam控制，但未在此报告中宣称复现其完整动态LR方法。我们的早期长度跃升也不伴随大梯度，因此长度不能未经校准就当作统一触发阈值。

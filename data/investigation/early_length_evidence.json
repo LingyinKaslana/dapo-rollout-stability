@@ -1,0 +1,3938 @@
+{
+  "complete": true,
+  "draft_only": true,
+  "scope": "Early length investigation and itsdirectfollow-ups,20261102–20261104; latergradient/cache/ULcampaign delegated tootherreportsections.",
+  "owner": "antiloop_training_design",
+  "created_unix": 1793899891.5693874,
+  "no_new_experiment": true,
+  "no_GPU_API_or_external_publication": true,
+  "main_message": "早期长度跃升可以是模型选择更常得到奖励的回答模式；这和后期严重失配、大梯度、持续退化需要分别验证。我们逐步从关联图走向固定输入/固定历史流干预，但尚无统一单因解释。",
+  "setup_registry": {
+    "original_full8": {
+      "run": "20261031-setup2-qwen3-8b-april-eight-w256-g64-8k-from0-12h",
+      "model": "Qwen3-8B-Base",
+      "train_questions": 40299,
+      "collector": "APRIL full8 simultaneous,pendingW256,mixedacc filtering",
+      "cap": 8192,
+      "selected_per_round": "64groupsx8=512responses",
+      "optimizer_updates_per_round": 4,
+      "train_sampling": "T1/p1/k-1",
+      "validation_sampling": "T.6/p.95/k20,n4",
+      "noncontinuation_baseline": false
+    },
+    "historical_44": {
+      "runs": [
+        "20261102-setup2-qwen3-8b-april-nodiscard44-w256-g64-8k-from0-10h",
+        "20261101-setup2-qwen3-8b-april-discard44-w256-g64-8k-from0-10h"
+      ],
+      "difference": "4+4 staged keep versus first4allcorrect discard",
+      "limitations": "Differentasync completion/samplecomposition, unequal finalhorizons, no expectationcorrection"
+    },
+    "early_formal": {
+      "run": "archive:remote/surge-reproduction-20261103/runs/formal",
+      "protocol_family": "race4v2,fastest4complete gate,not full8",
+      "purpose": "Densefullcheckpoints andnativebatch capture forfirsttoken causalreplay",
+      "observed_rounds": [
+        1,
+        200
+      ]
+    },
+    "late_nodiscard44": {
+      "start_completed_step": 500,
+      "run_family": "oldnodiscard44 + separatelyrerunonline/replay branches",
+      "not_same_trajectory_as_early_formal": true
+    },
+    "small_06B_GSM8K": {
+      "model": {
+        "repository": "Qwen/Qwen3-0.6B-Base",
+        "revision": "da87bfb608c14b7cf20ba1ce41287e8de496c0cd",
+        "initialization": "same pristine Base per arm",
+        "full_parameter_training": true,
+        "parameter_dtype": "fp32",
+        "forward_dtype": "bfloat16"
+      },
+      "data": {
+        "dataset": "openai/gsm8k",
+        "config": "main",
+        "revision": "740312add88f781978c0658806c59bc2815b9866",
+        "split_seed": 20261025,
+        "train_count": 6973,
+        "dev_count": 500,
+        "online_dev_count": 256,
+        "official_test_count": 1319,
+        "online_dev_rule": "fixed first 256 of original 500 dev IDs, same across all arms",
+        "test_usage": "only final comparison, no hyperparameter selection",
+        "prompt": "existing GSM8K zero-shot boxed-answer chat template, hash frozen across arms",
+        "selection": "uniform shuffle; no outcome-based dataset filtering"
+      },
+      "sampling_and_geometry": {
+        "group_size": 8,
+        "pending_window_groups": 64,
+        "selected_groups_per_round": 16,
+        "ppo_mini_batch_groups": 4,
+        "optimizer_steps_per_round": 4,
+        "ppo_epochs": 1,
+        "generation_input_groups": 28,
+        "window_accounting": "pending",
+        "full_group_filter": "binary accuracy mixed",
+        "train_temperature": 1.0,
+        "train_top_p": 1.0,
+        "train_top_k": -1,
+        "max_prompt_tokens": 1024,
+        "max_response_tokens": 4096,
+        "max_model_tokens": 5120,
+        "rollout_max_num_seqs": 128,
+        "rollout_max_num_batched_tokens": 6144,
+        "actor_max_tokens_per_gpu": 12288,
+        "rollout_logprob_max_tokens_per_gpu": 24576,
+        "gpu_memory_utilization": 0.65,
+        "lr": 5e-07,
+        "lr_scheduler": "constant",
+        "adamw_betas": [
+          0.9,
+          0.999
+        ],
+        "weight_decay": 0.01,
+        "clip_ratio_low": 0.2,
+        "clip_ratio_high": 0.28,
+        "grad_clip": 1.0,
+        "loss_aggregation": "token-mean",
+        "kl_loss": false,
+        "entropy_coeff": 0.0,
+        "rollout_importance_correction": null,
+        "overlong_buffer_tokens": 1024,
+        "overlong_penalty_factor": 1.0,
+        "reward": "frozen v7 accuracy scorer with audited GSM8K percent-unit adapter; correct +1, incorrect -1; DAPO length penalty separate",
+        "cross_update_resume": true,
+        "cross_weight_kv_reuse": false,
+        "carryover": "token prefix + original behavior logprobs and policy version; rebuild KV under updated weights",
+        "lr_warmup_steps": 10
+      },
+      "completed_rounds_each": 1000,
+      "training_seed": 20261102,
+      "replicated_training_seeds": 1
+    },
+    "base_screen": {
+      "model": "Untrained Qwen3-8B-Base",
+      "draws_per_question": 1,
+      "sampling": "T1/p1/k-1/cap8192",
+      "dataset": "Unique train questions;dev excluded;second10000 excludesfirst1000",
+      "AI_labels_not_human_gold": true
+    },
+    "fixed64_diagnostics": {
+      "population": "64DeepMathdev questions reused forprobability/forcedopening/replayendpoint analysis",
+      "sampling": "T1/p1/k-1/cap8192,n4",
+      "not_the1021x4_T06_validation_track": true
+    }
+  },
+  "evidence": [
+    {
+      "id": "EL01",
+      "title": "最早的问题：四种8B调度都出现快速变长，但发生轮次不同",
+      "setup": "historical_8B_full8_and_44_and_race4v2",
+      "design": "固定1021道DeepMath×4，匹配跃升前后相同题；保留训练/验证不同采样温度。",
+      "results": [
+        {
+          "arm": "eight",
+          "run_name": "20261031-setup2-qwen3-8b-april-eight-w256-g64-8k-from0-12h",
+          "validation_steps": [
+            350,
+            400
+          ],
+          "population": {
+            "questions": 1021,
+            "samples_per_question": 4,
+            "responses": 4084
+          },
+          "before": {
+            "mean_tokens": 1421.7061704211558,
+            "accuracy": 0.713026444662096,
+            "cap_rate": 0.015181194906953967,
+            "high_repeat20_rate": 0.012242899118511263
+          },
+          "after": {
+            "mean_tokens": 2838.200783545544,
+            "accuracy": 0.7431439764936337,
+            "cap_rate": 0.05901077375122429,
+            "high_repeat20_rate": 0.021057786483839373
+          },
+          "natural_first_word": [
+            {
+              "step": 350,
+              "Alright_fraction": 0.0002448579823702253,
+              "To_fraction": 0.9960822722820764
+            },
+            {
+              "step": 400,
+              "Alright_fraction": 0.9909402546523016,
+              "To_fraction": 0.009059745347698335
+            }
+          ],
+          "paired_same_questions": {
+            "n": 1021,
+            "fraction_length_increased": 0.9539666993143977,
+            "fraction_length_doubled": 0.4338883447600392,
+            "median_length_ratio": 1.8549537648612946,
+            "both_4_of_4_correct_n": 443,
+            "both_4_of_4_correct_mean_length_before": 1104.0936794582392,
+            "both_4_of_4_correct_mean_length_after": 1974.4023702031602
+          },
+          "accuracy_composition_only_token_effect": -22.335764418613962,
+          "sources": [
+            {
+              "source": "reports/length_diagnostics_20261102/checks_summary.json",
+              "json_pointer": "/pairs/eight"
+            },
+            {
+              "source": "reports/rl_opening_dynamics_20261104/history_openings.json",
+              "json_pointer": "/runs/0/points/7/openings"
+            },
+            {
+              "source": "reports/rl_opening_dynamics_20261104/history_openings.json",
+              "json_pointer": "/runs/0/points/8/openings"
+            }
+          ]
+        },
+        {
+          "arm": "discard44",
+          "run_name": "20261101-setup2-qwen3-8b-april-discard44-w256-g64-8k-from0-10h",
+          "validation_steps": [
+            150,
+            200
+          ],
+          "population": {
+            "questions": 1021,
+            "samples_per_question": 4,
+            "responses": 4084
+          },
+          "before": {
+            "mean_tokens": 1169.630999020568,
+            "accuracy": 0.6483839373163565,
+            "cap_rate": 0.023751224289911853,
+            "high_repeat20_rate": 0.02277179236043095
+          },
+          "after": {
+            "mean_tokens": 3004.6062683643486,
+            "accuracy": 0.7039666993143977,
+            "cap_rate": 0.08888344760039177,
+            "high_repeat20_rate": 0.040156709108716944
+          },
+          "natural_first_word": [
+            {
+              "step": 150,
+              "Alright_fraction": 0.01248775710088149,
+              "To_fraction": 0.9791870714985309
+            },
+            {
+              "step": 200,
+              "Alright_fraction": 0.9828599412340843,
+              "To_fraction": 0.017140058765915768
+            }
+          ],
+          "paired_same_questions": {
+            "n": 1021,
+            "fraction_length_increased": 0.9686581782566112,
+            "fraction_length_doubled": 0.6503428011753183,
+            "median_length_ratio": 2.4756225151705378,
+            "both_4_of_4_correct_n": 367,
+            "both_4_of_4_correct_mean_length_before": 801.5108991825613,
+            "both_4_of_4_correct_mean_length_after": 1881.8351498637603
+          },
+          "accuracy_composition_only_token_effect": -41.81436875343638,
+          "sources": [
+            {
+              "source": "reports/length_diagnostics_20261102/checks_summary.json",
+              "json_pointer": "/pairs/discard44"
+            },
+            {
+              "source": "reports/rl_opening_dynamics_20261104/history_openings.json",
+              "json_pointer": "/runs/2/points/3/openings"
+            },
+            {
+              "source": "reports/rl_opening_dynamics_20261104/history_openings.json",
+              "json_pointer": "/runs/2/points/4/openings"
+            }
+          ]
+        },
+        {
+          "arm": "nodiscard44",
+          "run_name": "20261102-setup2-qwen3-8b-april-nodiscard44-w256-g64-8k-from0-10h",
+          "validation_steps": [
+            200,
+            250
+          ],
+          "population": {
+            "questions": 1021,
+            "samples_per_question": 4,
+            "responses": 4084
+          },
+          "before": {
+            "mean_tokens": 1082.8371694417237,
+            "accuracy": 0.6736043095004897,
+            "cap_rate": 0.015670910871694418,
+            "high_repeat20_rate": 0.014201762977473066
+          },
+          "after": {
+            "mean_tokens": 2954.1821743388837,
+            "accuracy": 0.7157198824681684,
+            "cap_rate": 0.0727228207639569,
+            "high_repeat20_rate": 0.03721841332027424
+          },
+          "natural_first_word": [
+            {
+              "step": 200,
+              "Alright_fraction": 0.0,
+              "To_fraction": 0.9995102840352595
+            },
+            {
+              "step": 250,
+              "Alright_fraction": 0.9664544564152792,
+              "To_fraction": 0.03354554358472086
+            }
+          ],
+          "paired_same_questions": {
+            "n": 1021,
+            "fraction_length_increased": 0.9794319294809011,
+            "fraction_length_doubled": 0.703232125367287,
+            "median_length_ratio": 2.5445216815623968,
+            "both_4_of_4_correct_n": 403,
+            "both_4_of_4_correct_mean_length_before": 818.5949131513647,
+            "both_4_of_4_correct_mean_length_after": 1969.1854838709678
+          },
+          "accuracy_composition_only_token_effect": -24.72860558080606,
+          "sources": [
+            {
+              "source": "reports/length_diagnostics_20261102/checks_summary.json",
+              "json_pointer": "/pairs/nodiscard44"
+            },
+            {
+              "source": "reports/rl_opening_dynamics_20261104/history_openings.json",
+              "json_pointer": "/runs/1/points/4/openings"
+            },
+            {
+              "source": "reports/rl_opening_dynamics_20261104/history_openings.json",
+              "json_pointer": "/runs/1/points/5/openings"
+            }
+          ]
+        },
+        {
+          "arm": "race4v2",
+          "run_name": "20261102-setup2-qwen3-8b-april-race4v2-w256-g64-8k-from0-remaining",
+          "validation_steps": [
+            100,
+            150
+          ],
+          "population": {
+            "questions": 1021,
+            "samples_per_question": 4,
+            "responses": 4084
+          },
+          "before": {
+            "mean_tokens": 1127.6417727717924,
+            "accuracy": 0.6329578844270323,
+            "cap_rate": 0.021302644466209598,
+            "high_repeat20_rate": 0.017384916748285992
+          },
+          "after": {
+            "mean_tokens": 3356.7331047992166,
+            "accuracy": 0.6493633692458374,
+            "cap_rate": 0.12659157688540645,
+            "high_repeat20_rate": 0.0648873653281097
+          },
+          "natural_first_word": [
+            {
+              "step": 100,
+              "Alright_fraction": 0.0014691478942213516,
+              "To_fraction": 0.9943682664054848
+            },
+            {
+              "step": 150,
+              "Alright_fraction": 0.9938785504407444,
+              "To_fraction": 0.005876591576885406
+            }
+          ],
+          "paired_same_questions": {
+            "n": 1021,
+            "fraction_length_increased": 0.9755142017629774,
+            "fraction_length_doubled": 0.7433888344760039,
+            "median_length_ratio": 2.8099943534726144,
+            "both_4_of_4_correct_n": 307,
+            "both_4_of_4_correct_mean_length_before": 812.8477198697068,
+            "both_4_of_4_correct_mean_length_after": 2027.280944625407
+          },
+          "accuracy_composition_only_token_effect": -10.86284856189377,
+          "sources": [
+            {
+              "source": "reports/length_diagnostics_20261102/checks_summary.json",
+              "json_pointer": "/pairs/race4v2"
+            },
+            {
+              "source": "reports/rl_opening_dynamics_20261104/history_openings.json",
+              "json_pointer": "/runs/3/points/2/openings"
+            },
+            {
+              "source": "reports/rl_opening_dynamics_20261104/history_openings.json",
+              "json_pointer": "/runs/3/points/3/openings"
+            }
+          ]
+        }
+      ],
+      "evidence_strength": "重复的观察现象；不同策略之间不是充分随机化的因果隔离",
+      "supported_claim": "长度跃升不是4+4独有；完整八路并行APRIL也出现。固定题大多数变长，不能仅用题目换了或正确/错误比例变化解释。",
+      "not_established": [
+        "full8仍有APRIL跨权重续写，不能写成原始同步DAPO的无续写对照。",
+        "不同调度同时改变取消、等待、候选暴露和训练数据反馈；轮次早晚不能单独证明哪项机制导致跃升。",
+        "high_repeat20只是20gram词/符号代理；旧high_repeat_rate高达70–80%不应当成真实异常率。"
+      ],
+      "sources": [
+        {
+          "source": "reports/length_diagnostics_20261102/checks_summary.json",
+          "json_pointer": "/scope"
+        },
+        {
+          "source": "reports/length_diagnostics_20261102/checks_summary.json",
+          "json_pointer": "/definitions"
+        },
+        {
+          "source": "reports/rl_opening_dynamics_20261104/history_openings.json",
+          "json_pointer": "/method"
+        }
+      ]
+    },
+    {
+      "id": "EL02",
+      "title": "早期长度变化与后期梯度失稳需要拆开",
+      "setup": "original_full8_and_separate_early_formal",
+      "design": "同一full8轨迹的跃升前后训练窗口；另列early formal完整800次优化器更新。",
+      "results": {
+        "full8_training_windows": [
+          {
+            "steps": [
+              326,
+              350
+            ],
+            "n": 25,
+            "means": {
+              "actor/grad_norm": 0.3830592742562294,
+              "actor/entropy": 0.37691103339195253,
+              "actor/ppo_kl": 1.1014737358010507e-05,
+              "actor/pg_clipfrac": 0.0011533053617616437,
+              "response_length/mean": 1329.6115625,
+              "response_length/clip_ratio": 0.00125,
+              "april/selected_cross_version_response_fraction": 0.253984375,
+              "april/selected_max_token_policy_age": 3.72,
+              "rollout_corr/k3_kl": 0.0007170195272192359,
+              "rollout_corr/log_ppl_abs_diff": 0.0011219205893576146
+            }
+          },
+          {
+            "steps": [
+              376,
+              400
+            ],
+            "n": 25,
+            "means": {
+              "actor/grad_norm": 0.2427481010556221,
+              "actor/entropy": 0.20511405169963837,
+              "actor/ppo_kl": 2.9477132350516515e-05,
+              "actor/pg_clipfrac": 0.000883269321401359,
+              "response_length/mean": 3070.27671875,
+              "response_length/clip_ratio": 0.0596875,
+              "april/selected_cross_version_response_fraction": 0.3046875,
+              "april/selected_max_token_policy_age": 3.48,
+              "rollout_corr/k3_kl": 0.0006065471353940665,
+              "rollout_corr/log_ppl_abs_diff": 0.0008733727200888097
+            }
+          }
+        ],
+        "formal_early_max_preclip_norm_800updates": 0.706914,
+        "full8_validation_accuracy_350_to400": [
+          0.713026444662096,
+          0.7431439764936337
+        ]
+      },
+      "evidence_strength": "同run直接观察，反驳“变长必然就是梯度爆炸”的充分条件",
+      "supported_claim": "full8早期长度均值1329.6→3070.3时轮均梯度0.383→0.243，失配代理也未变大；较长回答同时伴随准确率提高。",
+      "not_established": [
+        "并未证明所有变长都有益；cap/repetition尾部仍需另看。",
+        "early formal的0.706914与full8窗口统计来自不同轨迹，不能拼接成一条曲线。",
+        "log_ppl_abs_diff是每回答平均logprob差的绝对值再聚合，不是逐token d均值。"
+      ],
+      "sources": [
+        {
+          "source": "reports/length_diagnostics_20261102/checks_summary.json",
+          "json_pointer": "/training_windows/eight/0"
+        },
+        {
+          "source": "reports/length_diagnostics_20261102/checks_summary.json",
+          "json_pointer": "/training_windows/eight/1"
+        },
+        {
+          "source": "reports/rl_root_cause_20261103/research_state.json",
+          "json_pointer": "/early_length_results/finding"
+        }
+      ]
+    },
+    {
+      "id": "EL03",
+      "title": "数据/模板突然改变的初步排查",
+      "setup": "historical_8B_validation",
+      "design": "跨21份验证文件核对同qid的prompt和gold；匹配同题4/4皆正确子集。",
+      "results": {
+        "prompt_invariance": {
+          "files": 21,
+          "responses": 136164,
+          "question_ids": 1621,
+          "all_prompt_and_gold_equal_across_arms_and_steps": true,
+          "mismatches": []
+        },
+        "full8_both_four_of_four_correct": {
+          "n": 1021,
+          "fraction_length_increased": 0.9539666993143977,
+          "fraction_length_doubled": 0.4338883447600392,
+          "median_length_ratio": 1.8549537648612946,
+          "both_4_of_4_correct_n": 443,
+          "both_4_of_4_correct_mean_length_before": 1104.0936794582392,
+          "both_4_of_4_correct_mean_length_after": 1974.4023702031602
+        }
+      },
+      "evidence_strength": "身份核验+同题描述对照",
+      "supported_claim": "这些验证文件没有题目或答案模板漂移；即使前后都4/4正确，full8均长1104→1974。",
+      "not_established": [
+        "不排除训练数据的实际暴露顺序、异步完成次序或特定题目×模型状态交互。",
+        "验证输入不变不等于训练批次相同。"
+      ],
+      "sources": [
+        {
+          "source": "reports/length_diagnostics_20261102/checks_summary.json",
+          "json_pointer": "/prompt_invariance"
+        },
+        {
+          "source": "reports/length_diagnostics_20261102/checks_summary.json",
+          "json_pointer": "/pairs/eight/paired_questions"
+        }
+      ]
+    },
+    {
+      "id": "EL04",
+      "title": "1xB300缩小筛选没有复现同规模的失稳",
+      "setup": "small_06B_GSM8K",
+      "design": "Qwen3-0.6B-Base、GSM8K6973train/500dev、固定dev256、4k回答、W64、每轮16G8、单GPU；eight/4+4keep/4+4discard各1000轮，seed20261102。",
+      "results": {
+        "design_common": {
+          "group_size": 8,
+          "pending_window_groups": 64,
+          "selected_groups_per_round": 16,
+          "ppo_mini_batch_groups": 4,
+          "optimizer_steps_per_round": 4,
+          "ppo_epochs": 1,
+          "generation_input_groups": 28,
+          "window_accounting": "pending",
+          "full_group_filter": "binary accuracy mixed",
+          "train_temperature": 1.0,
+          "train_top_p": 1.0,
+          "train_top_k": -1,
+          "max_prompt_tokens": 1024,
+          "max_response_tokens": 4096,
+          "max_model_tokens": 5120,
+          "rollout_max_num_seqs": 128,
+          "rollout_max_num_batched_tokens": 6144,
+          "actor_max_tokens_per_gpu": 12288,
+          "rollout_logprob_max_tokens_per_gpu": 24576,
+          "gpu_memory_utilization": 0.65,
+          "lr": 5e-07,
+          "lr_scheduler": "constant",
+          "adamw_betas": [
+            0.9,
+            0.999
+          ],
+          "weight_decay": 0.01,
+          "clip_ratio_low": 0.2,
+          "clip_ratio_high": 0.28,
+          "grad_clip": 1.0,
+          "loss_aggregation": "token-mean",
+          "kl_loss": false,
+          "entropy_coeff": 0.0,
+          "rollout_importance_correction": null,
+          "overlong_buffer_tokens": 1024,
+          "overlong_penalty_factor": 1.0,
+          "reward": "frozen v7 accuracy scorer with audited GSM8K percent-unit adapter; correct +1, incorrect -1; DAPO length penalty separate",
+          "cross_update_resume": true,
+          "cross_weight_kv_reuse": false,
+          "carryover": "token prefix + original behavior logprobs and policy version; rebuild KV under updated weights",
+          "lr_warmup_steps": 10
+        },
+        "length_summaries": {
+          "screen-A_eight-seed20261102": {
+            "dev_points": 41,
+            "dev_at_steps": {
+              "0": 1212.76,
+              "25": 301.86,
+              "100": 298.12,
+              "500": 372.82,
+              "650": 413.13,
+              "700": 497.13,
+              "750": 434.43,
+              "800": 528.67,
+              "850": 651.89,
+              "1000": 555.83
+            },
+            "max_dev_after25": [
+              651.8935546875,
+              850
+            ],
+            "final_cap": 0.0107421875,
+            "max_cap_after25": 0.0244140625,
+            "train_windows": {
+              "51-100": 329.54,
+              "401-500": 441.83,
+              "601-700": 573.62,
+              "701-800": 675.12,
+              "801-900": 966.86,
+              "901-1000": 804.17
+            },
+            "largest_adjacent15window_ratio_after50": [
+              1.29181477015493,
+              797
+            ]
+          },
+          "screen-B_four_four_keep-seed20261102": {
+            "dev_points": 41,
+            "dev_at_steps": {
+              "0": 1212.76,
+              "25": 314.29,
+              "100": 305.47,
+              "500": 396.3,
+              "650": 460.72,
+              "700": 486.33,
+              "750": 471.56,
+              "800": 499.36,
+              "850": 582.56,
+              "1000": 475.41
+            },
+            "max_dev_after25": [
+              601.6923828125,
+              825
+            ],
+            "final_cap": 0.0048828125,
+            "max_cap_after25": 0.0283203125,
+            "train_windows": {
+              "51-100": 356.99,
+              "401-500": 498.75,
+              "601-700": 681.71,
+              "701-800": 679.61,
+              "801-900": 853.62,
+              "901-1000": 780.35
+            },
+            "largest_adjacent15window_ratio_after50": [
+              1.3565584291821122,
+              616
+            ]
+          },
+          "screen-C_four_four_discard-seed20261102": {
+            "dev_points": 41,
+            "dev_at_steps": {
+              "0": 1209.06,
+              "25": 291.28,
+              "100": 300.21,
+              "500": 355.96,
+              "650": 382.7,
+              "700": 323.15,
+              "750": 331.62,
+              "800": 346.63,
+              "850": 371.46,
+              "1000": 384.52
+            },
+            "max_dev_after25": [
+              415.73828125,
+              975
+            ],
+            "final_cap": 0.0029296875,
+            "max_cap_after25": 0.01171875,
+            "train_windows": {
+              "51-100": 369.75,
+              "401-500": 453.13,
+              "601-700": 454.87,
+              "701-800": 464.69,
+              "801-900": 520.77,
+              "901-1000": 610.87
+            },
+            "largest_adjacent15window_ratio_after50": [
+              1.2450147148909556,
+              905
+            ]
+          }
+        },
+        "screening": {
+          "arms": {
+            "A_eight": {
+              "last_four_dev_mean": 0.869140625,
+              "peak_two_dev_mean": 0.8720703125,
+              "baseline_grad_median": 2.018689662218094,
+              "max_25_round_grad_median": 2.360619843006134,
+              "unstable": false
+            },
+            "B_four_four_keep": {
+              "last_four_dev_mean": 0.85205078125,
+              "peak_two_dev_mean": 0.85986328125,
+              "baseline_grad_median": 1.9606833755970001,
+              "max_25_round_grad_median": 2.203377425670624,
+              "unstable": false
+            },
+            "C_four_four_discard": {
+              "last_four_dev_mean": 0.85693359375,
+              "peak_two_dev_mean": 0.8623046875,
+              "baseline_grad_median": 1.8621879667043686,
+              "max_25_round_grad_median": 2.3570939898490906,
+              "unstable": false
+            }
+          },
+          "dev_spread": 0.01708984375,
+          "replicate": false,
+          "rule": "Different instability labels OR >=3 percentage point spread in last four dev means. Instability: a 25-round grad median >5x rounds51-150 median AND last-two dev mean >=3pp below best-two dev mean. Exploratory trigger, not a significance test."
+        }
+      },
+      "evidence_strength": "未复现的单种子筛选；不是稳定性定理",
+      "supported_claim": "三臂未触发预注册探索门槛；后期有缓慢变长但没有8B式明显短窗口跳变。",
+      "not_established": [
+        "模型、数据、cap、window、batch均不同；不是8B严格缩放实验。",
+        "无差异触发后没有追加两种子重复，不能说小模型永远不会出现。",
+        "design.status为初始启动状态已过期，应使用完成snapshot和summary。"
+      ],
+      "sources": [
+        {
+          "source": "reports/pilot44_stability_20261102/experiment_design.json",
+          "json_pointer": "/model"
+        },
+        {
+          "source": "reports/pilot44_stability_20261102/experiment_design.json",
+          "json_pointer": "/data"
+        },
+        {
+          "source": "reports/pilot44_stability_20261102/experiment_design.json",
+          "json_pointer": "/common"
+        },
+        {
+          "source": "reports/pilot44_stability_20261102/experiment_design.json",
+          "json_pointer": "/replication_trigger"
+        },
+        {
+          "source": "reports/small_model_length_20261103/summary.json",
+          "json_pointer": ""
+        },
+        {
+          "source": "reports/small_model_length_20261103/snapshot.json",
+          "json_pointer": "/reports"
+        },
+        {
+          "source": "reports/project_curation_20261104/project/data/evidence/G-08.json",
+          "json_pointer": "/results/screening"
+        }
+      ]
+    },
+    {
+      "id": "EL05",
+      "title": "历史检索：类似首词变化与一般长度脉冲不等价",
+      "setup": "BBB_20run_readonly_audit",
+      "design": "20个至少50轮的BBB历史run，用相邻20轮均值比作描述性筛选，再核固定验证。",
+      "results": {
+        "new_same_style_surge": {
+          "run": "seqfirst8",
+          "train_main_rise_approx": [
+            100,
+            140
+          ],
+          "validation_steps": [
+            100,
+            150
+          ],
+          "validation_mean_tokens": [
+            1462.0798237022527,
+            2831.275954946131
+          ],
+          "alright_fraction": [
+            0.034769833496571985,
+            0.9725759059745348
+          ],
+          "retained_at_index_snapshot": [
+            250,
+            300
+          ]
+        },
+        "older_training_pulses": [
+          {
+            "run": "eight17",
+            "window": [
+              2145,
+              2184
+            ],
+            "train_means": [
+              1238.54,
+              2158.01
+            ],
+            "validation_steps": [
+              2150,
+              2200
+            ],
+            "validation_means": [
+              1278.41162109375,
+              1411.29736328125
+            ],
+            "retained_steps": [
+              2470,
+              2475,
+              2480
+            ]
+          },
+          {
+            "run": "discard17",
+            "window": [
+              2476,
+              2515
+            ],
+            "train_means": [
+              1280.95,
+              2137.14
+            ],
+            "validation_steps": [
+              2450,
+              2500
+            ],
+            "validation_means": [
+              1188.636962890625,
+              1201.96337890625
+            ],
+            "another_rise": [
+              2618,
+              2637
+            ],
+            "retained_steps": [
+              2630,
+              2635,
+              2640
+            ]
+          }
+        ],
+        "tailsieve_candidate": {
+          "train_window": [
+            2337,
+            2376
+          ],
+          "train_means": [
+            1293.81,
+            1730.7
+          ],
+          "validation_steps": [
+            2340,
+            2380
+          ],
+          "validation_means": [
+            1232.978515625,
+            1510.541015625
+          ],
+          "cap_rates": [
+            0.024658203125,
+            0.072265625
+          ],
+          "grad_means_2331_2340_and_2371_2380": [
+            0.5761,
+            0.5059
+          ],
+          "mismatch_mean_approx": 0.0014,
+          "alright_fraction": 0,
+          "verified_checkpoints": [
+            {
+              "step": 2340,
+              "path": "archive:remote/validation_bests/deepmath_d5p5/step_2340",
+              "model_shards": 7,
+              "optimizer_shards": 7,
+              "extra_state_shards": 7,
+              "actor_bytes": 21893098230,
+              "data_pt_bytes": 188507
+            },
+            {
+              "step": 2410,
+              "path": "archive:remote/validation_bests/deepmath_d6/step_2410",
+              "model_shards": 7,
+              "optimizer_shards": 7,
+              "extra_state_shards": 7,
+              "actor_bytes": 21893098230,
+              "data_pt_bytes": 210011
+            }
+          ],
+          "interpretation": "Moderate, partially reversible length increase. No conversational-opening takeover; not established as the same mechanism as8B early surges."
+        },
+        "archive06": [
+          {
+            "arm": "baseline",
+            "n": 2848,
+            "largest_20_vs_20_growth_after_first30": {
+              "step": 835,
+              "pre": 464.2828094482422,
+              "post": 555.3445343017578,
+              "ratio": 1.1961341729661157
+            }
+          },
+          {
+            "arm": "april",
+            "n": 3300,
+            "largest_20_vs_20_growth_after_first30": {
+              "step": 1157,
+              "pre": 656.0807220458985,
+              "post": 782.4677001953125,
+              "ratio": 1.1926393718067092
+            }
+          }
+        ],
+        "older_other_methods": "The20-vs20 screening did not find comparable abrupt jumps in the original1.7B Baseline/APRIL/RollPacker/RollVerify long runs. TailSieve is the strongest candidate among the five-method comparison."
+      },
+      "evidence_strength": "历史观察复核",
+      "supported_claim": "seqfirst8也有100–140附近的同类首词/长度变化；旧1.7B和0.6B的脉冲较温和，TailSieve未见Alright接管且梯度未升。",
+      "not_established": [
+        "TailSieve不是已确认同一机制；不能为寻找异常而把所有幅度变化都命名为突增。",
+        "20vs20筛选不是统计显著的changepoint推断，旧保存频率与可恢复点需单列。"
+      ],
+      "sources": [
+        {
+          "source": "reports/bbb_historical_surge_audit_20261103/findings.json",
+          "json_pointer": "/scope"
+        },
+        {
+          "source": "reports/bbb_historical_surge_audit_20261103/findings.json",
+          "json_pointer": "/screening"
+        },
+        {
+          "source": "reports/bbb_historical_surge_audit_20261103/findings.json",
+          "json_pointer": "/new_same_style_surge"
+        },
+        {
+          "source": "reports/bbb_historical_surge_audit_20261103/findings.json",
+          "json_pointer": "/tailsieve_candidate"
+        },
+        {
+          "source": "reports/bbb_historical_surge_audit_20261103/findings.json",
+          "json_pointer": "/archive06"
+        },
+        {
+          "source": "reports/bbb_historical_surge_audit_20261103/findings.json",
+          "json_pointer": "/save_frequency_correction"
+        }
+      ]
+    },
+    {
+      "id": "EL06",
+      "title": "Base1000题初筛：异常不需要RL才存在",
+      "setup": "base_screen1000",
+      "design": "原始Qwen3-8B-Base，T1/p1/k-1/8192，每题1次，不按正确或优势筛选；规则候选再由assistant文本复核。",
+      "results": {
+        "sample_count": 1000,
+        "generations_per_question": 1,
+        "generation": {
+          "complete": true,
+          "responses": 1000,
+          "tokens": 1185032,
+          "length_caps": 4,
+          "elapsed_seconds": 152.34828090667725,
+          "completed_unix": 1793722278.82738
+        },
+        "unique_manually_reviewed": 168,
+        "confirmed_anomaly_count": 99,
+        "confirmed_fraction_lower_bound": 0.099,
+        "uncertain_count": 22,
+        "reviewed_not_confirmed": 47,
+        "not_manually_reviewed": 832,
+        "types_overlap": {
+          "invented_dialogue": 66,
+          "task_drift": 82,
+          "gibberish": 36,
+          "repetition": 9
+        },
+        "confirmed_self_terminated": 95,
+        "confirmed_length_capped": 4,
+        "negative_rule_spot_audit": {
+          "sample_count": 40,
+          "confirmed": 5,
+          "uncertain": 5,
+          "selection": "40 deterministic hash-selected answers outside the first97 candidates; excludes correctness labels."
+        },
+        "no_correctness_or_advantage_filter": true
+      },
+      "evidence_strength": "AI辅助的保守已确认下限；非人工总体金标",
+      "supported_claim": "至少99/1000被判异常，其中95条自然结束；异常不等价于长度截断。未命中候选之外的40条抽查又发现5条异常。",
+      "not_established": [
+        "99/1000不是完整异常率；832条未逐条内容复核。",
+        "一次输出异常不能定义该题为稳定易异常题；不能把数学答错本身当异常。"
+      ],
+      "sources": [
+        {
+          "source": "reports/anomaly_screen1000_20261104/summary.json",
+          "json_pointer": ""
+        }
+      ]
+    },
+    {
+      "id": "EL07",
+      "title": "扩至10000题并全文LLM复核，补上规则漏检",
+      "setup": "base_screen10000",
+      "design": "从训练题冻结hash顺序取10000不同题，排除之前1000及dev，每题一次；严格程序确认39条，其余9961全文AI复核。",
+      "results": {
+        "generation": {
+          "complete": true,
+          "responses": 10000,
+          "tokens": 12126631,
+          "length_caps": 99,
+          "elapsed_seconds": 1329.0503697395325,
+          "completed_unix": 1793724743.7654402
+        },
+        "initial_candidates": 1482,
+        "initial_hard_rule_candidates": 38,
+        "final_labels": {
+          "abnormal": 2555,
+          "uncertain": 73,
+          "normal": 7372,
+          "error": 0,
+          "pending": 0
+        },
+        "strict_program_confirmed": 39,
+        "LLM_reviewed": 9961,
+        "LLM_abnormal_outside_initial_candidates": 1340,
+        "overlapping_types": {
+          "task_drift": 1727,
+          "invented_dialogue": 1599,
+          "gibberish": 703,
+          "repetition": 308
+        },
+        "capped_by_label": {
+          "abnormal": {
+            "count": 2555,
+            "capped_count": 96,
+            "capped_fraction": 0.037573385518591
+          },
+          "uncertain": {
+            "count": 73,
+            "capped_count": 0,
+            "capped_fraction": 0.0
+          },
+          "normal": {
+            "count": 7372,
+            "capped_count": 3,
+            "capped_fraction": 0.00040694519804666303
+          },
+          "error": {
+            "count": 0,
+            "capped_count": 0,
+            "capped_fraction": null
+          },
+          "pending": {
+            "count": 0,
+            "capped_count": 0,
+            "capped_fraction": null
+          }
+        },
+        "review_API_reported_cost_usd": "35.5593413194000020707"
+      },
+      "evidence_strength": "完整该采样语料的规则+AI标签，不是人类真值",
+      "supported_claim": "Base在这些T1采样下已有任务漂移/虚构对话/乱码/重复：2555异常、73不确定、7372normal标签；重复标签308（严格规则39）。",
+      "not_established": [
+        "1482是候选数，不是最终异常数；最初38hard candidates与修订严格规则39confirmed不是同一次口径。",
+        "2555包含多种异常且类别重叠，不能写成2555条重复。",
+        "与1000题的9.9%下限不能直接做模型异常变多比较：题集不同、复核覆盖不同。",
+        "未检出异常不意味着回答正确；单次题目风险仍未建立。"
+      ],
+      "sources": [
+        {
+          "source": "reports/anomaly_screen10000_20261104/screen_summary.json",
+          "json_pointer": ""
+        },
+        {
+          "source": "reports/anomaly_llm_review_20261104/summary.json",
+          "json_pointer": "/label_counts"
+        },
+        {
+          "source": "reports/anomaly_llm_review_20261104/summary.json",
+          "json_pointer": "/program_abnormal_count"
+        },
+        {
+          "source": "reports/anomaly_llm_review_20261104/summary.json",
+          "json_pointer": "/llm_reviewed_count"
+        },
+        {
+          "source": "reports/anomaly_llm_review_20261104/summary.json",
+          "json_pointer": "/llm_abnormal_outside_original_candidates"
+        },
+        {
+          "source": "reports/anomaly_llm_review_20261104/summary.json",
+          "json_pointer": "/abnormal_types_overlap"
+        },
+        {
+          "source": "reports/anomaly_llm_review_20261104/summary.json",
+          "json_pointer": "/limitations"
+        }
+      ]
+    },
+    {
+      "id": "EL08",
+      "title": "坏题假说的复采检验：有温和富集，未证明触发训练爆炸",
+      "setup": "base_risk_matched_resampling",
+      "design": "预选500题一次Base输出异常的题和500个同cohort/难度/近prompt长度对照；每题8个新seed，8000条盲审，分析口径在看复采标签前冻结。",
+      "results": {
+        "pairs": 500,
+        "responses_per_arm": 4000,
+        "matching": "Exact data_source/difficulty bucket; closest difficulty and log prompt length without replacement.",
+        "label_counts": {
+          "risk": {
+            "normal": 2790,
+            "abnormal": 1175,
+            "uncertain": 35
+          },
+          "control": {
+            "abnormal": 1015,
+            "normal": 2952,
+            "uncertain": 33
+          }
+        },
+        "primary_response": {
+          "numerator": "primary_confirmed",
+          "denominator": "responses",
+          "risk": 0.29375,
+          "control": 0.25375,
+          "risk_numerator": 1175.0,
+          "risk_denominator": 4000.0,
+          "control_numerator": 1015.0,
+          "control_denominator": 4000.0,
+          "risk_minus_control": 0.040000000000000036,
+          "paired_difference_bootstrap": {
+            "finite_draws": 20000,
+            "ci95": [
+              0.017250000000000043,
+              0.062
+            ],
+            "fraction_positive": 0.9997,
+            "fraction_zero": 0.0,
+            "fraction_negative": 0.0003
+          },
+          "arm_ci95": {
+            "risk": [
+              0.27775,
+              0.30975
+            ],
+            "control": [
+              0.2385,
+              0.269
+            ]
+          },
+          "risk_ratio": 1.1576354679802958,
+          "risk_ratio_bootstrap": {
+            "finite_draws": 20000,
+            "ci95": [
+              1.0655140160699603,
+              1.2554079200233563
+            ],
+            "fraction_positive": 1.0,
+            "fraction_zero": 0.0,
+            "fraction_negative": 0.0
+          }
+        },
+        "atleast1_of8": {
+          "numerator": "primary_confirmed_atleast1",
+          "denominator": "prompts",
+          "risk": 0.882,
+          "control": 0.858,
+          "risk_numerator": 441.0,
+          "risk_denominator": 500.0,
+          "control_numerator": 429.0,
+          "control_denominator": 500.0,
+          "risk_minus_control": 0.02400000000000002,
+          "paired_difference_bootstrap": {
+            "finite_draws": 20000,
+            "ci95": [
+              -0.016000000000000014,
+              0.06400000000000006
+            ],
+            "fraction_positive": 0.8716,
+            "fraction_zero": 0.01855,
+            "fraction_negative": 0.10985
+          },
+          "arm_ci95": {
+            "risk": [
+              0.854,
+              0.91
+            ],
+            "control": [
+              0.826,
+              0.888
+            ]
+          }
+        },
+        "atleast4_of8": {
+          "numerator": "primary_confirmed_atleast4",
+          "denominator": "prompts",
+          "risk": 0.204,
+          "control": 0.138,
+          "risk_numerator": 102.0,
+          "risk_denominator": 500.0,
+          "control_numerator": 69.0,
+          "control_denominator": 500.0,
+          "risk_minus_control": 0.06599999999999998,
+          "paired_difference_bootstrap": {
+            "finite_draws": 20000,
+            "ci95": [
+              0.020000000000000018,
+              0.11199999999999999
+            ],
+            "fraction_positive": 0.99775,
+            "fraction_zero": 0.0003,
+            "fraction_negative": 0.00195
+          },
+          "arm_ci95": {
+            "risk": [
+              0.17,
+              0.24
+            ],
+            "control": [
+              0.108,
+              0.168
+            ]
+          }
+        },
+        "secondary_excluding_LLM_only_repetition": {
+          "numerator": "secondary_confirmed",
+          "denominator": "responses",
+          "risk": 0.28325,
+          "control": 0.24575,
+          "risk_numerator": 1133.0,
+          "risk_denominator": 4000.0,
+          "control_numerator": 983.0,
+          "control_denominator": 4000.0,
+          "risk_minus_control": 0.037500000000000006,
+          "paired_difference_bootstrap": {
+            "finite_draws": 20000,
+            "ci95": [
+              0.015250000000000041,
+              0.059000000000000025
+            ],
+            "fraction_positive": 0.9995,
+            "fraction_zero": 0.0,
+            "fraction_negative": 0.0005
+          },
+          "arm_ci95": {
+            "risk": [
+              0.2675,
+              0.299
+            ],
+            "control": [
+              0.23075,
+              0.261
+            ]
+          }
+        }
+      },
+      "evidence_strength": "匹配观察队列的预测性富集；不是随机化训练因果试验",
+      "supported_claim": "risk29.375% vscontrol25.375%，差4pp、配对95%CI[1.725,6.2]pp；≥4/8异常题20.4% vs13.8%。",
+      "not_established": [
+        "不能说某一批坏题加载导致特定轮爆炸；没有用这些队列完成随机化训练触发验证。",
+        "至少1/8的差2.4pp区间跨零，单次screen标签远非稳定二分类。",
+        "风险与对照的标签来自同套AI规则，可能存在相关标注误差。"
+      ],
+      "sources": [
+        {
+          "source": "reports/rl_root_cause_20261103/risk_validation/protocol.json",
+          "json_pointer": ""
+        },
+        {
+          "source": "reports/rl_root_cause_20261103/trajectory/risk_repeat_analysis/analysis.json",
+          "json_pointer": "/analysis_spec"
+        },
+        {
+          "source": "reports/rl_root_cause_20261103/trajectory/risk_repeat_analysis/analysis.json",
+          "json_pointer": "/metrics/primary_confirmed_response_rate"
+        },
+        {
+          "source": "reports/rl_root_cause_20261103/trajectory/risk_repeat_analysis/analysis.json",
+          "json_pointer": "/metrics/primary_confirmed_prompt_atleast1_rate"
+        },
+        {
+          "source": "reports/rl_root_cause_20261103/trajectory/risk_repeat_analysis/analysis.json",
+          "json_pointer": "/metrics/primary_confirmed_prompt_atleast4_rate"
+        },
+        {
+          "source": "reports/rl_root_cause_20261103/trajectory/risk_repeat_analysis/analysis.json",
+          "json_pointer": "/interpretation"
+        }
+      ]
+    },
+    {
+      "id": "EL09",
+      "title": "固定失败输入的权重干预反对单一坏题解释",
+      "setup": "late_nodiscard44_500_vs541_not_early_surge",
+      "design": "选择4条失败前缀（3题）固定prefix/seed换500/541，另6题多次新采样；不更新参数。",
+      "results": {
+        "prefix_validation": {
+          "passed": true,
+          "main_responses": 384,
+          "supplement_responses": 32,
+          "total_responses": 416,
+          "backward_passes": 42,
+          "optimizer_updates": 0,
+          "paired_seed_and_prefix_hash_checks": true,
+          "nll_vs_logodds_gradient_identity_max_relative_error": 1.4244731591395166e-05,
+          "cases": 4,
+          "unique_questions": 3
+        },
+        "boundary_cells": [
+          {
+            "model": "keep541",
+            "dtype": "bf16",
+            "mode": "boundary",
+            "n": 32,
+            "loops": 32,
+            "caps": 32,
+            "mean_tokens": 2048,
+            "high_repeat20": 32
+          },
+          {
+            "model": "keep541",
+            "dtype": "fp16",
+            "mode": "boundary",
+            "n": 32,
+            "loops": 32,
+            "caps": 32,
+            "mean_tokens": 2048,
+            "high_repeat20": 32
+          },
+          {
+            "model": "keep500",
+            "dtype": "bf16",
+            "mode": "boundary",
+            "n": 32,
+            "loops": 0,
+            "caps": 21,
+            "mean_tokens": 1618.6875,
+            "high_repeat20": 0
+          }
+        ],
+        "rewind_cells": [
+          {
+            "model": "keep541",
+            "dtype": "bf16",
+            "mode": "rewind512",
+            "n": 32,
+            "loops": 16,
+            "caps": 16,
+            "mean_tokens": 1301.625,
+            "high_repeat20": 14
+          },
+          {
+            "model": "keep541",
+            "dtype": "bf16",
+            "mode": "rewind128",
+            "n": 32,
+            "loops": 21,
+            "caps": 21,
+            "mean_tokens": 1437.15625,
+            "high_repeat20": 21
+          }
+        ],
+        "data_native_resampling": {
+          "keep500": {
+            "responses": 24,
+            "at_loops_ge100chars": 0,
+            "capped": 5
+          },
+          "keep541": {
+            "responses": 24,
+            "at_loops_ge100chars": 4,
+            "capped": 4
+          }
+        },
+        "temporal_order": {
+          "loop_responses": 4,
+          "first_abs_loggap_gt1_after_first_at": 4,
+          "first_abs_probgap_gt02_after_first_at": 3
+        }
+      },
+      "evidence_strength": "特定失败前缀上的条件生成干预；不能估计总体发生率",
+      "supported_claim": "同前缀在541的边界32/32循环、500为0/32；在选定新复采4个循环中，大loggap均在首个@后出现。支持题目×权重×路径交互。",
+      "not_established": [
+        "这些是late500/541，不能当early126–140因果实验。",
+        "选失败前缀有明显选择偏差，500无@仍21/32续写触顶2048，不能叫整体修复。",
+        "不证明所有失配都在循环后出现，也未找出原训练具体触发样本。"
+      ],
+      "sources": [
+        {
+          "source": "reports/prefix_causality_20261103/findings.json",
+          "json_pointer": "/validation"
+        },
+        {
+          "source": "reports/prefix_causality_20261103/findings.json",
+          "json_pointer": "/cells"
+        },
+        {
+          "source": "reports/prefix_causality_20261103/findings.json",
+          "json_pointer": "/limits"
+        },
+        {
+          "source": "reports/data_trigger_experiment_20261103/findings.json",
+          "json_pointer": "/native_resampling"
+        },
+        {
+          "source": "reports/data_trigger_experiment_20261103/findings.json",
+          "json_pointer": "/temporal"
+        },
+        {
+          "source": "reports/data_trigger_experiment_20261103/findings.json",
+          "json_pointer": "/limitations"
+        }
+      ]
+    },
+    {
+      "id": "EL10",
+      "title": "Base长回答更常被标重复：方向与误报需要保留",
+      "setup": "base_screen10000_reanalysis",
+      "design": "按生成后的长度分箱；复用AI标签并对8条特意选择例子盲审正常推进/轻冗余/明显循环。",
+      "results": {
+        "length_bins": [
+          {
+            "min_tokens_inclusive": 0,
+            "max_tokens_exclusive": 1024,
+            "n": 6306,
+            "confirmed_repetition": 30,
+            "confirmed_repetition_rate": 0.004757373929590866,
+            "strict_program_repetition": 2,
+            "strict_program_rate": 0.0003171582619727244,
+            "llm_repetition": 28,
+            "uncertain_any_type": 49,
+            "capped": 0
+          },
+          {
+            "min_tokens_inclusive": 1024,
+            "max_tokens_exclusive": 2048,
+            "n": 2540,
+            "confirmed_repetition": 50,
+            "confirmed_repetition_rate": 0.01968503937007874,
+            "strict_program_repetition": 3,
+            "strict_program_rate": 0.0011811023622047244,
+            "llm_repetition": 47,
+            "uncertain_any_type": 23,
+            "capped": 0
+          },
+          {
+            "min_tokens_inclusive": 2048,
+            "max_tokens_exclusive": 4096,
+            "n": 763,
+            "confirmed_repetition": 117,
+            "confirmed_repetition_rate": 0.15334207077326342,
+            "strict_program_repetition": 11,
+            "strict_program_rate": 0.014416775884665793,
+            "llm_repetition": 106,
+            "uncertain_any_type": 1,
+            "capped": 0
+          },
+          {
+            "min_tokens_inclusive": 4096,
+            "max_tokens_exclusive": 8193,
+            "n": 391,
+            "confirmed_repetition": 111,
+            "confirmed_repetition_rate": 0.28388746803069054,
+            "strict_program_repetition": 23,
+            "strict_program_rate": 0.058823529411764705,
+            "llm_repetition": 88,
+            "uncertain_any_type": 0,
+            "capped": 99
+          }
+        ],
+        "blind_review_summary": {
+          "review_type": "independent_blind_repetition_review",
+          "review_scope": "仅读取base_blind_00.json至base_blind_07.json的audit_id、prompt和text；未读取selection manifest、原始标签或其他案例材料。",
+          "offset_convention": "对各JSON解析后text字符串的Unicode字符索引，0-based、左闭右开；不是JSON源文件字节索引。",
+          "criteria": "clear_loop需要持续重复且无实质新增信息；长证明、不同case、新方法、带新计算的自我修正不因此标为循环；仅2次重述或简短结尾复核不标严重循环。数学正确性不参与分类。",
+          "counts": {
+            "clear_loop": 3,
+            "mild_redundancy": 3,
+            "normal_progress": 2,
+            "uncertain": 0
+          }
+        },
+        "curated_aggregate": {
+          "model": "Qwen3-8B-Base",
+          "n": 10000,
+          "one_response_per_question": true,
+          "selection": "Fixed SHA256 ordering of eligible unique training questions, 10000 new questions excluding first1000 and dev; no reward or outcome selection. Source train40299/dev1621.",
+          "sampling": {
+            "temperature": 1,
+            "top_p": 1,
+            "top_k": -1,
+            "max_tokens": 8192,
+            "stop_token_ids": [
+              151643,
+              151645
+            ],
+            "forced_opening": false
+          },
+          "engine": {
+            "backend": "vLLM",
+            "version": "0.29.0",
+            "dtype": "bfloat16",
+            "tensor_parallel_size": 1
+          },
+          "definition": "label abnormal AND judgment.types contains repetition; strict program plus full-text LLM. This is pre-existing AI-assisted annotation, not a human gold standard.",
+          "by_length": [
+            {
+              "min_tokens_inclusive": 0,
+              "max_tokens_exclusive": 1024,
+              "n": 6306,
+              "confirmed_repetition": 30,
+              "confirmed_repetition_rate": 0.004757373929590866,
+              "strict_program_repetition": 2,
+              "strict_program_rate": 0.0003171582619727244,
+              "llm_repetition": 28,
+              "uncertain_any_type": 49,
+              "capped": 0
+            },
+            {
+              "min_tokens_inclusive": 1024,
+              "max_tokens_exclusive": 2048,
+              "n": 2540,
+              "confirmed_repetition": 50,
+              "confirmed_repetition_rate": 0.01968503937007874,
+              "strict_program_repetition": 3,
+              "strict_program_rate": 0.0011811023622047244,
+              "llm_repetition": 47,
+              "uncertain_any_type": 23,
+              "capped": 0
+            },
+            {
+              "min_tokens_inclusive": 2048,
+              "max_tokens_exclusive": 4096,
+              "n": 763,
+              "confirmed_repetition": 117,
+              "confirmed_repetition_rate": 0.15334207077326342,
+              "strict_program_repetition": 11,
+              "strict_program_rate": 0.014416775884665793,
+              "llm_repetition": 106,
+              "uncertain_any_type": 1,
+              "capped": 0
+            },
+            {
+              "min_tokens_inclusive": 4096,
+              "max_tokens_exclusive": 8193,
+              "n": 391,
+              "confirmed_repetition": 111,
+              "confirmed_repetition_rate": 0.28388746803069054,
+              "strict_program_repetition": 23,
+              "strict_program_rate": 0.058823529411764705,
+              "llm_repetition": 88,
+              "uncertain_any_type": 0,
+              "capped": 99
+            }
+          ],
+          "overall": {
+            "min_tokens_inclusive": 0,
+            "max_tokens_exclusive": 8193,
+            "n": 10000,
+            "confirmed_repetition": 308,
+            "confirmed_repetition_rate": 0.0308,
+            "strict_program_repetition": 39,
+            "strict_program_rate": 0.0039,
+            "llm_repetition": 269,
+            "uncertain_any_type": 73,
+            "capped": 99
+          },
+          "blind_criteria": "clear_loop需要持续重复且无实质新增信息；长证明、不同case、新方法、带新计算的自我修正不因此标为循环；仅2次重述或简短结尾复核不标严重循环。数学正确性不参与分类。",
+          "blind_counts": {
+            "clear_loop": 3,
+            "mild_redundancy": 3,
+            "normal_progress": 2,
+            "uncertain": 0
+          }
+        }
+      },
+      "evidence_strength": "描述关联+选例误报复核",
+      "supported_claim": "AI重复标签率随长度从<1024的0.48%至4096–8192的28.39%；但循环本身会拉长回答，且8例盲审中3明显循环/3轻冗余/2正常推进。",
+      "not_established": [
+        "不能从长度分箱推出长回答导致循环；不同题目且每题一次。",
+        "8例经过选择，不能把其中2/8或5/8当总体误报率。",
+        "保留正常新计算、不同case和有内容的自我修正；长和多次检查不自动是异常。"
+      ],
+      "sources": [
+        {
+          "source": "reports/rl_repetition_audit_20261104/base_length_summary.json",
+          "json_pointer": ""
+        },
+        {
+          "source": "reports/rl_repetition_audit_20261104/blind_repeat_review.json",
+          "json_pointer": ""
+        },
+        {
+          "source": "reports/project_curation_20261104/project/data/evidence/S06.json",
+          "json_pointer": "/results/by_length"
+        },
+        {
+          "source": "reports/project_curation_20261104/project/data/evidence/S06.json",
+          "json_pointer": "/results/blind_counts"
+        },
+        {
+          "source": "reports/rl_repetition_audit_20261104/base_length_summary.json",
+          "json_pointer": "/by_length_requested"
+        }
+      ]
+    },
+    {
+      "id": "EL11",
+      "title": "强制开头改变长度：生成侧可干预证据",
+      "setup": "base_and_early_formal100_150",
+      "design": "同64题、每arm4个pairedseed，固定权重强制单个首token Alright/To/Let或自然生成，cap含prefix8192；无optimizer。",
+      "results": {
+        "base_cells": [
+          {
+            "checkpoint": 0,
+            "arm": "natural",
+            "n": 256,
+            "mean_tokens": 1150.51171875,
+            "median_tokens": 838.5,
+            "capped": 4,
+            "stop_id_terminated": 252,
+            "starts_alright": 3,
+            "high_repeat20_proxy": 2,
+            "long_symbol_run_proxy": 2,
+            "any_role_marker_proxy": 6
+          },
+          {
+            "checkpoint": 0,
+            "arm": "alright",
+            "n": 256,
+            "mean_tokens": 2748.42578125,
+            "median_tokens": 1935.0,
+            "capped": 14,
+            "stop_id_terminated": 242,
+            "starts_alright": 256,
+            "high_repeat20_proxy": 4,
+            "long_symbol_run_proxy": 0,
+            "any_role_marker_proxy": 2
+          },
+          {
+            "checkpoint": 0,
+            "arm": "to",
+            "n": 256,
+            "mean_tokens": 1091.84765625,
+            "median_tokens": 812.0,
+            "capped": 2,
+            "stop_id_terminated": 254,
+            "starts_alright": 0,
+            "high_repeat20_proxy": 0,
+            "long_symbol_run_proxy": 0,
+            "any_role_marker_proxy": 6
+          },
+          {
+            "checkpoint": 0,
+            "arm": "let",
+            "n": 256,
+            "mean_tokens": 1181.6875,
+            "median_tokens": 833.0,
+            "capped": 2,
+            "stop_id_terminated": 254,
+            "starts_alright": 0,
+            "high_repeat20_proxy": 2,
+            "long_symbol_run_proxy": 0,
+            "any_role_marker_proxy": 11
+          }
+        ],
+        "base_contrasts": [
+          {
+            "name": "step0:alright-to",
+            "mean_token_difference": 1656.578125,
+            "bootstrap95_prompt_cluster_ci": [
+              1286.2806640625,
+              2052.57978515625
+            ],
+            "prompts": 64,
+            "replicates_per_prompt": 4
+          },
+          {
+            "name": "step0:alright-let",
+            "mean_token_difference": 1566.73828125,
+            "bootstrap95_prompt_cluster_ci": [
+              1136.20703125,
+              2017.0671874999996
+            ],
+            "prompts": 64,
+            "replicates_per_prompt": 4
+          },
+          {
+            "name": "step0:natural-to",
+            "mean_token_difference": 58.6640625,
+            "bootstrap95_prompt_cluster_ci": [
+              -139.9380859375,
+              265.56376953125
+            ],
+            "prompts": 64,
+            "replicates_per_prompt": 4
+          },
+          {
+            "name": "step0:natural-alright",
+            "mean_token_difference": -1597.9140625,
+            "bootstrap95_prompt_cluster_ci": [
+              -2013.9255859375,
+              -1211.2720703125
+            ],
+            "prompts": 64,
+            "replicates_per_prompt": 4
+          }
+        ],
+        "early100_150_cells": [
+          {
+            "checkpoint": 100,
+            "arm": "natural",
+            "n": 256,
+            "mean_tokens": 1173.75,
+            "median_tokens": 903.0,
+            "capped": 1,
+            "stop_id_terminated": 255,
+            "starts_alright": 2,
+            "high_repeat20_proxy": 1,
+            "long_symbol_run_proxy": 0,
+            "any_role_marker_proxy": 1
+          },
+          {
+            "checkpoint": 100,
+            "arm": "alright",
+            "n": 256,
+            "mean_tokens": 3203.0546875,
+            "median_tokens": 2381.5,
+            "capped": 22,
+            "stop_id_terminated": 234,
+            "starts_alright": 256,
+            "high_repeat20_proxy": 0,
+            "long_symbol_run_proxy": 0,
+            "any_role_marker_proxy": 0
+          },
+          {
+            "checkpoint": 100,
+            "arm": "to",
+            "n": 256,
+            "mean_tokens": 1063.953125,
+            "median_tokens": 900.0,
+            "capped": 0,
+            "stop_id_terminated": 256,
+            "starts_alright": 0,
+            "high_repeat20_proxy": 1,
+            "long_symbol_run_proxy": 0,
+            "any_role_marker_proxy": 0
+          },
+          {
+            "checkpoint": 100,
+            "arm": "let",
+            "n": 256,
+            "mean_tokens": 1148.59375,
+            "median_tokens": 984.0,
+            "capped": 1,
+            "stop_id_terminated": 255,
+            "starts_alright": 0,
+            "high_repeat20_proxy": 2,
+            "long_symbol_run_proxy": 0,
+            "any_role_marker_proxy": 2
+          },
+          {
+            "checkpoint": 150,
+            "arm": "natural",
+            "n": 256,
+            "mean_tokens": 3602.4453125,
+            "median_tokens": 2793.0,
+            "capped": 26,
+            "stop_id_terminated": 230,
+            "starts_alright": 249,
+            "high_repeat20_proxy": 1,
+            "long_symbol_run_proxy": 0,
+            "any_role_marker_proxy": 0
+          },
+          {
+            "checkpoint": 150,
+            "arm": "alright",
+            "n": 256,
+            "mean_tokens": 3481.18359375,
+            "median_tokens": 2670.0,
+            "capped": 21,
+            "stop_id_terminated": 235,
+            "starts_alright": 256,
+            "high_repeat20_proxy": 2,
+            "long_symbol_run_proxy": 0,
+            "any_role_marker_proxy": 0
+          },
+          {
+            "checkpoint": 150,
+            "arm": "to",
+            "n": 256,
+            "mean_tokens": 1282.03125,
+            "median_tokens": 1052.5,
+            "capped": 2,
+            "stop_id_terminated": 254,
+            "starts_alright": 0,
+            "high_repeat20_proxy": 2,
+            "long_symbol_run_proxy": 0,
+            "any_role_marker_proxy": 1
+          },
+          {
+            "checkpoint": 150,
+            "arm": "let",
+            "n": 256,
+            "mean_tokens": 1532.828125,
+            "median_tokens": 1129.0,
+            "capped": 1,
+            "stop_id_terminated": 255,
+            "starts_alright": 0,
+            "high_repeat20_proxy": 2,
+            "long_symbol_run_proxy": 0,
+            "any_role_marker_proxy": 0
+          }
+        ],
+        "early100_150_contrasts": [
+          {
+            "name": "step100:alright-to",
+            "mean_token_difference": 2139.1015625,
+            "bootstrap95_prompt_cluster_ci": [
+              1763.13876953125,
+              2546.8253906249997
+            ],
+            "prompts": 64,
+            "replicates_per_prompt": 4
+          },
+          {
+            "name": "step100:alright-let",
+            "mean_token_difference": 2054.4609375,
+            "bootstrap95_prompt_cluster_ci": [
+              1688.56953125,
+              2452.13876953125
+            ],
+            "prompts": 64,
+            "replicates_per_prompt": 4
+          },
+          {
+            "name": "step100:natural-to",
+            "mean_token_difference": 109.796875,
+            "bootstrap95_prompt_cluster_ci": [
+              -3.584960937499994,
+              245.20087890624998
+            ],
+            "prompts": 64,
+            "replicates_per_prompt": 4
+          },
+          {
+            "name": "step100:natural-alright",
+            "mean_token_difference": -2029.3046875,
+            "bootstrap95_prompt_cluster_ci": [
+              -2389.68388671875,
+              -1690.82587890625
+            ],
+            "prompts": 64,
+            "replicates_per_prompt": 4
+          },
+          {
+            "name": "step150:alright-to",
+            "mean_token_difference": 2199.15234375,
+            "bootstrap95_prompt_cluster_ci": [
+              1827.3701171875,
+              2602.36220703125
+            ],
+            "prompts": 64,
+            "replicates_per_prompt": 4
+          },
+          {
+            "name": "step150:alright-let",
+            "mean_token_difference": 1948.35546875,
+            "bootstrap95_prompt_cluster_ci": [
+              1603.9595703125,
+              2308.54501953125
+            ],
+            "prompts": 64,
+            "replicates_per_prompt": 4
+          },
+          {
+            "name": "step150:natural-to",
+            "mean_token_difference": 2320.4140625,
+            "bootstrap95_prompt_cluster_ci": [
+              1910.182421875,
+              2761.22919921875
+            ],
+            "prompts": 64,
+            "replicates_per_prompt": 4
+          },
+          {
+            "name": "step150:natural-alright",
+            "mean_token_difference": 121.26171875,
+            "bootstrap95_prompt_cluster_ci": [
+              -93.96123046875,
+              340.7628906249997
+            ],
+            "prompts": 64,
+            "replicates_per_prompt": 4
+          },
+          {
+            "name": "step150-step100:natural",
+            "mean_token_difference": 2428.6953125,
+            "bootstrap95_prompt_cluster_ci": [
+              2024.17099609375,
+              2846.3702148437496
+            ],
+            "prompts": 64,
+            "replicates_per_prompt": 4
+          },
+          {
+            "name": "step150-step100:alright",
+            "mean_token_difference": 278.12890625,
+            "bootstrap95_prompt_cluster_ci": [
+              17.107031250000006,
+              564.4336914062499
+            ],
+            "prompts": 64,
+            "replicates_per_prompt": 4
+          },
+          {
+            "name": "step150-step100:to",
+            "mean_token_difference": 218.078125,
+            "bootstrap95_prompt_cluster_ci": [
+              107.5220703125,
+              349.90751953125
+            ],
+            "prompts": 64,
+            "replicates_per_prompt": 4
+          },
+          {
+            "name": "step150-step100:let",
+            "mean_token_difference": 384.234375,
+            "bootstrap95_prompt_cluster_ci": [
+              166.67529296875,
+              648.1196289062499
+            ],
+            "prompts": 64,
+            "replicates_per_prompt": 4
+          },
+          {
+            "name": "interaction:(150alright-150to)-(100alright-100to)",
+            "mean_token_difference": 60.05078125,
+            "bootstrap95_prompt_cluster_ci": [
+              -228.3279296875,
+              368.12744140624994
+            ],
+            "prompts": 64,
+            "replicates_per_prompt": 4
+          }
+        ],
+        "first_token_and_template_definition": {
+          "first_token": "Firstvalidresponse position aftertheactualsavedprompt; forcedprefixexperiment usesoneencodedopeningtoken.",
+          "saved_prompt_count": 64,
+          "all_saved_prompt_last3_ids": [
+            151644,
+            77091,
+            198
+          ],
+          "tail_meaning": "im_start,assistant,newline; no prefixedthinkingcontinuation afterassistantheader",
+          "prompt_builder": "apply_chat_template(add_generation_prompt=True,enable_thinking=True,return_dict=False)",
+          "user_instruction": "Please reason step by step, and put your final answer within \\boxed{}.",
+          "first_word_frequency_is_separate": "HistoricalfirstEnglishwordfrequency usesregexpwithoutstrippingthinktags, andisnot thefullsoftmaxprobability."
+        }
+      },
+      "evidence_strength": "固定prompt/权重的生成条件干预",
+      "supported_claim": "Base强制Alright均长2748 vsTo1092（差1657，[1286,2053]token）；100轮约3203 vs1064，150仍约2200token差。单个开头足以改变条件生成长度。",
+      "not_established": [
+        "这不是自然开头stratum的无偏质量排序；强制prefix会改变条件分布。",
+        "固定seed不代表发散之后仍逐随机数配对；长度是8192内受限长度。",
+        "不能从这一个实验推断训练究竟先偏爱长回答还是先偏爱首词。"
+      ],
+      "sources": [
+        {
+          "source": "reports/rl_root_cause_20261103/fixed_probes/base_style_summary.json",
+          "json_pointer": "/cells"
+        },
+        {
+          "source": "reports/rl_root_cause_20261103/fixed_probes/base_style_summary.json",
+          "json_pointer": "/contrasts"
+        },
+        {
+          "source": "reports/rl_root_cause_20261103/fixed_probes/style_summary.json",
+          "json_pointer": "/cells"
+        },
+        {
+          "source": "reports/rl_root_cause_20261103/fixed_probes/style_summary.json",
+          "json_pointer": "/contrasts"
+        },
+        {
+          "source": "reports/rl_root_cause_20261103/fixed_probes/style_summary.json",
+          "json_pointer": "/interpretation_limits"
+        },
+        {
+          "source": "reports/rl_root_cause_20261103/fixed_probes/style_cases.json.gz",
+          "json_pointer": "",
+          "selection": "All64 records:prompt/prompt_token_ids, inparticular last3IDs."
+        }
+      ]
+    },
+    {
+      "id": "EL12",
+      "title": "首token直接loss的固定batch重放：与删任意一token区分",
+      "setup": "early_formal_replay119to140",
+      "design": "从同一完成119轮fullstate，重放相同历史回答batch流至140；首token优势置零，对照原loss、随机非首token置零、按原p0 NLL匹配的非首token置零；response_mask/物理D保持，正文shared梯度保留。",
+      "results": {
+        "arms": {
+          "control": {
+            "response_tokens": 3328.1953125,
+            "acc": 0.65234375,
+            "response_hit_token_cap": 0.078125,
+            "starts_Alright": 0.96484375,
+            "unknown": 0.00390625
+          },
+          "firsttoken": {
+            "response_tokens": 2034.98828125,
+            "acc": 0.6171875,
+            "response_hit_token_cap": 0.05859375,
+            "starts_Alright": 0.25390625,
+            "unknown": 0.0
+          },
+          "random": {
+            "response_tokens": 3360.34375,
+            "acc": 0.65234375,
+            "response_hit_token_cap": 0.1015625,
+            "starts_Alright": 0.91796875,
+            "unknown": 0.0
+          },
+          "nllmatched": {
+            "response_tokens": 3270.9140625,
+            "acc": 0.66015625,
+            "response_hit_token_cap": 0.06640625,
+            "starts_Alright": 0.94140625,
+            "unknown": 0.0078125
+          }
+        },
+        "contrasts": {
+          "firsttoken-control": {
+            "response_tokens": {
+              "difference": -1293.20703125,
+              "prompt_cluster_bootstrap95_ci": [
+                -1617.89658203125,
+                -986.6793945312501
+              ]
+            },
+            "acc": {
+              "difference": -0.03515625,
+              "prompt_cluster_bootstrap95_ci": [
+                -0.09375,
+                0.0234375
+              ]
+            },
+            "response_hit_token_cap": {
+              "difference": -0.01953125,
+              "prompt_cluster_bootstrap95_ci": [
+                -0.05859375,
+                0.015625
+              ]
+            },
+            "starts_Alright": {
+              "difference": -0.7109375,
+              "prompt_cluster_bootstrap95_ci": [
+                -0.77734375,
+                -0.640625
+              ]
+            },
+            "unknown": {
+              "difference": -0.00390625,
+              "prompt_cluster_bootstrap95_ci": [
+                -0.01171875,
+                0.0
+              ]
+            }
+          },
+          "random-control": {
+            "response_tokens": {
+              "difference": 32.1484375,
+              "prompt_cluster_bootstrap95_ci": [
+                -262.86982421875,
+                317.27763671875
+              ]
+            },
+            "acc": {
+              "difference": 0.0,
+              "prompt_cluster_bootstrap95_ci": [
+                -0.0625,
+                0.0625
+              ]
+            },
+            "response_hit_token_cap": {
+              "difference": 0.0234375,
+              "prompt_cluster_bootstrap95_ci": [
+                -0.0234375,
+                0.0703125
+              ]
+            },
+            "starts_Alright": {
+              "difference": -0.046875,
+              "prompt_cluster_bootstrap95_ci": [
+                -0.0859375,
+                -0.0078125
+              ]
+            },
+            "unknown": {
+              "difference": -0.00390625,
+              "prompt_cluster_bootstrap95_ci": [
+                -0.01171875,
+                0.0
+              ]
+            }
+          },
+          "nllmatched-control": {
+            "response_tokens": {
+              "difference": -57.28125,
+              "prompt_cluster_bootstrap95_ci": [
+                -356.8642578125,
+                226.54003906249957
+              ]
+            },
+            "acc": {
+              "difference": 0.0078125,
+              "prompt_cluster_bootstrap95_ci": [
+                -0.0546875,
+                0.06650390624999147
+              ]
+            },
+            "response_hit_token_cap": {
+              "difference": -0.01171875,
+              "prompt_cluster_bootstrap95_ci": [
+                -0.05078125,
+                0.02734375
+              ]
+            },
+            "starts_Alright": {
+              "difference": -0.0234375,
+              "prompt_cluster_bootstrap95_ci": [
+                -0.0625,
+                0.01171875
+              ]
+            },
+            "unknown": {
+              "difference": 0.00390625,
+              "prompt_cluster_bootstrap95_ci": [
+                -0.01171875,
+                0.0234375
+              ]
+            }
+          }
+        },
+        "evaluation_spec": {
+          "created_unix": 1793735316.256917,
+          "purpose": "Summarize four replay intervention endpoint datasets using the same native BBB generation engine.",
+          "arms": [
+            "control",
+            "firsttoken",
+            "random",
+            "nllmatched"
+          ],
+          "step": 140,
+          "prompts": 64,
+          "responses_per_prompt": 4,
+          "sampling": {
+            "temperature": 1.0,
+            "top_p": 1.0,
+            "top_k": -1
+          },
+          "required_integrity": [
+            "same exact64 qid order in manifest",
+            "same full input text for each qid across arms",
+            "exactly4 responses per qid",
+            "no duplicate missingqid groups",
+            "same native generator sampling fields"
+          ],
+          "metrics": [
+            "response_tokens",
+            "acc",
+            "response_hit_token_cap",
+            "starts_Alright",
+            "unknown"
+          ],
+          "contrasts": [
+            "firsttoken-control",
+            "random-control",
+            "nllmatched-control"
+          ],
+          "bootstrap": {
+            "unit": "qid cluster; retain all4 responses per prompt within each arm",
+            "resamples": 20000,
+            "seed": 202611039,
+            "paired_on": "prompt, not guaranteed same random generation streams",
+            "interval": "percentile95; descriptive, no multiplicity correction"
+          },
+          "limitations": [
+            "One training trajectory per arm, not repeated-training-seed confidence intervals.",
+            "Input text and native engine match do not imply identical sampling RNG streams.",
+            "Starts_Alright uses decoded text prefix; first-token teacher-forced probabilities have separate native measurements.",
+            "Protocol prepared after random arm endpoint was seen, before remaining3 full endpoint results."
+          ]
+        },
+        "start_end": {
+          "source_run": "archive:remote/surge-reproduction-20261103/runs/formal",
+          "checkpoint": "archive:remote/formal/checkpoints/global_step_119",
+          "start_step": 119,
+          "end_step": 140,
+          "save_steps": [
+            120,
+            125,
+            130,
+            140
+          ],
+          "validate_after": true,
+          "capture_first_gradient": false,
+          "first_token_probe_cases": "archive:remote/local-xiaokangp/rl-root-cause-20261103-fixed-probes/style_cases.json.gz",
+          "probe_before": true,
+          "flash_attention_deterministic": true,
+          "token_mask_seed": 20261104,
+          "arm_name": "first_token_adv_zero",
+          "intervention": "zero_first_response_token"
+        }
+      },
+      "evidence_strength": "固定历史流下的受控参数学习干预；支持局部因果通道",
+      "supported_claim": "首token置零把自然端点平均长度3328→2035，Alright247/256→65/256；随机和NLLmatched删一token仍3360/3271、235/241个Alright。差异不只是少训练一个token。",
+      "not_established": [
+        "不是新rollout在线分叉，更不是full8原始350→400的同run干预。",
+        "首tokenzero不是强制生成To，不冻结首token对应参数，后续token/sharedweight仍影响开头。",
+        "正确率158/256 vs167/256，差−3.52pp CI[−9.375,2.344]，不能声称质量确定不受影响。",
+        "端点评测同seed配置但非每request相同随机流；每arm一条训练轨迹、探索多比较。"
+      ],
+      "sources": [
+        {
+          "source": "reports/rl_root_cause_20261103/fixed_probes/replay_endpoint_comparison.json",
+          "json_pointer": "/summaries"
+        },
+        {
+          "source": "reports/rl_root_cause_20261103/fixed_probes/replay_endpoint_comparison.json",
+          "json_pointer": "/contrasts"
+        },
+        {
+          "source": "reports/rl_root_cause_20261103/fixed_probes/replay_endpoint_comparison.json",
+          "json_pointer": "/spec"
+        },
+        {
+          "source": "reports/rl_root_cause_20261103/replay_design/first_token_arm_specs/first_token_adv_zero.json",
+          "json_pointer": ""
+        },
+        {
+          "source": "reports/rl_root_cause_20261103/replay_design/first_token_arm_specs/nll_matched_interior_token_adv_zero.json",
+          "json_pointer": ""
+        }
+      ]
+    },
+    {
+      "id": "EL13",
+      "title": "为什么会偏向Alright：正确率优势有证据，方差优势不确定",
+      "setup": "forced_opening_base_100_150",
+      "design": "同64题×4强制开头，按题配对bootstrap20000次。",
+      "results": [
+        {
+          "checkpoint": 0,
+          "prompts": 64,
+          "responses_per_prompt": 4,
+          "arms": {
+            "alright": {
+              "correct": 148,
+              "unknown": 2,
+              "accuracy": 0.578125,
+              "mixed_correctness_G4": 0.546875,
+              "unbiased_within_question_binary_variance": 0.15104166666666663,
+              "mixed_correctness_groups": 35
+            },
+            "to": {
+              "correct": 102,
+              "unknown": 7,
+              "accuracy": 0.3984375,
+              "mixed_correctness_G4": 0.421875,
+              "unbiased_within_question_binary_variance": 0.11979166666666666,
+              "mixed_correctness_groups": 27
+            }
+          },
+          "paired_differences": {
+            "accuracy": {
+              "difference": 0.1796875,
+              "prompt_bootstrap95_ci": [
+                0.10546875,
+                0.25390625
+              ]
+            },
+            "mixed_correctness_G4": {
+              "difference": 0.125,
+              "prompt_bootstrap95_ci": [
+                -0.03125,
+                0.28125
+              ]
+            },
+            "unbiased_within_question_binary_variance": {
+              "difference": 0.03125,
+              "prompt_bootstrap95_ci": [
+                -0.014322916666666664,
+                0.07682291666666666
+              ]
+            }
+          }
+        },
+        {
+          "checkpoint": 100,
+          "prompts": 64,
+          "responses_per_prompt": 4,
+          "arms": {
+            "alright": {
+              "correct": 165,
+              "unknown": 3,
+              "accuracy": 0.64453125,
+              "mixed_correctness_G4": 0.515625,
+              "unbiased_within_question_binary_variance": 0.13932291666666666,
+              "mixed_correctness_groups": 33
+            },
+            "to": {
+              "correct": 143,
+              "unknown": 0,
+              "accuracy": 0.55859375,
+              "mixed_correctness_G4": 0.46875,
+              "unbiased_within_question_binary_variance": 0.12890625,
+              "mixed_correctness_groups": 30
+            }
+          },
+          "paired_differences": {
+            "accuracy": {
+              "difference": 0.0859375,
+              "prompt_bootstrap95_ci": [
+                0.0234375,
+                0.15625
+              ]
+            },
+            "mixed_correctness_G4": {
+              "difference": 0.046875,
+              "prompt_bootstrap95_ci": [
+                -0.078125,
+                0.171875
+              ]
+            },
+            "unbiased_within_question_binary_variance": {
+              "difference": 0.01041666666666667,
+              "prompt_bootstrap95_ci": [
+                -0.024739583333333332,
+                0.045572916666666664
+              ]
+            }
+          }
+        },
+        {
+          "checkpoint": 150,
+          "prompts": 64,
+          "responses_per_prompt": 4,
+          "arms": {
+            "alright": {
+              "correct": 179,
+              "unknown": 2,
+              "accuracy": 0.69921875,
+              "mixed_correctness_G4": 0.515625,
+              "unbiased_within_question_binary_variance": 0.14192708333333331,
+              "mixed_correctness_groups": 33
+            },
+            "to": {
+              "correct": 154,
+              "unknown": 3,
+              "accuracy": 0.6015625,
+              "mixed_correctness_G4": 0.5,
+              "unbiased_within_question_binary_variance": 0.13802083333333331,
+              "mixed_correctness_groups": 32
+            }
+          },
+          "paired_differences": {
+            "accuracy": {
+              "difference": 0.09765625,
+              "prompt_bootstrap95_ci": [
+                0.01943359375000009,
+                0.1796875
+              ]
+            },
+            "mixed_correctness_G4": {
+              "difference": 0.015625,
+              "prompt_bootstrap95_ci": [
+                -0.140625,
+                0.15625
+              ]
+            },
+            "unbiased_within_question_binary_variance": {
+              "difference": 0.00390625,
+              "prompt_bootstrap95_ci": [
+                -0.037760416666666664,
+                0.04427083333333333
+              ]
+            }
+          }
+        }
+      ],
+      "evidence_strength": "固定开头条件下的局部正确率比较+方差统计",
+      "supported_claim": "Base正确率57.81% vs39.84%，差17.97pp CI[10.55,25.39]；100差8.59pp、150差9.77pp。",
+      "not_established": [
+        "BaseG4混合组差12.5pp CI[−3.125,28.125]、题内二元方差差0.03125 CI跨零，不能说方差机制已被证明。",
+        "G4指标不是训练G8筛选/完整shapedreward方差，二元variance也不是参数gradientvariance。",
+        "没有同panel的late强制开头结果，不能外推晚期准确率关系。"
+      ],
+      "sources": [
+        {
+          "source": "reports/rl_ppl_accuracy_20261104/accuracy_variance_summary.json",
+          "json_pointer": "/forced_prefix"
+        },
+        {
+          "source": "reports/rl_ppl_accuracy_20261104/accuracy_variance_summary.json",
+          "json_pointer": "/bootstrap"
+        },
+        {
+          "source": "reports/rl_ppl_accuracy_20261104/accuracy_variance_summary.json",
+          "json_pointer": "/definitions"
+        },
+        {
+          "source": "reports/rl_ppl_accuracy_20261104/accuracy_variance_summary.json",
+          "json_pointer": "/limits"
+        }
+      ]
+    },
+    {
+      "id": "EL14",
+      "title": "正反馈解释与信号反转：与bandit直觉一致但不是单次中奖证明",
+      "setup": "early_formal100to140_and_separate_late501to550",
+      "design": "从实际selectedG8重构R/A并分解正确与超长项；early和late分别列，不拼时间轴。",
+      "results": {
+        "reconstruction_checks": {
+          "responses": 46592,
+          "G8_groups": 5824,
+          "reward_reconstruction_max_abs_error": 0.0,
+          "A_reconstruction_max_abs_error": 3.1938769007311407e-07,
+          "A_additive_decomposition_max_abs_error": 3.1938768996209177e-07
+        },
+        "reward_formula": "R = (2*correct-1) + recorded_overlong_reward. score already includes overlong: do not add it twice.",
+        "advantage_decomposition": "Centered correctness and overlong components divided by the same original sample std(R)+1e-6; their sum reconstructs recorded A.",
+        "early_windows": [
+          {
+            "run": "early",
+            "first": 100,
+            "last": 110,
+            "n": 5632,
+            "style_counts": {
+              "To": 5098,
+              "Alright": 169,
+              "Let": 142,
+              "other": 166,
+              "We": 57
+            },
+            "by_style": {
+              "Alright": {
+                "n": 169,
+                "correct_rate": 0.6804733727810651,
+                "mean_tokens": 3614.0118343195268,
+                "mean_reward": 0.25524685650887574,
+                "mean_overlong_reward": -0.10569988905325443,
+                "cap_rate": 0.07692307692307693,
+                "mean_A": 0.4467798013394401,
+                "mean_A_no_length_counterfactual": 0.5253561122695561,
+                "ratio1_first_A_over_D_sum": 0.00036989335962949235,
+                "labels": {
+                  "normal": 129,
+                  "abnormal": 40
+                }
+              },
+              "To": {
+                "n": 5098,
+                "correct_rate": 0.45292271479011376,
+                "mean_tokens": 1149.9517457826598,
+                "mean_reward": -0.09552028292345037,
+                "mean_overlong_reward": -0.001365712503677913,
+                "cap_rate": 0.0007846214201647705,
+                "mean_A": -0.015531088522587538,
+                "mean_A_no_length_counterfactual": -0.018298175808902598,
+                "ratio1_first_A_over_D_sum": -0.00048537432605437204,
+                "labels": {
+                  "normal": 4899,
+                  "abnormal": 194,
+                  "uncertain": 5
+                }
+              },
+              "other": {
+                "n": 166,
+                "correct_rate": 0.4397590361445783,
+                "mean_tokens": 1624.4939759036145,
+                "mean_reward": -0.15152014307228914,
+                "mean_overlong_reward": -0.031038215361445784,
+                "cap_rate": 0.030120481927710843,
+                "mean_A": -0.056177768721637954,
+                "mean_A_no_length_counterfactual": -0.04465137359550653,
+                "ratio1_first_A_over_D_sum": -8.3181107277975e-05,
+                "labels": {
+                  "normal": 147,
+                  "abnormal": 19
+                }
+              },
+              "Let": {
+                "n": 142,
+                "correct_rate": 0.4859154929577465,
+                "mean_tokens": 1360.9154929577464,
+                "mean_reward": -0.035211267605633804,
+                "mean_overlong_reward": -0.007042253521126761,
+                "cap_rate": 0.007042253521126761,
+                "mean_A": 0.04741929807293583,
+                "mean_A_no_length_counterfactual": 0.04180957503803718,
+                "ratio1_first_A_over_D_sum": 7.883588679725088e-05,
+                "labels": {
+                  "normal": 132,
+                  "abnormal": 9,
+                  "uncertain": 1
+                }
+              },
+              "We": {
+                "n": 57,
+                "correct_rate": 0.543859649122807,
+                "mean_tokens": 1311.561403508772,
+                "mean_reward": 0.07017543859649122,
+                "mean_overlong_reward": -0.017543859649122806,
+                "cap_rate": 0.017543859649122806,
+                "mean_A": 0.10988899072011311,
+                "mean_A_no_length_counterfactual": 0.1048085203804081,
+                "ratio1_first_A_over_D_sum": 4.239073324965084e-05,
+                "labels": {
+                  "normal": 52,
+                  "abnormal": 5
+                }
+              }
+            }
+          },
+          {
+            "run": "early",
+            "first": 111,
+            "last": 120,
+            "n": 5120,
+            "style_counts": {
+              "To": 4233,
+              "other": 162,
+              "We": 76,
+              "Let": 170,
+              "Alright": 479
+            },
+            "by_style": {
+              "Alright": {
+                "n": 479,
+                "correct_rate": 0.605427974947808,
+                "mean_tokens": 3904.0208768267225,
+                "mean_reward": 0.0548720071111691,
+                "mean_overlong_reward": -0.15598394278444677,
+                "cap_rate": 0.12317327766179541,
+                "mean_A": 0.21920167419102843,
+                "mean_A_no_length_counterfactual": 0.3110771364344133,
+                "ratio1_first_A_over_D_sum": 0.00043660076861797573,
+                "labels": {
+                  "normal": 383,
+                  "abnormal": 96
+                }
+              },
+              "To": {
+                "n": 4233,
+                "correct_rate": 0.4408221119773211,
+                "mean_tokens": 1246.7524214505079,
+                "mean_reward": -0.12128650170535081,
+                "mean_overlong_reward": -0.0029307256599929127,
+                "cap_rate": 0.001653673517599811,
+                "mean_A": -0.01623110504838104,
+                "mean_A_no_length_counterfactual": -0.024892806427818763,
+                "ratio1_first_A_over_D_sum": -0.0003041929152028779,
+                "labels": {
+                  "normal": 4065,
+                  "abnormal": 166,
+                  "uncertain": 2
+                }
+              },
+              "other": {
+                "n": 162,
+                "correct_rate": 0.46296296296296297,
+                "mean_tokens": 1660.4876543209878,
+                "mean_reward": -0.09485616801697531,
+                "mean_overlong_reward": -0.020782093942901234,
+                "cap_rate": 0.012345679012345678,
+                "mean_A": -0.06085101220710778,
+                "mean_A_no_length_counterfactual": -0.06710764852859527,
+                "ratio1_first_A_over_D_sum": -6.27890037566384e-05,
+                "labels": {
+                  "normal": 145,
+                  "abnormal": 17
+                }
+              },
+              "Let": {
+                "n": 170,
+                "correct_rate": 0.37058823529411766,
+                "mean_tokens": 1622.4882352941177,
+                "mean_reward": -0.28363108915441176,
+                "mean_overlong_reward": -0.02480755974264706,
+                "cap_rate": 0.01764705882352941,
+                "mean_A": -0.1088752756223959,
+                "mean_A_no_length_counterfactual": -0.12950010379130458,
+                "ratio1_first_A_over_D_sum": -8.078133820633738e-05,
+                "labels": {
+                  "normal": 156,
+                  "abnormal": 14
+                }
+              },
+              "We": {
+                "n": 76,
+                "correct_rate": 0.3684210526315789,
+                "mean_tokens": 1249.6315789473683,
+                "mean_reward": -0.2631578947368421,
+                "mean_overlong_reward": 0.0,
+                "cap_rate": 0.0,
+                "mean_A": -0.10427203421529971,
+                "mean_A_no_length_counterfactual": -0.14142423732859113,
+                "ratio1_first_A_over_D_sum": -3.061144085238669e-05,
+                "labels": {
+                  "normal": 70,
+                  "abnormal": 6
+                }
+              }
+            }
+          },
+          {
+            "run": "early",
+            "first": 121,
+            "last": 130,
+            "n": 5120,
+            "style_counts": {
+              "To": 3195,
+              "Let": 155,
+              "other": 146,
+              "Alright": 1549,
+              "We": 75
+            },
+            "by_style": {
+              "Alright": {
+                "n": 1549,
+                "correct_rate": 0.6417043253712073,
+                "mean_tokens": 3729.9509360877987,
+                "mean_reward": 0.1473206630285668,
+                "mean_overlong_reward": -0.13608798771384764,
+                "cap_rate": 0.1013557133634603,
+                "mean_A": 0.18044341723642054,
+                "mean_A_no_length_counterfactual": 0.23473153829324866,
+                "ratio1_first_A_over_D_sum": 0.0009263858079962984,
+                "labels": {
+                  "normal": 1224,
+                  "abnormal": 325
+                }
+              },
+              "To": {
+                "n": 3195,
+                "correct_rate": 0.4475743348982786,
+                "mean_tokens": 1251.8028169014085,
+                "mean_reward": -0.10873159966744914,
+                "mean_overlong_reward": -0.0038802694640062596,
+                "cap_rate": 0.0025039123630672924,
+                "mean_A": -0.07666329729402838,
+                "mean_A_no_length_counterfactual": -0.09920671641266082,
+                "ratio1_first_A_over_D_sum": -0.0013473208917978484,
+                "labels": {
+                  "normal": 3060,
+                  "abnormal": 134,
+                  "uncertain": 1
+                }
+              },
+              "other": {
+                "n": 146,
+                "correct_rate": 0.5342465753424658,
+                "mean_tokens": 1506.0342465753424,
+                "mean_reward": 0.0410958904109589,
+                "mean_overlong_reward": -0.0273972602739726,
+                "cap_rate": 0.0273972602739726,
+                "mean_A": 0.014914993048415915,
+                "mean_A_no_length_counterfactual": 0.008254165422217716,
+                "ratio1_first_A_over_D_sum": 4.6700377837173234e-05,
+                "labels": {
+                  "normal": 141,
+                  "abnormal": 5
+                }
+              },
+              "Let": {
+                "n": 155,
+                "correct_rate": 0.33548387096774196,
+                "mean_tokens": 1356.0258064516129,
+                "mean_reward": -0.32903225806451614,
+                "mean_overlong_reward": 0.0,
+                "cap_rate": 0.0,
+                "mean_A": -0.22213065482886327,
+                "mean_A_no_length_counterfactual": -0.2599244442121886,
+                "ratio1_first_A_over_D_sum": -0.00019093081092381973,
+                "labels": {
+                  "normal": 149,
+                  "abnormal": 6
+                }
+              },
+              "We": {
+                "n": 75,
+                "correct_rate": 0.48,
+                "mean_tokens": 1329.6533333333334,
+                "mean_reward": -0.04,
+                "mean_overlong_reward": 0.0,
+                "cap_rate": 0.0,
+                "mean_A": -0.030866047898307443,
+                "mean_A_no_length_counterfactual": -0.10067350902060532,
+                "ratio1_first_A_over_D_sum": 1.8765737528352054e-05,
+                "labels": {
+                  "normal": 71,
+                  "abnormal": 4
+                }
+              }
+            }
+          },
+          {
+            "run": "early",
+            "first": 131,
+            "last": 140,
+            "n": 5120,
+            "style_counts": {
+              "To": 865,
+              "Alright": 4115,
+              "other": 86,
+              "Let": 43,
+              "We": 11
+            },
+            "by_style": {
+              "Alright": {
+                "n": 4115,
+                "correct_rate": 0.5334143377885784,
+                "mean_tokens": 3809.6510328068043,
+                "mean_reward": -0.08139879822296477,
+                "mean_overlong_reward": -0.1482274738001215,
+                "cap_rate": 0.10789793438639125,
+                "mean_A": 0.03243814130728999,
+                "mean_A_no_length_counterfactual": 0.047129550951904055,
+                "ratio1_first_A_over_D_sum": 0.0009001576379762328,
+                "labels": {
+                  "normal": 3255,
+                  "abnormal": 860
+                }
+              },
+              "To": {
+                "n": 865,
+                "correct_rate": 0.3965317919075145,
+                "mean_tokens": 1254.0728323699423,
+                "mean_reward": -0.2105643740968208,
+                "mean_overlong_reward": -0.003627957911849711,
+                "cap_rate": 0.0023121387283236996,
+                "mean_A": -0.13597023264004315,
+                "mean_A_no_length_counterfactual": -0.19500343108277035,
+                "ratio1_first_A_over_D_sum": -0.0005821631027078317,
+                "labels": {
+                  "normal": 839,
+                  "abnormal": 25,
+                  "uncertain": 1
+                }
+              },
+              "other": {
+                "n": 86,
+                "correct_rate": 0.37209302325581395,
+                "mean_tokens": 2135.360465116279,
+                "mean_reward": -0.31232966933139533,
+                "mean_overlong_reward": -0.056515715843023256,
+                "cap_rate": 0.03488372093023256,
+                "mean_A": -0.12192297975944225,
+                "mean_A_no_length_counterfactual": -0.16924622248724072,
+                "ratio1_first_A_over_D_sum": -5.881929954928332e-05,
+                "labels": {
+                  "abnormal": 15,
+                  "normal": 71
+                }
+              },
+              "Let": {
+                "n": 43,
+                "correct_rate": 0.3953488372093023,
+                "mean_tokens": 1356.2093023255813,
+                "mean_reward": -0.2203170421511628,
+                "mean_overlong_reward": -0.011014716569767442,
+                "cap_rate": 0.0,
+                "mean_A": -0.12979994263759878,
+                "mean_A_no_length_counterfactual": -0.2113669356351746,
+                "ratio1_first_A_over_D_sum": -2.4845349458704724e-05,
+                "labels": {
+                  "normal": 41,
+                  "abnormal": 2
+                }
+              },
+              "We": {
+                "n": 11,
+                "correct_rate": 0.45454545454545453,
+                "mean_tokens": 1063.8181818181818,
+                "mean_reward": -0.09090909090909091,
+                "mean_overlong_reward": 0.0,
+                "cap_rate": 0.0,
+                "mean_A": 0.01800667562267997,
+                "mean_A_no_length_counterfactual": -0.14692553766123997,
+                "ratio1_first_A_over_D_sum": 2.230453640311321e-06,
+                "labels": {
+                  "normal": 11
+                }
+              }
+            }
+          }
+        ],
+        "late501to505": {
+          "run": "late",
+          "first": 501,
+          "last": 505,
+          "n": 2560,
+          "style_counts": {
+            "To": 922,
+            "Let": 49,
+            "other": 478,
+            "Alright": 1054,
+            "We": 57
+          },
+          "by_style": {
+            "Alright": {
+              "n": 1054,
+              "correct_rate": 0.4829222011385199,
+              "mean_tokens": 3519.8747628083493,
+              "mean_reward": -0.16726366075664137,
+              "mean_overlong_reward": -0.13310806303368122,
+              "cap_rate": 0.12144212523719165,
+              "mean_A": -0.09118711168699292,
+              "mean_A_no_length_counterfactual": -0.06912819054595803,
+              "ratio1_first_A_over_D_sum": 1.661774550232755e-05,
+              "labels": {
+                "normal": 821,
+                "abnormal": 231,
+                "uncertain": 2
+              }
+            },
+            "To": {
+              "n": 922,
+              "correct_rate": 0.6008676789587852,
+              "mean_tokens": 2004.020607375271,
+              "mean_reward": 0.16308064160791758,
+              "mean_overlong_reward": -0.03865471630965293,
+              "cap_rate": 0.033622559652928416,
+              "mean_A": 0.14228442474520905,
+              "mean_A_no_length_counterfactual": 0.12773687031140152,
+              "ratio1_first_A_over_D_sum": 0.0007651514281817788,
+              "labels": {
+                "normal": 791,
+                "abnormal": 126,
+                "uncertain": 5
+              }
+            },
+            "other": {
+              "n": 478,
+              "correct_rate": 0.5418410041841004,
+              "mean_tokens": 2167.8221757322176,
+              "mean_reward": 0.031199946064330544,
+              "mean_overlong_reward": -0.05248206230387029,
+              "cap_rate": 0.0502092050209205,
+              "mean_A": -0.08014904584533002,
+              "mean_A_no_length_counterfactual": -0.0945671948046278,
+              "ratio1_first_A_over_D_sum": -4.950268553830286e-05,
+              "labels": {
+                "normal": 365,
+                "abnormal": 110,
+                "uncertain": 3
+              }
+            },
+            "Let": {
+              "n": 49,
+              "correct_rate": 0.5306122448979592,
+              "mean_tokens": 1835.469387755102,
+              "mean_reward": 0.061224489795918366,
+              "mean_overlong_reward": 0.0,
+              "cap_rate": 0.0,
+              "mean_A": 0.07107479079645507,
+              "mean_A_no_length_counterfactual": 0.018853097193019704,
+              "ratio1_first_A_over_D_sum": 2.167363697973675e-05,
+              "labels": {
+                "normal": 45,
+                "abnormal": 4
+              }
+            },
+            "We": {
+              "n": 57,
+              "correct_rate": 0.5263157894736842,
+              "mean_tokens": 1653.1929824561403,
+              "mean_reward": 0.017843681469298246,
+              "mean_overlong_reward": -0.03478789747807018,
+              "cap_rate": 0.017543859649122806,
+              "mean_A": -0.004323574011785942,
+              "mean_A_no_length_counterfactual": -0.01110463574593521,
+              "ratio1_first_A_over_D_sum": 5.539112880599547e-06,
+              "labels": {
+                "normal": 50,
+                "abnormal": 7
+              }
+            }
+          },
+          "mixed_groups": 252,
+          "mixed_unique_qids": 252,
+          "mixed_group_differences": {
+            "delta_correct": -0.14403817082388512,
+            "delta_correctness_reward": -0.28807634164777024,
+            "delta_reward": -0.38725511661913026,
+            "delta_advantage": -0.36936818612239636,
+            "delta_overlong_reward": -0.09917877497136007,
+            "delta_tokens": 1487.3433767951626,
+            "delta_capped": 0.09538926681783824,
+            "delta_A_correct_component": -0.27663580540969757,
+            "delta_A_length_component": -0.09273236929189017,
+            "delta_A_no_length_counterfactual": -0.30947524724110903
+          }
+        },
+        "late506to510": {
+          "run": "late",
+          "first": 506,
+          "last": 510,
+          "n": 2560,
+          "style_counts": {
+            "other": 1040,
+            "Alright": 533,
+            "To": 930,
+            "We": 32,
+            "Let": 25
+          },
+          "by_style": {
+            "Alright": {
+              "n": 533,
+              "correct_rate": 0.3433395872420263,
+              "mean_tokens": 5110.4953095684805,
+              "mean_reward": -0.7961357073757036,
+              "mean_overlong_reward": -0.4828148818597561,
+              "cap_rate": 0.4709193245778612,
+              "mean_A": -0.37750912873567155,
+              "mean_A_no_length_counterfactual": -0.2895787619645055,
+              "ratio1_first_A_over_D_sum": -0.00026540762434607885,
+              "labels": {
+                "normal": 115,
+                "abnormal": 414,
+                "uncertain": 4
+              }
+            },
+            "To": {
+              "n": 930,
+              "correct_rate": 0.6064516129032258,
+              "mean_tokens": 2253.6935483870966,
+              "mean_reward": 0.10324838289650537,
+              "mean_overlong_reward": -0.10965484290994623,
+              "cap_rate": 0.1053763440860215,
+              "mean_A": 0.24016540271620596,
+              "mean_A_no_length_counterfactual": 0.20662557486702196,
+              "ratio1_first_A_over_D_sum": 0.0014368368841346506,
+              "labels": {
+                "normal": 485,
+                "abnormal": 434,
+                "uncertain": 11
+              }
+            },
+            "other": {
+              "n": 1040,
+              "correct_rate": 0.5115384615384615,
+              "mean_tokens": 2894.3778846153846,
+              "mean_reward": -0.16513437124399039,
+              "mean_overlong_reward": -0.18821129432091346,
+              "cap_rate": 0.18461538461538463,
+              "mean_A": -0.01885452944642076,
+              "mean_A_no_length_counterfactual": -0.029129090151681913,
+              "ratio1_first_A_over_D_sum": 0.0005923230817917778,
+              "labels": {
+                "normal": 388,
+                "abnormal": 640,
+                "uncertain": 12
+              }
+            },
+            "Let": {
+              "n": 25,
+              "correct_rate": 0.52,
+              "mean_tokens": 2140.92,
+              "mean_reward": -0.08,
+              "mean_overlong_reward": -0.12,
+              "cap_rate": 0.12,
+              "mean_A": -0.0383463180065155,
+              "mean_A_no_length_counterfactual": -0.10745366826025729,
+              "ratio1_first_A_over_D_sum": 1.0551771923555374e-05,
+              "labels": {
+                "normal": 15,
+                "abnormal": 10
+              }
+            },
+            "We": {
+              "n": 32,
+              "correct_rate": 0.40625,
+              "mean_tokens": 2542.0,
+              "mean_reward": -0.3125,
+              "mean_overlong_reward": -0.125,
+              "cap_rate": 0.125,
+              "mean_A": -0.049190327525138855,
+              "mean_A_no_length_counterfactual": -0.15111590734354247,
+              "ratio1_first_A_over_D_sum": 2.8389093278493977e-05,
+              "labels": {
+                "abnormal": 20,
+                "normal": 12
+              }
+            }
+          },
+          "mixed_groups": 208,
+          "mixed_unique_qids": 208,
+          "mixed_group_differences": {
+            "delta_correct": -0.3155334249084249,
+            "delta_correctness_reward": -0.6310668498168498,
+            "delta_reward": -1.0033638755043783,
+            "delta_advantage": -0.8649444455813085,
+            "delta_overlong_reward": -0.3722970256875286,
+            "delta_tokens": 2849.2413118131863,
+            "delta_capped": 0.3669986263736264,
+            "delta_A_correct_component": -0.5465004457165181,
+            "delta_A_length_component": -0.3184439717222289,
+            "delta_A_no_length_counterfactual": -0.6977411728813073
+          }
+        }
+      },
+      "evidence_strength": "实际学习信号观察+同回答奖励反事实，非完整参数因果证明",
+      "supported_claim": "early100–110 Alright尚少(169/5632)，correct68.05%、A+0.447；To45.29%、A−0.0155。与稀少高收益模式逐步更多采样和更新的正反馈相符。late501–505另一轨迹则Alright A−0.091/To+0.142，移除长度惩罚后Alright仍−0.069。",
+      "not_established": [
+        "不能证明某一次正确Alright抽样单独触发跃升。",
+        "A/D或精确dLoss/dlogp不是最终P(Alright)变化，需考虑正文梯度、softmax共享、PPO裁剪、Adam。",
+        "不能说晚期只因长度罚占优：正确率与内容也变了；不能拼early+late证明往复周期。"
+      ],
+      "sources": [
+        {
+          "source": "reports/rl_opening_dynamics_20261104/opening_reward_dynamics.json",
+          "json_pointer": "/checks"
+        },
+        {
+          "source": "reports/rl_opening_dynamics_20261104/opening_reward_dynamics.json",
+          "json_pointer": "/reward_formula"
+        },
+        {
+          "source": "reports/rl_opening_dynamics_20261104/opening_reward_dynamics.json",
+          "json_pointer": "/advantage_decomposition"
+        },
+        {
+          "source": "reports/rl_opening_dynamics_20261104/opening_reward_dynamics.json",
+          "json_pointer": "/windows/0"
+        },
+        {
+          "source": "reports/rl_opening_dynamics_20261104/opening_reward_dynamics.json",
+          "json_pointer": "/windows/4"
+        },
+        {
+          "source": "reports/rl_opening_dynamics_20261104/opening_reward_dynamics.json",
+          "json_pointer": "/windows/5"
+        },
+        {
+          "source": "reports/rl_opening_dynamics_20261104/opening_reward_dynamics.json",
+          "json_pointer": "/limits"
+        }
+      ]
+    },
+    {
+      "id": "EL15",
+      "title": "概率陡升可来自连续log-odds积累，无须先假定数值异常",
+      "setup": "early_formal_fixed64_firsttoken_probability",
+      "design": "固定HF BF16/padding，逐checkpoint计算同64prompt首token完整概率；100–150每题单独线性拟合log-odds。",
+      "results": {
+        "probability_curve": [
+          {
+            "checkpoint": 100,
+            "P_Alright_mean": 0.01974746614723699,
+            "P_To_mean": 0.9214450623840094,
+            "mean_Alright_log_odds": -4.449149519205093
+          },
+          {
+            "checkpoint": 110,
+            "P_Alright_mean": 0.06449578085448593,
+            "P_To_mean": 0.8620815319009125,
+            "mean_Alright_log_odds": -3.1923616230487823
+          },
+          {
+            "checkpoint": 115,
+            "P_Alright_mean": 0.0958605860651005,
+            "P_To_mean": 0.8325171475298703,
+            "mean_Alright_log_odds": -2.7449159622192383
+          },
+          {
+            "checkpoint": 120,
+            "P_Alright_mean": 0.15930819998902734,
+            "P_To_mean": 0.768645538482815,
+            "mean_Alright_log_odds": -2.0796380937099457
+          },
+          {
+            "checkpoint": 125,
+            "P_Alright_mean": 0.37370304827345535,
+            "P_To_mean": 0.5637560982722789,
+            "mean_Alright_log_odds": -0.6694286167621613
+          },
+          {
+            "checkpoint": 130,
+            "P_Alright_mean": 0.6856868038885295,
+            "P_To_mean": 0.27546741094556637,
+            "mean_Alright_log_odds": 1.020808219909668
+          },
+          {
+            "checkpoint": 135,
+            "P_Alright_mean": 0.8693211390636861,
+            "P_To_mean": 0.11066270167793846,
+            "mean_Alright_log_odds": 2.406894326210022
+          },
+          {
+            "checkpoint": 140,
+            "P_Alright_mean": 0.9323409199714661,
+            "P_To_mean": 0.055796274631575216,
+            "mean_Alright_log_odds": 3.225481301546097
+          },
+          {
+            "checkpoint": 150,
+            "P_Alright_mean": 0.9768869886174798,
+            "P_To_mean": 0.017698720899716136,
+            "mean_Alright_log_odds": 4.350381523370743
+          },
+          {
+            "checkpoint": 200,
+            "P_Alright_mean": 0.9941266849637032,
+            "P_To_mean": 0.004140632522080523,
+            "mean_Alright_log_odds": 5.75903445482254
+          }
+        ],
+        "linear_logodds_fit": {
+          "per_prompt_intercept_and_slope": true,
+          "median_prompt_r2": 0.9650057091977204,
+          "prompt_r2_iqr": [
+            0.9604120407063671,
+            0.9671369445097068
+          ],
+          "rmse_log_odds": 0.5573733217189493,
+          "rmse_mean_probability": 0.05801124644300157,
+          "mean_slope_per_training_round": 0.1965519253260051,
+          "step200_probability_prediction": 0.9999973597412863,
+          "step200_probability_observed": 0.9941266849637032
+        }
+      },
+      "evidence_strength": "描述性模型拟合；非机制唯一性或因果检验",
+      "supported_claim": "P(Alright)从100的1.97%逐步至120的15.93%、125的37.37%、130的68.57%、150的97.69%；每题logodds近线性拟合medianR²=.965，符合多步积累经sigmoid表现为陡变。",
+      "not_established": [
+        "时间点相关，不是独立样本；linearfit不能证明某个学习动力学定理。",
+        "平均sigmoid(每题预测logit)不同于sigmoid(平均logit)。",
+        "这是概率测量；历史验证中的Alright_fraction是抽样首词频率，不可互换。"
+      ],
+      "sources": [
+        {
+          "source": "reports/rl_root_cause_20261103/fixed_probes/first_token_curve_summary.json",
+          "json_pointer": "/summary"
+        },
+        {
+          "source": "reports/rl_root_cause_20261103/fixed_probes/first_token_curve_summary.json",
+          "json_pointer": "/linear_logodds_fit_100_to150"
+        },
+        {
+          "source": "reports/rl_root_cause_20261103/fixed_probes/first_token_curve_summary.json",
+          "json_pointer": "/caveats"
+        }
+      ]
+    },
+    {
+      "id": "EL16",
+      "title": "race4筛选可能改变开头信号，但独立512题确认仍不确定",
+      "setup": "frozen_early_checkpoint120_G8",
+      "design": "独立未用512题，每题完整8回答；离线按最先生成完成4条全对模拟舍弃，按offeredqid保留零系数组；不实际动态取消或更新。",
+      "results": {
+        "prompts": 512,
+        "responses": 4096,
+        "denominators": {
+          "offered": 512,
+          "race4_kept": 282,
+          "full_raw_acc_mixed": 314,
+          "kept_raw_acc_mixed": 232
+        },
+        "summary": {
+          "binary": {
+            "per_offered_full": 0.14933545640685184,
+            "per_offered_retained": 0.1745196463088239,
+            "primary_paired_delta_per_offered": 0.02518418990197209,
+            "bootstrap95_qid_cluster_ci": [
+              -0.007601323786341973,
+              0.06028459448715075
+            ],
+            "bootstrap_positive_fraction": 0.92965,
+            "bootstrap_negative_fraction": 0.0702,
+            "bootstrap_zero_fraction": 0.00015,
+            "full_sum": 76.45975368030814,
+            "retained_sum": 89.35405891011784,
+            "per_race4_kept": 0.3168583649294959,
+            "per_full_mixed": 0.2435024002557584,
+            "per_kept_mixed": 0.38514680564705966,
+            "nonzero_delta_qids": 47
+          },
+          "native_overlong_shaped": {
+            "per_offered_full": 0.08159415714896535,
+            "per_offered_retained": 0.10861632438425148,
+            "primary_paired_delta_per_offered": 0.027022167235286124,
+            "bootstrap95_qid_cluster_ci": [
+              -0.006176741639168539,
+              0.06262756023022945
+            ],
+            "bootstrap_positive_fraction": 0.9413,
+            "bootstrap_negative_fraction": 0.0587,
+            "bootstrap_zero_fraction": 0.0,
+            "full_sum": 41.77620846027026,
+            "retained_sum": 55.61155808473676,
+            "per_race4_kept": 0.19720410668346366,
+            "per_full_mixed": 0.13304524987347216,
+            "per_kept_mixed": 0.23970499174455498,
+            "nonzero_delta_qids": 47
+          }
+        },
+        "statistical_spec": {
+          "root_confirmed_unix": 1793733691.5374858,
+          "N": 512,
+          "G": 8,
+          "checkpoint": 120,
+          "population": "Frozen unused DeepMath dev remainder in protocol.json",
+          "primary": "Paired mean per offered qid of retained first-token Alright logit coefficient minus full eligible-group coefficient",
+          "coefficient": "C_g=sum_i A_i*1[first_token_i==71486], only if0<sum(raw_acc)<8, else0. No1/G or batch-token normalization included.",
+          "reward_primary": "R_i=2*raw_acc_i-1-clip((L_i-6144)/2048,0,1)",
+          "advantage": "(R_i-mean(R_g))/(sample_std(R_g,ddof=1)+1e-6)",
+          "eligibility": "Original raw binary acc mixed groups; allcorrect/allwrong remain zero even if overlong shaping varies.",
+          "drop": "First4 generation-terminal completion order all have raw_acc=1; grade speed not used for ordering.",
+          "retained_coefficient": "C_g*1[not drop_g]",
+          "secondary": [
+            "Per race4-kept denominator",
+            "Per raw-acc-mixed denominator",
+            "Binary acc reward version using same ddof1/eps"
+          ],
+          "bootstrap": "20000 qid-cluster bootstrap draws, fixed seed202611038; percentile95%CI. Keep all512 offered qids including zero coefficients.",
+          "unknown": "Use original grader acc value, do not discard unknown responses/groups.",
+          "stopping": "Fixed512; no significance-based stopping or extension.",
+          "limits": [
+            "First-token coefficient proxy, not whole-parameter gradient or complete native token/IS/clipping loss.",
+            "Frozen single1x GPU workload, not dynamic production scheduler.",
+            "Independent512 report; do not pool old128 fromdifferent GPU configuration without explicit separation."
+          ]
+        }
+      },
+      "evidence_strength": "固定权重离线系数代理对照，置信区间跨零",
+      "supported_claim": "native shaped reward的保留后首tokenAlright系数代理每offeredqid增加0.0270，CI[−.00618,.06263]；不能声称已证明race筛选放大首词信号。",
+      "not_established": [
+        "系数分子没有完整batch/token归一化、PPO/IS/Adam或参数Jacobian；不是最终训练梯度。",
+        "512独立确认不与旧128探索数据合并；全8完成的单GPU工作负载不复现真实动态取消。"
+      ],
+      "sources": [
+        {
+          "source": "reports/rl_root_cause_20261103/natural_g8_replication/analysis_summary.json",
+          "json_pointer": "/summary"
+        },
+        {
+          "source": "reports/rl_root_cause_20261103/natural_g8_replication/analysis_summary.json",
+          "json_pointer": "/statistical_spec"
+        },
+        {
+          "source": "reports/rl_root_cause_20261103/natural_g8_replication/analysis_summary.json",
+          "json_pointer": "/limits"
+        }
+      ]
+    },
+    {
+      "id": "EL17",
+      "title": "full8反例约束：开头、长度、重复和大梯度不是固定绑定",
+      "setup": "original_full8_late_validation",
+      "design": "使用同1021×4固定验证以及对应轮均preclip梯度，保持训练/验证人口分离。",
+      "results": {
+        "selected_validation_points": [
+          {
+            "step": 350,
+            "n": 4084,
+            "validation_mean_length": 1421.7061704211558,
+            "validation_accuracy": 0.713026444662096,
+            "validation_reward": 0.4098925016068805,
+            "mechanical_repeat_n": 37,
+            "mechanical_repeat_fraction": 0.009059745347698335,
+            "mixed_opening_questions": 1,
+            "same_question_length_difference_A_minus_To": 6890.666666666667,
+            "Alright_n": 1,
+            "Alright_fraction": 0.0002448579823702253,
+            "Alright_mean_length": 8192,
+            "Alright_accuracy": 0.0,
+            "Alright_mechanical_repeat_fraction": 0.0,
+            "To_n": 4068,
+            "To_fraction": 0.9960822722820764,
+            "To_mean_length": 1420.3011307767945,
+            "To_accuracy": 0.7136184857423795,
+            "To_mechanical_repeat_fraction": 0.009095378564405112,
+            "logged_round_mean_grad_norm": 0.36260368302464485
+          },
+          {
+            "step": 400,
+            "n": 4084,
+            "validation_mean_length": 2838.200783545544,
+            "validation_accuracy": 0.7431439764936337,
+            "validation_reward": 0.41350774363369247,
+            "mechanical_repeat_n": 80,
+            "mechanical_repeat_fraction": 0.019588638589618023,
+            "mixed_opening_questions": 23,
+            "same_question_length_difference_A_minus_To": 1081.9492753623188,
+            "Alright_n": 4047,
+            "Alright_fraction": 0.9909402546523016,
+            "Alright_mean_length": 2855.637509266123,
+            "Alright_accuracy": 0.7449962935507783,
+            "Alright_mechanical_repeat_fraction": 0.019767729182110207,
+            "To_n": 37,
+            "To_fraction": 0.009059745347698335,
+            "To_mean_length": 931,
+            "To_accuracy": 0.5405405405405406,
+            "To_mechanical_repeat_fraction": 0.0,
+            "logged_round_mean_grad_norm": 0.23093216121196747
+          },
+          {
+            "step": 500,
+            "n": 4084,
+            "validation_mean_length": 2830.2955435847207,
+            "validation_accuracy": 0.767384916748286,
+            "validation_reward": 0.4707279933888345,
+            "mechanical_repeat_n": 54,
+            "mechanical_repeat_fraction": 0.013222331047992164,
+            "mixed_opening_questions": 9,
+            "same_question_length_difference_A_minus_To": 870.7222222222222,
+            "Alright_n": 4072,
+            "Alright_fraction": 0.9970617042115573,
+            "Alright_mean_length": 2835.8774557956776,
+            "Alright_accuracy": 0.7674361493123772,
+            "Alright_mechanical_repeat_fraction": 0.013261296660117878,
+            "To_n": 12,
+            "To_fraction": 0.002938295788442703,
+            "To_mean_length": 936.1666666666666,
+            "To_accuracy": 0.75,
+            "To_mechanical_repeat_fraction": 0.0,
+            "logged_round_mean_grad_norm": 0.3897024467587471
+          },
+          {
+            "step": 550,
+            "n": 4084,
+            "validation_mean_length": 2081.4485798237024,
+            "validation_accuracy": 0.7558765915768854,
+            "validation_reward": 0.49517541300654994,
+            "mechanical_repeat_n": 14,
+            "mechanical_repeat_fraction": 0.0034280117531831538,
+            "mixed_opening_questions": 218,
+            "same_question_length_difference_A_minus_To": 329.1498470948012,
+            "Alright_n": 3442,
+            "Alright_fraction": 0.8428011753183153,
+            "Alright_mean_length": 2179.644683323649,
+            "Alright_accuracy": 0.747239976757699,
+            "Alright_mechanical_repeat_fraction": 0.0031958163858221964,
+            "To_n": 634,
+            "To_fraction": 0.15523996082272282,
+            "To_mean_length": 1553.7555205047317,
+            "To_accuracy": 0.8028391167192429,
+            "To_mechanical_repeat_fraction": 0.00473186119873817,
+            "logged_round_mean_grad_norm": 0.4703720211982727
+          },
+          {
+            "step": 600,
+            "n": 4084,
+            "validation_mean_length": 1865.5315866797257,
+            "validation_accuracy": 0.7526934378060725,
+            "validation_reward": 0.48851522806225517,
+            "mechanical_repeat_n": 6,
+            "mechanical_repeat_fraction": 0.0014691478942213516,
+            "mixed_opening_questions": 142,
+            "same_question_length_difference_A_minus_To": 9.494131455399058,
+            "Alright_n": 3708,
+            "Alright_fraction": 0.9079333986287953,
+            "Alright_mean_length": 1904.9476806903992,
+            "Alright_accuracy": 0.7454153182308522,
+            "Alright_mechanical_repeat_fraction": 0.001348435814455232,
+            "To_n": 351,
+            "To_fraction": 0.08594515181194907,
+            "To_mean_length": 1480.5099715099716,
+            "To_accuracy": 0.8205128205128205,
+            "To_mechanical_repeat_fraction": 0.002849002849002849,
+            "logged_round_mean_grad_norm": 0.6583168506622314
+          },
+          {
+            "step": 650,
+            "n": 4084,
+            "validation_mean_length": 1377.1214495592556,
+            "validation_accuracy": 0.7475514201762977,
+            "validation_reward": 0.4941126480625612,
+            "mechanical_repeat_n": 1,
+            "mechanical_repeat_fraction": 0.0002448579823702253,
+            "mixed_opening_questions": 298,
+            "same_question_length_difference_A_minus_To": 138.17170022371363,
+            "Alright_n": 1297,
+            "Alright_fraction": 0.3175808031341822,
+            "Alright_mean_length": 1617.983037779491,
+            "Alright_accuracy": 0.674633770239013,
+            "Alright_mechanical_repeat_fraction": 0.0,
+            "To_n": 2535,
+            "To_fraction": 0.6207149853085211,
+            "To_mean_length": 1259.148717948718,
+            "To_accuracy": 0.7798816568047338,
+            "To_mechanical_repeat_fraction": 0.0003944773175542406,
+            "logged_round_mean_grad_norm": 77.27626778185368
+          }
+        ],
+        "conclusions": [
+          {
+            "claim": "长期To之后快速转为Alright，且长度跃升",
+            "status": "在同一run的观察上成立",
+            "evidence": "350→400：Alright0.0245%→99.094%；固定评测长度1421.71→2838.20；训练长度365–400也快速增加。"
+          },
+          {
+            "claim": "这次跃升主要由首token更新造成",
+            "status": "尚未在本run干预验证",
+            "evidence": "350只有1条Alright且截断8192；不能可靠估计跃升前条件长度，也不能搬用formal100–140的首token损失干预作为本run因果证据。"
+          },
+          {
+            "claim": "快速变长本身不意味着梯度/PPL爆炸",
+            "status": "得到同一run直接支持",
+            "evidence": "351–400每轮平均裁剪前grad最大0.4075，后段反而下降；PPL两侧仍接近。"
+          },
+          {
+            "claim": "较长阶段会伴随更多重复",
+            "status": "保守机械指标有阶段性支持，不能泛化",
+            "evidence": "350→400机械重复37/4084→80/4084；550–650持续下降。没有完整的同口径LLM语义重复率。"
+          },
+          {
+            "claim": "Alright始终固定对应长回答",
+            "status": "被本run反例否定",
+            "evidence": "550→600，Alright比例84.28%→90.79%，总体长度2081→1866；Alright条件长度2180→1905。"
+          },
+          {
+            "claim": "后期梯度增长需要长度和重复同步增加",
+            "status": "不符合本run的固定评测观察",
+            "evidence": "600→650验证长度1866→1377，机械重复6→1；轮平均梯度0.658→77.276。实际入训长度另有波动，615达到4019.6，不能与固定评测混用。"
+          }
+        ]
+      },
+      "evidence_strength": "同run观察反例",
+      "supported_claim": "550→600 Alright比例84.28%→90.79%但总体长度2081→1866；600→650验证长度1866→1377、严格重复6→1，而轮均grad .658→77.276。",
+      "not_established": [
+        "full8没有做同run首tokenloss干预；只能把early formal干预作为可检验机制线索。",
+        "固定验证重复率下降不能推出实际入训异常下降；后者筛选、T1和跨版本分布不同。"
+      ],
+      "sources": [
+        {
+          "source": "reports/eight_length_audit_20261104/summary.json",
+          "json_pointer": "/selected_validation_points"
+        },
+        {
+          "source": "reports/eight_length_audit_20261104/summary.json",
+          "json_pointer": "/conclusions"
+        },
+        {
+          "source": "reports/eight_length_audit_20261104/summary.json",
+          "json_pointer": "/limits"
+        }
+      ]
+    },
+    {
+      "id": "EL18",
+      "title": "回看早期实际数据暴露，未定位单个坏题触发点",
+      "setup": "early_formal_prompt_risk_exposure",
+      "design": "把一次Base屏幕标签按qid关联到实际submitted/selected/discarded事件，实际batch分析仅100–140。",
+      "results": {
+        "event_totals": {
+          "submitted": 28240,
+          "race4_discarded": 11515,
+          "selected": 12800
+        },
+        "windows": [
+          {
+            "first": 1,
+            "last": 50,
+            "event_counts": {
+              "submitted": {
+                "normal": 1027,
+                "unreviewed": 4552,
+                "abnormal": 358,
+                "uncertain": 12
+              },
+              "selected": {
+                "abnormal": 201,
+                "unreviewed": 2465,
+                "normal": 525,
+                "uncertain": 9
+              },
+              "race4_discarded": {
+                "unreviewed": 1046,
+                "normal": 259,
+                "abnormal": 87,
+                "uncertain": 1
+              }
+            }
+          },
+          {
+            "first": 51,
+            "last": 100,
+            "event_counts": {
+              "submitted": {
+                "unreviewed": 5109,
+                "normal": 1266,
+                "abnormal": 401,
+                "uncertain": 12
+              },
+              "selected": {
+                "normal": 586,
+                "unreviewed": 2410,
+                "abnormal": 199,
+                "uncertain": 5
+              },
+              "race4_discarded": {
+                "unreviewed": 1871,
+                "normal": 470,
+                "abnormal": 135,
+                "uncertain": 4
+              }
+            }
+          },
+          {
+            "first": 101,
+            "last": 110,
+            "event_counts": {
+              "submitted": {
+                "unreviewed": 1036,
+                "normal": 232,
+                "abnormal": 97,
+                "uncertain": 2
+              },
+              "selected": {
+                "unreviewed": 499,
+                "normal": 100,
+                "abnormal": 41
+              },
+              "race4_discarded": {
+                "unreviewed": 404,
+                "normal": 88,
+                "abnormal": 46,
+                "uncertain": 3
+              }
+            }
+          },
+          {
+            "first": 111,
+            "last": 118,
+            "event_counts": {
+              "submitted": {
+                "unreviewed": 809,
+                "normal": 211,
+                "abnormal": 76,
+                "uncertain": 4
+              },
+              "selected": {
+                "unreviewed": 382,
+                "normal": 96,
+                "abnormal": 33,
+                "uncertain": 1
+              },
+              "race4_discarded": {
+                "unreviewed": 317,
+                "normal": 88,
+                "abnormal": 33,
+                "uncertain": 1
+              }
+            }
+          },
+          {
+            "first": 119,
+            "last": 125,
+            "event_counts": {
+              "submitted": {
+                "unreviewed": 678,
+                "normal": 170,
+                "abnormal": 65
+              },
+              "selected": {
+                "normal": 85,
+                "unreviewed": 325,
+                "abnormal": 38
+              },
+              "race4_discarded": {
+                "unreviewed": 255,
+                "normal": 74,
+                "uncertain": 1,
+                "abnormal": 18
+              }
+            }
+          },
+          {
+            "first": 126,
+            "last": 130,
+            "event_counts": {
+              "submitted": {
+                "unreviewed": 518,
+                "abnormal": 29,
+                "normal": 100,
+                "uncertain": 1
+              },
+              "selected": {
+                "unreviewed": 237,
+                "normal": 60,
+                "abnormal": 23
+              },
+              "race4_discarded": {
+                "unreviewed": 192,
+                "normal": 40,
+                "abnormal": 12
+              }
+            }
+          },
+          {
+            "first": 131,
+            "last": 140,
+            "event_counts": {
+              "submitted": {
+                "unreviewed": 1116,
+                "abnormal": 86,
+                "normal": 253,
+                "uncertain": 2
+              },
+              "selected": {
+                "normal": 110,
+                "unreviewed": 500,
+                "abnormal": 29,
+                "uncertain": 1
+              },
+              "race4_discarded": {
+                "unreviewed": 558,
+                "normal": 118,
+                "abnormal": 42,
+                "uncertain": 1
+              }
+            }
+          },
+          {
+            "first": 141,
+            "last": 200,
+            "event_counts": {
+              "submitted": {
+                "unreviewed": 7532,
+                "abnormal": 641,
+                "normal": 1826,
+                "uncertain": 19
+              },
+              "selected": {
+                "unreviewed": 2901,
+                "abnormal": 258,
+                "normal": 676,
+                "uncertain": 5
+              },
+              "race4_discarded": {
+                "unreviewed": 4021,
+                "abnormal": 341,
+                "normal": 978,
+                "uncertain": 11
+              }
+            }
+          }
+        ],
+        "actual_update_batch_analysis_scope": [
+          100,
+          140
+        ]
+      },
+      "evidence_strength": "部分题目覆盖的观察关联",
+      "supported_claim": "可以追踪已筛题的暴露，但大部分训练题未被10000题筛选覆盖，不能把unreviewed当normal；没有从这份关联中识别到原训练的确定触发题。",
+      "not_established": [
+        "Base anomaly label comes from one independently generated answer, not a stable prompt-specific failure probability.",
+        "Only the fixed random10000-prompt screen is covered; other prompts are unreviewed, not normal.",
+        "This is exposure/selected-batch association, not evidence that a particular prompt caused the transition."
+      ],
+      "sources": [
+        {
+          "source": "reports/rl_root_cause_20261103/trajectory/prompt_risk_analysis.json",
+          "json_pointer": "/event_totals"
+        },
+        {
+          "source": "reports/rl_root_cause_20261103/trajectory/prompt_risk_analysis.json",
+          "json_pointer": "/windows"
+        },
+        {
+          "source": "reports/rl_root_cause_20261103/trajectory/prompt_risk_analysis.json",
+          "json_pointer": "/actual_update_batch_analysis_scope"
+        },
+        {
+          "source": "reports/rl_root_cause_20261103/trajectory/prompt_risk_analysis.json",
+          "json_pointer": "/limitations"
+        }
+      ]
+    }
+  ],
+  "source_registry": {
+    "reports/length_diagnostics_20261102/checks_summary.json": {
+      "repo_relative_path": "reports/length_diagnostics_20261102/checks_summary.json",
+      "local_path": "archive:reports/length_diagnostics_20261102/checks_summary.json",
+      "sha256": "623b99b9ee12b6edca74ec5ac2e259ad1f74a871592d347d3d5c882114d10b3f",
+      "bytes": 65061,
+      "kind": "primary_or_derived_local_experimental_artifact"
+    },
+    "reports/rl_opening_dynamics_20261104/history_openings.json": {
+      "repo_relative_path": "reports/rl_opening_dynamics_20261104/history_openings.json",
+      "local_path": "archive:reports/rl_opening_dynamics_20261104/history_openings.json",
+      "sha256": "bfdc09501813c1d40c83df2c76a01b8912e939d40cff82d18881eb31e3413c80",
+      "bytes": 147791,
+      "kind": "primary_or_derived_local_experimental_artifact"
+    },
+    "reports/rl_root_cause_20261103/research_state.json": {
+      "repo_relative_path": "reports/rl_root_cause_20261103/research_state.json",
+      "local_path": "archive:reports/rl_root_cause_20261103/research_state.json",
+      "sha256": "b680e6955b6c9f16d9577bf1b51a596ac59e3185f7ac0354e3dd8bf2cd910548",
+      "bytes": 38668,
+      "kind": "primary_or_derived_local_experimental_artifact"
+    },
+    "reports/pilot44_stability_20261102/experiment_design.json": {
+      "repo_relative_path": "reports/pilot44_stability_20261102/experiment_design.json",
+      "local_path": "archive:reports/pilot44_stability_20261102/experiment_design.json",
+      "sha256": "411a9c8077fa77589699e8ae8eefcf2e71be9bd66f0d87fcaf36c22dc3064e62",
+      "bytes": 7900,
+      "kind": "primary_or_derived_local_experimental_artifact"
+    },
+    "reports/small_model_length_20261103/summary.json": {
+      "repo_relative_path": "reports/small_model_length_20261103/summary.json",
+      "local_path": "archive:reports/small_model_length_20261103/summary.json",
+      "sha256": "0718e84485ff7a8b16f630cf447ebb32e568585f5623ecb92f56a9d4e25dbe88",
+      "bytes": 2115,
+      "kind": "primary_or_derived_local_experimental_artifact"
+    },
+    "reports/small_model_length_20261103/snapshot.json": {
+      "repo_relative_path": "reports/small_model_length_20261103/snapshot.json",
+      "local_path": "archive:reports/small_model_length_20261103/snapshot.json",
+      "sha256": "bf66ce929b845d03f3e607daad02d53a3ecb96ec1a71ac4e1d4b45b3438686eb",
+      "bytes": 897187,
+      "kind": "primary_or_derived_local_experimental_artifact"
+    },
+    "reports/project_curation_20261104/project/data/evidence/G-08.json": {
+      "repo_relative_path": "reports/project_curation_20261104/project/data/evidence/G-08.json",
+      "local_path": "archive:reports/project_curation_20261104/project/data/evidence/G-08.json",
+      "sha256": "7f5545d028c59f929e3803b05a3b11cb17b38296490c37a4290c47115fba190d",
+      "bytes": 2411,
+      "kind": "primary_or_derived_local_experimental_artifact"
+    },
+    "reports/bbb_historical_surge_audit_20261103/findings.json": {
+      "repo_relative_path": "reports/bbb_historical_surge_audit_20261103/findings.json",
+      "local_path": "archive:reports/bbb_historical_surge_audit_20261103/findings.json",
+      "sha256": "4c39c77608e9d64aa5f821930cc405dc52fcb0a356c85b3b7a9f03690ea66c28",
+      "bytes": 4608,
+      "kind": "primary_or_derived_local_experimental_artifact"
+    },
+    "reports/anomaly_screen1000_20261104/summary.json": {
+      "repo_relative_path": "reports/anomaly_screen1000_20261104/summary.json",
+      "local_path": "archive:reports/anomaly_screen1000_20261104/summary.json",
+      "sha256": "642d04d35ed552cf43dd9240bbc7abdabc863e12cbabe24dda184b852b72e144",
+      "bytes": 3041,
+      "kind": "primary_or_derived_local_experimental_artifact"
+    },
+    "reports/anomaly_screen10000_20261104/screen_summary.json": {
+      "repo_relative_path": "reports/anomaly_screen10000_20261104/screen_summary.json",
+      "local_path": "archive:reports/anomaly_screen10000_20261104/screen_summary.json",
+      "sha256": "539f613535e8a694ca55bc6ced7cc62c0a0bf6cba8f17989098bc69119c35212",
+      "bytes": 1536,
+      "kind": "primary_or_derived_local_experimental_artifact"
+    },
+    "reports/anomaly_llm_review_20261104/summary.json": {
+      "repo_relative_path": "reports/anomaly_llm_review_20261104/summary.json",
+      "local_path": "archive:reports/anomaly_llm_review_20261104/summary.json",
+      "sha256": "2ca205bb1e0685137facedf33280733ad4a91e014c10d7797a1a592e58b1a16e",
+      "bytes": 7536,
+      "kind": "primary_or_derived_local_experimental_artifact"
+    },
+    "reports/rl_root_cause_20261103/risk_validation/protocol.json": {
+      "repo_relative_path": "reports/rl_root_cause_20261103/risk_validation/protocol.json",
+      "local_path": "archive:reports/rl_root_cause_20261103/risk_validation/protocol.json",
+      "sha256": "7344911ce5738dfa8f3e43f3d96e11cc2e6d4dc2bf550e642cff42ad835d3426",
+      "bytes": 1544,
+      "kind": "primary_or_derived_local_experimental_artifact"
+    },
+    "reports/rl_root_cause_20261103/trajectory/risk_repeat_analysis/analysis.json": {
+      "repo_relative_path": "reports/rl_root_cause_20261103/trajectory/risk_repeat_analysis/analysis.json",
+      "local_path": "archive:reports/rl_root_cause_20261103/trajectory/risk_repeat_analysis/analysis.json",
+      "sha256": "b9a241492e4e9ac7ca3bedefb3d2ccec1d9c13f19135852c3600e528f0f15961",
+      "bytes": 44473,
+      "kind": "primary_or_derived_local_experimental_artifact"
+    },
+    "reports/prefix_causality_20261103/findings.json": {
+      "repo_relative_path": "reports/prefix_causality_20261103/findings.json",
+      "local_path": "archive:reports/prefix_causality_20261103/findings.json",
+      "sha256": "ce04e135c0de2dfc2ff0d164e7bcb39199462f34f03703482a6eba7fc5038e1c",
+      "bytes": 6161,
+      "kind": "primary_or_derived_local_experimental_artifact"
+    },
+    "reports/data_trigger_experiment_20261103/findings.json": {
+      "repo_relative_path": "reports/data_trigger_experiment_20261103/findings.json",
+      "local_path": "archive:reports/data_trigger_experiment_20261103/findings.json",
+      "sha256": "c6143ae83756ec97d82d8ddbba1d2867a0ba1faa9d9f57ebc4237284313dfb9e",
+      "bytes": 1870,
+      "kind": "primary_or_derived_local_experimental_artifact"
+    },
+    "reports/rl_repetition_audit_20261104/base_length_summary.json": {
+      "repo_relative_path": "reports/rl_repetition_audit_20261104/base_length_summary.json",
+      "local_path": "archive:reports/rl_repetition_audit_20261104/base_length_summary.json",
+      "sha256": "603dcc859d121405aa639ee24216585f62e33c403a6775b382f6890073e252c4",
+      "bytes": 10312,
+      "kind": "primary_or_derived_local_experimental_artifact"
+    },
+    "reports/rl_repetition_audit_20261104/blind_repeat_review.json": {
+      "repo_relative_path": "reports/rl_repetition_audit_20261104/blind_repeat_review.json",
+      "local_path": "archive:reports/rl_repetition_audit_20261104/blind_repeat_review.json",
+      "sha256": "326e3d1c2a10fe0e13a53bfa063ef31b4ac61299b515d20da1bb4df7182c5e0a",
+      "bytes": 19184,
+      "kind": "primary_or_derived_local_experimental_artifact"
+    },
+    "reports/project_curation_20261104/project/data/evidence/S06.json": {
+      "repo_relative_path": "reports/project_curation_20261104/project/data/evidence/S06.json",
+      "local_path": "archive:reports/project_curation_20261104/project/data/evidence/S06.json",
+      "sha256": "61b861c1b3974d76cb1f5d78adb6873cb6849e2cb8668c4a511fbceacbe0d32b",
+      "bytes": 4326,
+      "kind": "primary_or_derived_local_experimental_artifact"
+    },
+    "reports/rl_root_cause_20261103/fixed_probes/base_style_summary.json": {
+      "repo_relative_path": "reports/rl_root_cause_20261103/fixed_probes/base_style_summary.json",
+      "local_path": "archive:reports/rl_root_cause_20261103/fixed_probes/base_style_summary.json",
+      "sha256": "c5c73c84284dca7002cf95e98913c9cc475a51ce4b76a77f1a9415f5aacf0d2e",
+      "bytes": 654631,
+      "kind": "primary_or_derived_local_experimental_artifact"
+    },
+    "reports/rl_root_cause_20261103/fixed_probes/style_summary.json": {
+      "repo_relative_path": "reports/rl_root_cause_20261103/fixed_probes/style_summary.json",
+      "local_path": "archive:reports/rl_root_cause_20261103/fixed_probes/style_summary.json",
+      "sha256": "c190a82a20b35873cdba31c813f42676c1085914e47eac288117808c30698e2d",
+      "bytes": 1123303,
+      "kind": "primary_or_derived_local_experimental_artifact"
+    },
+    "reports/rl_root_cause_20261103/fixed_probes/replay_endpoint_comparison.json": {
+      "repo_relative_path": "reports/rl_root_cause_20261103/fixed_probes/replay_endpoint_comparison.json",
+      "local_path": "archive:reports/rl_root_cause_20261103/fixed_probes/replay_endpoint_comparison.json",
+      "sha256": "b2031dc9f31d227bf1c2440951585dcfa535e8d432b0d339972ec1f139ea24d2",
+      "bytes": 247846,
+      "kind": "primary_or_derived_local_experimental_artifact"
+    },
+    "reports/rl_root_cause_20261103/replay_design/first_token_arm_specs/first_token_adv_zero.json": {
+      "repo_relative_path": "reports/rl_root_cause_20261103/replay_design/first_token_arm_specs/first_token_adv_zero.json",
+      "local_path": "archive:reports/rl_root_cause_20261103/replay_design/first_token_arm_specs/first_token_adv_zero.json",
+      "sha256": "e5b2029fc3c399c035e0161aee709a2ade6422d152da98c60b487da559773e66",
+      "bytes": 642,
+      "kind": "primary_or_derived_local_experimental_artifact"
+    },
+    "reports/rl_root_cause_20261103/replay_design/first_token_arm_specs/nll_matched_interior_token_adv_zero.json": {
+      "repo_relative_path": "reports/rl_root_cause_20261103/replay_design/first_token_arm_specs/nll_matched_interior_token_adv_zero.json",
+      "local_path": "archive:reports/rl_root_cause_20261103/replay_design/first_token_arm_specs/nll_matched_interior_token_adv_zero.json",
+      "sha256": "14fac0e4b632908779cfeb8e32bbbe883a15bf2fe52995b20d0ac7b98b6ec7d3",
+      "bytes": 701,
+      "kind": "primary_or_derived_local_experimental_artifact"
+    },
+    "reports/rl_ppl_accuracy_20261104/accuracy_variance_summary.json": {
+      "repo_relative_path": "reports/rl_ppl_accuracy_20261104/accuracy_variance_summary.json",
+      "local_path": "archive:reports/rl_ppl_accuracy_20261104/accuracy_variance_summary.json",
+      "sha256": "30cda0a4d6ef875760b4f7de4ae7693187af1b08a8a72ffe8d2bf66c213867ef",
+      "bytes": 5952,
+      "kind": "primary_or_derived_local_experimental_artifact"
+    },
+    "reports/rl_opening_dynamics_20261104/opening_reward_dynamics.json": {
+      "repo_relative_path": "reports/rl_opening_dynamics_20261104/opening_reward_dynamics.json",
+      "local_path": "archive:reports/rl_opening_dynamics_20261104/opening_reward_dynamics.json",
+      "sha256": "db518f628bf1996f58f4e7e6aabec16b92e268b6558a89ce1e3c4efa95cd3dfa",
+      "bytes": 76330,
+      "kind": "primary_or_derived_local_experimental_artifact"
+    },
+    "reports/rl_root_cause_20261103/fixed_probes/first_token_curve_summary.json": {
+      "repo_relative_path": "reports/rl_root_cause_20261103/fixed_probes/first_token_curve_summary.json",
+      "local_path": "archive:reports/rl_root_cause_20261103/fixed_probes/first_token_curve_summary.json",
+      "sha256": "7176c90f7243cb841112504befbfaffe1af6160e8fcfbb9fb2703a2aa05fd2b8",
+      "bytes": 21342,
+      "kind": "primary_or_derived_local_experimental_artifact"
+    },
+    "reports/rl_root_cause_20261103/natural_g8_replication/analysis_summary.json": {
+      "repo_relative_path": "reports/rl_root_cause_20261103/natural_g8_replication/analysis_summary.json",
+      "local_path": "archive:reports/rl_root_cause_20261103/natural_g8_replication/analysis_summary.json",
+      "sha256": "7ef14199a94a146c1d97db17a7db48e228e85c0478a049855589d2ec0aa6d446",
+      "bytes": 279692,
+      "kind": "primary_or_derived_local_experimental_artifact"
+    },
+    "reports/eight_length_audit_20261104/summary.json": {
+      "repo_relative_path": "reports/eight_length_audit_20261104/summary.json",
+      "local_path": "archive:reports/eight_length_audit_20261104/summary.json",
+      "sha256": "c40096e95a586e9115881ec24f6d328076af3171c66b51830c1ae7f1ee4f0c5b",
+      "bytes": 9410,
+      "kind": "primary_or_derived_local_experimental_artifact"
+    },
+    "reports/project_curation_20261104/project/docs/training-stability.md": {
+      "repo_relative_path": "reports/project_curation_20261104/project/docs/training-stability.md",
+      "local_path": "archive:reports/project_curation_20261104/project/docs/training-stability.md",
+      "sha256": "d98037990b4457515071de258382b07405b418cb2f2520a499dcff8401461bcd",
+      "bytes": 12859,
+      "kind": "secondary_project_narrative; operational statuses may be stale"
+    },
+    "reports/project_curation_20261104/project/docs/setup-comparison.md": {
+      "repo_relative_path": "reports/project_curation_20261104/project/docs/setup-comparison.md",
+      "local_path": "archive:reports/project_curation_20261104/project/docs/setup-comparison.md",
+      "sha256": "fce060ede77301c73da0465403a12fe20b0600ccfdd8691d8bea120709153693",
+      "bytes": 4274,
+      "kind": "secondary_project_narrative; operational statuses may be stale"
+    },
+    "reports/project_curation_20261104/project/docs/questions-and-decisions.md": {
+      "repo_relative_path": "reports/project_curation_20261104/project/docs/questions-and-decisions.md",
+      "local_path": "archive:reports/project_curation_20261104/project/docs/questions-and-decisions.md",
+      "sha256": "07349a7baac36bfc08ab3623e1a5b56d7934536e4e35f6ff9eb8482e0b116b4b",
+      "bytes": 3966,
+      "kind": "secondary_project_narrative; operational statuses may be stale"
+    },
+    "reports/rl_root_cause_20261103/trajectory/prompt_risk_analysis.json": {
+      "repo_relative_path": "reports/rl_root_cause_20261103/trajectory/prompt_risk_analysis.json",
+      "local_path": "archive:reports/rl_root_cause_20261103/trajectory/prompt_risk_analysis.json",
+      "sha256": "8a68c6f3eccd6aa1b12e367540e2551107bfcc074f0fbc46f5345fecfe65738b",
+      "bytes": 138523,
+      "kind": "primary_or_derived_local_experimental_artifact"
+    },
+    "reports/rl_root_cause_20261103/fixed_probes/style_cases.json.gz": {
+      "repo_relative_path": "reports/rl_root_cause_20261103/fixed_probes/style_cases.json.gz",
+      "local_path": "archive:reports/rl_root_cause_20261103/fixed_probes/style_cases.json.gz",
+      "sha256": "fae458e420ea880aafb09547999374387151e928debd385ba50dff447af42cf8",
+      "bytes": 17561,
+      "kind": "primary_frozen_gzip_JSON_prompt_identity"
+    }
+  },
+  "recommended_report_sequence": [
+    "先交代4+4/full8比较中看到长回答跃升，明确full8仍是APRIL。",
+    "固定题/模板复核和小模型未复现，显示不是单纯换题或普遍必现。",
+    "在Base上也发现异常；1000题部分审查→10000全文LLM→8000复采，纠正一次异常即坏题的推断。",
+    "强制首词改变长度，再用相同历史batch删首token直接loss、随机/NLLmatched控制，将观察升级为局部干预证据。",
+    "正确率优势、实际正A与logodds连续积累支持正反馈解释；方差假说与race4系数放大仍不确定。",
+    "用full8后期反例收束：变长不是爆炸，Alright不是固定长度，固定验证不代表实际入训。"
+  ],
+  "claims_to_avoid": [
+    "长度突然增长本身就是异常/训练崩溃。",
+    "full8就是没有跨权重续写的原始DAPO。",
+    "在full8的350→400已证明首token是唯一原因（干预其实是另一earlyformal轨迹）。",
+    "Base25.55%的回答都是重复或都数学错误。",
+    "1000题的9.9%与10000题25.55%意味着模型异常恶化。",
+    "任何一次被标异常的问题都会稳定诱发异常或导致RL爆炸。",
+    "Alright方差大已被证实，因此GRPO必然选择它。",
+    "early和late两条轨迹可拼成To/Alright持续循环振荡的证据。",
+    "第一token系数或平均A的符号等于实际参数更新后首词概率变化。",
+    "高5gram重复率等于语义异常率；AI标签是人类金标准。"
+  ],
+  "remaining_questions": [
+    "在完整full8主线做同checkpoint/同history的首token直接loss干预能否复现earlyformal效应。",
+    "随机化风险富集训练是否改变后期失稳，而不仅是新生成异常率。",
+    "开头选择、正文学习、EOS停止与rewardlength项在多种子在线训练中的相对作用。",
+    "使用人工复核校准重复/乱码标签，覆盖数字循环和正常数学结构。"
+  ],
+  "public_report_note": "Draft contains onlyaggregatedstatistics andlocalartifactreferences; no rawquestions/answers orcredentials. Preferrelativeprojectcitations whenintegrating; do notpublishinternalabsoluteenvironmentpaths needlessly.",
+  "ready_to_integrate_paragraphs_zh": [
+    "最初的问题是输出为何突然变长。复核固定题后发现，这种转变同时出现在full8、4+4保留、4+4舍弃及race4v2，只是时间不同；其中full8的350→400轮，验证均长1422→2838、正确率71.3%→74.3%，而训练侧轮均梯度仍平稳。我们因此把早期长度模式转换与后期梯度失稳拆开，而没有把长回答本身定义为异常。（EL01–EL03）",
+    "缩小到0.6B/GSM8K后，三种策略各1000轮没有触发预设筛选门槛。这是未复现结果，不是稳定性保证：模型、题目、回答上限、并发窗口与batch都变了。历史检索又找到seqfirst8的类似首词变化，但TailSieve只有较温和的长度脉冲，不能自动并成同一机制。（EL04–EL05）",
+    "对数据的怀疑促成Base异常筛选。1000题的部分AI复核确认至少99条异常；随后对新的10000题全文复核，得到2555异常、73不确定，其中重复标签308条。两次数字不可直接比较为模型变坏，前者是下限、后者覆盖全文且题集不同。再用500风险题与500匹配对照各重采8次，风险组只提高约4个百分点的异常率；这支持温和预测富集，尚不足以把某轮RL爆发归因于加载了坏题。（EL06–EL10、EL18）",
+    "首词机制有两层证据。固定权重强制Alright而非To，会明显延长同题生成；固定历史batch重放时，删除首token的直接loss又将端点均长3328降至2035、Alright247/256降至65/256，而随机/NLL匹配的单token删除未复现同等效果。这支持首token学习通道确实参与了early formal的跃升，但它不是full8原始350→400的同run干预，也没有排除正文共享梯度的作用。（EL11–EL12）",
+    "为什么首词会快速改变？Base强制Alright的正确率57.8%，To为39.8%；early实际训练中稀少的Alright也有更高正确率和正优势。固定prompt的P(Alright)从约2%逐步变成98%，每题log-odds近线性积累可以呈现概率上的陡峭过渡。因此，类似多臂老虎机的正反馈是与证据相容的解释，而非已经证明的唯一动力学或某一次中奖事件。关于方差和race筛选额外放大，确认性区间仍跨零。（EL13–EL16）",
+    "反例同样重要：另一late轨迹中Alright的正确率和平均优势转为劣势，去掉超长罚后优势仍负；不能只说长度罚后来占优。full8的550→600轮Alright比例增加而长度下降，600→650验证长度和机械重复下降而梯度大涨，也否定了开头、长度、重复与大梯度始终绑定的简单叙事。（EL14、EL17）"
+  ],
+  "validation": {
+    "all_source_files_exist": true,
+    "all_source_SHA256_match": true,
+    "JSON_pointer_references_resolved": 93,
+    "evidence_items": 18,
+    "no_raw_question_or_answer_text_embedded": true,
+    "validated_unix": 1793900227.9262385,
+    "gzip_JSON_supported": true
+  },
+  "publication": {
+    "scope": "Sanitized aggregates and source fingerprints; original archived files are not included.",
+    "original_draft_sha256": "1bb216bea6f7bd83285484e5a6f1294c58eb1d062f6577341cc4f05e463bc69d",
+    "synthetic_test_data_excluded": true
+  }
+}
