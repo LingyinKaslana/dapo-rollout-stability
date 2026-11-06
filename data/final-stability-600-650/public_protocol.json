@@ -1,0 +1,442 @@
+{
+  "schema": "final-stability-public-protocol-with-explicit-erratum-v1",
+  "status": "frozen_scientific_protocol",
+  "written_utc": "2026-11-05T19:20:20.969046+00:00",
+  "question": "从同一full8第600轮训练状态出发，哪些减轻梯度异常的办法能在600→650的50轮在线训练中降低异常，同时尽量保持正确率并减少自然生成退化？",
+  "design": {
+    "source_step": 600,
+    "target_step": 650,
+    "training_rounds_per_arm": 50,
+    "Adam_updates_per_round": 4,
+    "Adam_updates_per_arm": 200,
+    "total_training_rounds": 400,
+    "total_Adam_updates": 1600,
+    "training_replicates_per_arm": 1,
+    "historical_source_line": "original APRIL full8 Qwen3-8B-Base mainline,not old nodiscard44 or previous independent600→620UL trajectory",
+    "scope": "Online intervention comparison; shared initial state does not imply matched future generated data or exact replay of historical601–650.",
+    "arm_ids": [
+      "baseline",
+      "full_tis",
+      "negative_tis",
+      "abs_gap_mask",
+      "negative_down_mask",
+      "repeat_negative_down_mask",
+      "negative_mass",
+      "sync_fresh"
+    ]
+  },
+  "common_training": {
+    "model": "Qwen3-8B-Base",
+    "devices_per_training_job": 8,
+    "group_size": 8,
+    "accepted_groups_per_round": 64,
+    "accepted_responses_per_round": 512,
+    "global_minibatch_responses": 128,
+    "maximum_response_tokens": 8192,
+    "learning_rate": 5e-07,
+    "global_gradient_clip_norm": 1.0,
+    "optimizer": "OriginalAdamplusallmomentsandcountersrestored",
+    "state_restore": [
+      "fullactorweights",
+      "Adamfirst/secondmomentsandstep2400",
+      "scheduler600",
+      "savedPythonNumPyTorchCPU/CUDARNG",
+      "originallogicalcollectorstateexceptm7oldresponsesdiscarded"
+    ],
+    "same_source600_all_ranks_must_be_verified": true,
+    "source600_validation_shared_question_panel": true,
+    "vllm_runtime": "ModelRunnerV1, explicit nativeFlashInfer, use_trtllm_attention=False; verify actual class/backend on every training/inference worker",
+    "no_repetition_penalty": true,
+    "no_auxiliary_UL": true,
+    "do_not_change": [
+      "originalrewardandgrader",
+      "nativegroupadvantages",
+      "originalPPOclippinganddualclipping",
+      "nativecontexttokens",
+      "nativeglobalvalidtokenlossdenominator",
+      "globalnormclip1",
+      "lrandscheduler",
+      "trainingquestionpoolandprompttemplate"
+    ],
+    "runtime_limitations": [
+      "SavedengineRNGdoesnotcapturetheentirelivevLLMgenerator/KVcache/asynchronousschedulingstate.",
+      "Arm-specificCPUobservabilitycanalterasynchronouscompletionorder;useidenticalinstrumentationandpreserveactualevents.",
+      "Hardwarebackend,precision,maskdenominatorsandrewardversionsmustbeloggedandcomparedbeforeattributingdifferences."
+    ]
+  },
+  "notation": {
+    "q_t": "Savedrolloutconditionalprobabilityoftheobservedtokenatitsactualgenerationtime; preserve historical value, checkpoint/segment provenance and sampler distinction.",
+    "p0_t": "Trainingactorconditionalprobabilityoftheexactobservedtokenunderthecurrentroundpre-updateactor.",
+    "p_t": "TrainingactorconditionalprobabilityatitsactualB1/B2/B3/B4forwardpass.",
+    "s0_t": "log(p0_t)-log(q_t), signed; fixed/detached for the round interventions1–5.",
+    "s_t": "log(p_t)-log(q_t), signed current inner-update diagnostic.",
+    "d_t": "abs(s_t),nonnegative;neverusedforadownwardthresholdwithoutsign.",
+    "A_i": "Nativegrouprelativeadvantage;negative meansA_i<0,notjustreward0.",
+    "R_t": "Frozenprefix-confirmedexactcycleORstrictnoisy4grammask;puretext/provenanceinput."
+  },
+  "arms": {
+    "baseline": {
+      "id": "baseline",
+      "method_number": 0,
+      "change": "OriginalAPRILfull8objectiveandcollector;observabilityonly."
+    },
+    "full_tis": {
+      "id": "full_tis",
+      "method_number": 1,
+      "token_weight": "detach(min(exp(clamp(s0_t,-20,20)),2))",
+      "scope": "allvalidresponsetokens",
+      "notes": [
+        "OriginalPPOanddenominatorretained;noadditionalmeanweightnormalization.",
+        "Thisfinalstudyusesexp(-20)lowerweightfloortoretaintheoriginalfullTISnumericalguard;bothTISarmsusethesameguard.",
+        "Thisdiffersfromthepreviousfull8negative-onlyTISimplementationwhichhadonlyanuppercapandnolowerfloor;donotclaimbitwisealgorithmicreproduction.",
+        "Reportfloor-hitcountsseparatelyfromactualunderflowandzero-weighttokens."
+      ]
+    },
+    "negative_tis": {
+      "id": "negative_tis",
+      "method_number": 2,
+      "token_weight": "where(A_i<0,detach(min(exp(clamp(s0_t,-20,20)),2)),1)",
+      "scope": "negativetokensonly",
+      "notes": [
+        "Positiveandzeroadvantageskeepunitweight.",
+        "Noadditionalmeanweightnormalization.",
+        "Thisfinalstudyusesexp(-20)lowerweightfloortoretaintheoriginalfullTISnumericalguard;bothTISarmsusethesameguard.",
+        "Thisdiffersfromthepreviousfull8negative-onlyTISimplementationwhichhadonlyanuppercapandnolowerfloor;donotclaimbitwisealgorithmicreproduction.",
+        "Reportfloor-hitcountsseparatelyfromactualunderflowandzero-weighttokens."
+      ]
+    },
+    "abs_gap_mask": {
+      "id": "abs_gap_mask",
+      "method_number": 3,
+      "zero_loss_if": "abs(s0_t)>0.5",
+      "scope": "alladvantages",
+      "notes": [
+        "Strictinequality.",
+        "Onlydirectlosscoefficientzero;retaincontextandoriginaldenominator."
+      ]
+    },
+    "negative_down_mask": {
+      "id": "negative_down_mask",
+      "method_number": 4,
+      "zero_loss_if": "(A_i<0) and (s0_t<-0.5)",
+      "scope": "negativedowngaptokens",
+      "notes": [
+        "Strictinequality.",
+        "Onlydirectlosscoefficientzero;retaincontextandoriginaldenominator."
+      ]
+    },
+    "repeat_negative_down_mask": {
+      "id": "repeat_negative_down_mask",
+      "method_number": 5,
+      "zero_loss_if": "(A_i<0) and (s0_t<-0.5) and R_t",
+      "scope": "negative down-gap intersect exact OR strict-noisy repeated positions",
+      "R_t": "exactconfirmedmaskv2 OR noisystrict0.75mask;NOTretrospectivewholecyclemask",
+      "notes": [
+        "ExactoriginalalgorithmscopiedunchangedandSHAverified.",
+        "Detectorsreadneitherprobabilities,norrewards,noradvantages.",
+        "Thisisheuristicmechanicalrepetition,notsemanticcertainty;normalmathfalsepositivesremainpossible.",
+        "OriginalDandcontextunchanged;futuretokenconfirmationnotallowed."
+      ]
+    },
+    "negative_mass": {
+      "id": "negative_mass",
+      "method_number": 6,
+      "sequence_factor": "f_i=min(1,2048/T_i)",
+      "negative_normalizer": "c=sum_{valid,A<0}|A| / sum_{valid,A<0}(|A|*f_i), over the ORIGINAL global128-row optimizer minibatch before data-parallel scatter; if no negative mass,c=1",
+      "token_weight": "where(A_i<0,c*f_i,1)",
+      "scope": "Redistributenegativesignalacrossresponselengthwhilematchingglobalanchornegativeabscoefficientmass",
+      "notes": [
+        "Noactualtruncationorcontextdeletion.",
+        "MassmatchingisbeforePPOclipping;actualactivegradientmassneednotmatchafterclipping.",
+        "Ifallnegativeanswershavethesamelength,matchedcapfactorscanreduceexactlyto1."
+      ]
+    },
+    "sync_fresh": {
+      "id": "sync_fresh",
+      "method_number": 7,
+      "change": "Discard all inherited completed/incomplete response trajectories and generate complete G8 responses from each question afresh with one unchanged round weight. No response crosses an optimizer update.",
+      "retain": [
+        "source600model/Adam/scheduler/RNG",
+        "inputquestionpool/cursoridentityasdefinedbyruntimeprotocol",
+        "sameG8rewardsandnativegroupfilter",
+        "same512acceptedresponsesand4updatesperround"
+      ],
+      "notes": [
+        "Promptinputsfromlogicalstatecanbeinheritedbutoldresponseprefixes/q/KVcannot.",
+        "WaitforallrequiredacceptedG8groupsbeforethefirstofthefourupdates;donotupdateweightswithunfinishedresponses.",
+        "Regeneratingallanswerschangesinputcollectionprotocol,throughputandquestionacceptance,notjuststaleness.",
+        "Within-roundB2–B4stillhavepolicychangefromq;freshdoesnotimplyzeroexecution-pathgap."
+      ]
+    }
+  },
+  "evaluation": {
+    "primary_panel": "Frozenexisting64questions×8ordinarysamples",
+    "steps": [
+      600,
+      610,
+      620,
+      630,
+      640,
+      650
+    ],
+    "questions": 64,
+    "samples_per_question": 8,
+    "responses_per_checkpoint": 512,
+    "temperature": 1.0,
+    "top_p": 1.0,
+    "top_k": -1,
+    "maximum_response_tokens": 8192,
+    "repetition_penalty": 1.0,
+    "frequency_penalty": 0.0,
+    "presence_penalty": 0.0,
+    "fresh_answers_only": true,
+    "same_question_ids_and_original_token_template_hashes_all_arms": true,
+    "grader": "Originalmath-verify-typed-repeating-decimal-v7-setup2;rewardcodehashfrozen",
+    "sampling_seed_protocol": {
+      "question_panel_and_generation_settings_frozen": true,
+      "questions": 64,
+      "samples_per_question": 8,
+      "rollout_seed": 20261031,
+      "engine_seed_rule": "replica_rank + rollout_config.seed",
+      "full_determinism": false,
+      "per_request_seed_supplied": false,
+      "per_qid_replicate_seed_binding": false,
+      "request_ids": "uuid4().hex because full_determinism=False",
+      "native_path_evidence": [
+        {
+          "file": "verl/experimental/agent_loop/agent_loop.py",
+          "line": 620,
+          "finding": "sampling_params contains temperature/top_p/top_k/repetition_penalty/logprobs; copied per sample without seed."
+        },
+        {
+          "file": "verl/experimental/agent_loop/single_turn_agent_loop.py",
+          "line": 69,
+          "finding": "uuid4 request IDs when full_determinism=False; same sampling dict forwarded."
+        },
+        {
+          "file": "verl/workers/rollout/vllm_rollout/vllm_async_server.py",
+          "line": 648,
+          "finding": "Per-request seed only injected inside if self.config.full_determinism; actual configFalse, then SamplingParams(max_tokens=..., **sampling_params)."
+        }
+      ],
+      "interpretation": "Engine seeds and equal FP32 checkpoint weights do not imply identical per-question sampling streams, worker assignment, execution layout, or bitwise generated responses."
+    },
+    "primary_accuracy": "Equalmeanover64questions,8responses/question;alreadyuseddevpanel,nothiddenuntouchedtest.",
+    "optional_larger_endpoint_panel": {
+      "status": "frozen_secondary128x4",
+      "questions": 128,
+      "replicates_per_question": 4,
+      "responses_per_endpoint": 512,
+      "endpoints": 9,
+      "endpoint_protocol": "endpoint_protocol.json",
+      "endpoint_protocol_sha256": "df0fef3da31ff032f668c485eb27a1aae728fc35a857531764350e7378dcbac2",
+      "cases_sha256": "408b1d118eae44e5084f4d6b29fb64e77381af9e25f32c69ae6de7cf93ab58d3",
+      "jobs_sha256": "e4ba8f4ea2e157d1b12e3d2bffab2e664bb1940bf0215c630a2e6d3e196dce6c",
+      "rules": [
+        "Sameunchanged128questions/jobsforall8final650andcommonsource600.",
+        "Primary64x8curvesremainBBB.",
+        "Nooutcome-drivenselectionorreplacement.",
+        "Previouslyused1621devsplit,notuntouchedtest."
+      ]
+    },
+    "original_frozen_sampling_seed_statement": "Freezequestion×replicateseeds/requestorderandrecordactualbackend;sameseedsarenotaguaranteeofmatchedresponses.",
+    "sampling_erratum_status": "Companion correction after first valid startup; frozen training code/config not modified."
+  },
+  "populations": {
+    "accepted_training": "Exactlythe512responseusesenteringnative4updatesineachround;retainUID/QID/group/reward/Aandactualtokenmask.",
+    "all_completed_rollout": "Allnewlycompletedresponsesbeforemixed-groupfilter,includingallcorrect/allwronggroups;reportedseparatelybycompletionround.",
+    "partial_responses": "Notcompletedandnotaccepted;monitorcount/tokenage/continuationsegmentsseparately.",
+    "unique_vs_uses": "ReportresponseusesanduniqueUID/contentcounts;neverconflatewithquestions.",
+    "group_metrics": [
+      "groupcorrectcount0..8",
+      "acceptedmixedfraction",
+      "completionsneededperacceptedgroup",
+      "completionandtrainingversionage",
+      "continuationsegmentcount",
+      "rebuildandgenerationtime"
+    ]
+  },
+  "metric_contract": {
+    "training_every_round": [
+      "acceptedandallcompletedseparatecorrectness,reward,mean/median/p90/p95/p99length,caprate",
+      "firstgeneratedtokenIDanddecodedpiece;firstwordAlright/Tocase-sensitivecountspluscase-insensitivefractions",
+      "strictoriginalrepeatflag",
+      "all128-charmechanicalcyclesandnumeric/alphabetic/othersubtypes",
+      "exactconfirmedrepeatmaskrate,noisyprimary0.5rate,noisystrict0.75rate,andexactORstrictunionrate",
+      "mechanicalgarblecandidatecounts;notsemanticlabel",
+      "maskorTISweightcount/massbyadvantagesignandd-direction",
+      "throughput,generationtime,KVrebuildtime,CPUassessmentwaittime,wallclock,save/evaltime"
+    ],
+    "training_every_inner_update": [
+      "B1–B4identifier,Adamcounter",
+      "preclipglobalgradientnormandclipmultiplier",
+      "finitegrad/loss/parameterflags",
+      "actualp−qandp−p0metricssplitbyA<0/A>0/A=0andrepeatunion",
+      "actualactivepositive/negativecoefficientmassifavailablewithoutchangingloss",
+      "anchornegativeabsAmassexpected/actualforcap2048",
+      "TISweightsmin/max,sum,cap2count,zero/underflowcount"
+    ],
+    "gap_statistics": {
+      "signed_mean": "mean(s_t)",
+      "absolute_mean": "mean(abs(s_t))",
+      "absolute_L2": "sqrt(sum(d_t^2));lengthdependent",
+      "absolute_RMS": "sqrt(mean(d_t^2));normalized",
+      "tail_threshold": 0.5,
+      "tail_fraction": "count(d_t>0.5)/validtokens",
+      "tail_conditional_mean_or_zero": "mean(d_t|d_t>0.5);0ifnone",
+      "tail_excess_mean_or_zero": "mean(d_t−0.5|d_t>0.5);0ifnone;distinctfromconditionalmean",
+      "directional": "Report s<−.5 and s>.5 separately,includingqandpobserved-actionprobabilitysummaries",
+      "probability_near_one": [
+        0.9,
+        0.99,
+        0.999
+      ],
+      "log_PPL": "mean(−log(p_t))andmean(−log(q_t)),NLL;notsigned/absoluteprobabilitygap",
+      "PPL": "exp(log_PPL),onlyiffinite;donotaveragetokenexp(NLL)andcallitsequencePPL",
+      "aggregation": "Tokenweightedandresponseweightedseparately;savetoken/countsumsratherthanmeanofmeanwithunknownweights.",
+      "finite_policy": "Nonfinitevalidlogprobmustflag/failandretainrecord;neverdropfromdenominator."
+    },
+    "gradient_decomposition": "Fullpositive/negativegradientnormsrequireadditionalVJPsandsignedvectors;doNOTinferfromlosscoefficientmass. Optionalmatchedfrozenprobesmustbelabeledandkeptoutoftrainingupdates.",
+    "evaluation_metrics": [
+      "originalaccuracyandunknown-gradecount",
+      "lengthdistributionandcaprate",
+      "strictandall-typecyclecandidates",
+      "noisyreusecandidatesandmechanicalgarblecandidates",
+      "firstwordfrequencies;notclaimedfirsttokenprobabilities"
+    ],
+    "raw_artifacts": [
+      "fulloriginalresponse/prompttokenIDswithnativevalidmasks",
+      "historicalrolloutlogqandversion/segmentprovenance",
+      "roundanchorlogp0andinnerlogpforreconstructablemetricswherebudgetpermits",
+      "rowmetadataUID/QID/reward/advantage",
+      "detachedlossweights/maskshaandoriginalD",
+      "originalUTF8decodedtexthashandrawIDbytehash",
+      "model/optimizer/scheduler/RNG/collectorrestorationreceipts",
+      "validationrawoutputsandsamplingreceipt",
+      "process/backend/precision/softwareversionreceipts"
+    ]
+  },
+  "detector_contract": {
+    "exact_source": "repeat_gated_negative_down_20261106/noisy_v2/code/repetition_mask.py and repeat_targets_v2.py",
+    "noisy_source": "repeat_gated_negative_down_20261106/noisy_v2/code/noisy_repetition_mask.py",
+    "exact": "Allprefix-confirmedepisodes,period<=16;alphabetic>=max128chars,16cycles;numeric/symbol>=512chars AND256priorvisibleoriginaltokens;sameprompt/contextprotections.",
+    "noisy_strict": "Previous512normalizedchars,two256halves;each1−unique4grams/253>=.75;>=halfcurrent-tokennew4gramsoccurred>=2timesintheOLDwindow;sameprotections.",
+    "normalization": "Per-codepointNFKCthenremove whitespace;casepreserved.",
+    "excluded": [
+      "EOS/specialtokens",
+      "purewhitespace",
+      "unstable/nonexacttoken-decodeboundaries",
+      "replacement-characterpieces",
+      "protectedexplicitmath/repetitionrequests"
+    ],
+    "alignment": "OriginaltokenIDsandnativevalidmask,noresponse-retokenization.",
+    "verification": "Originalprompttemplateandquestionidentitymustmatch;decodedtextshaUTF8andIDshaLEint64recorded.",
+    "parallel": "PersistentspawnCPUprocesspool16workers(default),optional32afterthroughputmeasurement;CUDAhiddenonlyinchildren;localtokenizeronly."
+  },
+  "analysis_plan": {
+    "primary_stability": [
+      "Forall200updates:preclipnormmax,p95,p99,median,counts>1/>10/>50/>100,roundmaxandroundmean",
+      "ReportpeakBindexandwhichstage601–610/.../641–650;avoidcherrypickedwindows",
+      "Comparegradientcurveswithd-tailconditionalmean/fraction/RMSandretainedlossmass"
+    ],
+    "primary_quality": [
+      "Pairedquestion-levelaccuracydifferenceandlength/cycle/capdifferenceat650againstbaseline",
+      "Whole600→650evaluationtrajectory,whetherqualityrecoveredorpersistentlydegraded",
+      "Noequatinglowergradientsorlessgapwithlessrepetitionorbetterreasoning"
+    ],
+    "statistics": "Pairedquestionbootstrap10000drawsseed20261106forprimarypanel;CIcoversquestionvariationconditionalononesingletrainingtrajectory,nottrainingrandomness.8arms,7baselinecomparisons;multiplicityandexploratorynaturedisclosed.",
+    "causal_limits": [
+      "Singletrajectoryperarmandasyncsamplingdifferencesprecluderobusttraining-seedgeneralization.",
+      "Method7changescollectorandthroughputaswellasweightage.",
+      "Samecheckpoint600initisnotexacthistoricalreplay.",
+      "Fullmask/gap/repeatassociationdoesnotestablishdlargeassufficientcauseofgradientexplosion.",
+      "Smallgradientcanresultfromsuppressedlearningorhighconfidenceincorrectloops."
+    ]
+  },
+  "runtime_freeze_required_before_start": [
+    "sourcecheckpoint600filehashesand8rankrestorationproof",
+    "actualresolvedconfigandnativecodehashes",
+    "training/validationpanelandgraderhashes",
+    "detectorcopiesandworkerlosscodehashes",
+    "sourcebackendclass/Dtype/allranksproof",
+    "TIS/mask/capCPUtestsandnativezerochangebaselinecheck",
+    "synchronousG8noinheritedresponse/nointerupdatecontinuationproof",
+    "diskretention/transfermanifest",
+    "armlaunchorderandsoftwareversions"
+  ],
+  "detector_sources_sha256": {
+    "repetition_mask.py": "911b091b9221cfb91800373e183003ded79867f5f5ca58f5513ea4ef7c17394c",
+    "noisy_repetition_mask.py": "fadc36edef96591c8ef1ee9cd8edbb51b693190912035c74d6cdf6e171cbfd8a",
+    "repeat_targets_v2.py": "a1b78500e2f896f04b9c8f9804692321256df66fb07dd1c3236295c52612cfe6",
+    "strict_rules.py": "13453c5f830ebbc56fac2ce00d76f6c0260e76883cf8f370a546b62a7a8cc5ea"
+  },
+  "runtime_TIS_decision": {
+    "status": "resolved",
+    "same_guard_both_TIS_arms": true,
+    "formula": "exp(clamp(s0,-20,20)).clamp(max=2)",
+    "lower_floor": 2.061153622438558e-09,
+    "scope": "Regularnumericalimplementationchoicewithinfamily;notidenticaltopriornegative-onlyfull8TIS."
+  },
+  "observability_components": {
+    "validation_adapter.py": "Frozenactual64x8populationevery10rounds600..650;nativegradingandcohortmetricspreserved;first-wordfrequency/cycletypes/garblecandidates;noevaluationretokenizationforlossmasks.",
+    "prefilter_observer.py": "CapturesallnewlycompletedAPRILG8groupsbeforefilter;copiesoriginalCPUtokens/qbeforeaccept;verifiesnativecompletioneventandfullhistoricalsegmentcoverage;commitsonlyaftersuccessfulnativeaccept;singleCPUgzipwriterflushesatpausedboundaries.",
+    "all_completed_definition": "Newcompletioneventsafterrestoration;already-readyresponsesinheritedfrom600arecountedinacceptedtrainingwhenused,butnotinventedasnewcompletionevents.",
+    "synchronous_arm_caveat": "InitializeSyncPrefilterObserverandinstall_on_base(base)intheownednative_syncdriver;recordpolicy_versionaspreviouscompletedactorupdatestep,distinguishengineglobal_stepsmetadata.",
+    "sync_prefilter_observer.py": "Rebindexistingcompilednativefit_dapo_observefilter_summarydispatcher;nativeobserverfirst;captureallG8aftergrading/keep-setcomputationbeforebatchslice;nativebusinessASTunchanged;failsclosedifmissinganchor.ImplementationandpinnedASTCPUtestscomplete;runtimeintegrationstillrequiresverification."
+  },
+  "arm_order": [
+    "baseline",
+    "full_tis",
+    "negative_tis",
+    "abs_gap_mask",
+    "negative_down_mask",
+    "repeat_negative_down_mask",
+    "negative_mass",
+    "sync_fresh"
+  ],
+  "infrastructure_amendments": [
+    {
+      "kind": "observer_compatibility_fix_before_first_valid_arm",
+      "date_utc": "2026-11-05",
+      "reason": "All-correct/all-wrong native groups retire before completion event; capture segment provenance after native feed and before retirement, then validate against immutable terminal receipts. Native loss/collector unchanged.",
+      "invalid_attempt": "baseline_instrumentation_failure_20261105T195241Z",
+      "completed_rounds_excluded": 1,
+      "optimizer_updates_excluded": 4,
+      "restart": "Allvalidarmsrestartoriginal600;invalidattemptnotincluded",
+      "tests": "6observerCPUtestspassedincludingactualnativeAprilStateallwrong/allcorrect/mixedretirement"
+    }
+  ],
+  "execution": {
+    "training_world_size": 8,
+    "checkpoint_steps": [
+      610,
+      620,
+      630,
+      640,
+      650
+    ],
+    "archive_all_full_checkpoints": true,
+    "initial_source_never_deleted": true,
+    "per_arm_optimizer_updates": 200,
+    "initial_source_step": 600,
+    "target_step": 650,
+    "primary_eval_questions": 64,
+    "primary_eval_replicates": 8,
+    "primary_eval_steps": [
+      600,
+      610,
+      620,
+      630,
+      640,
+      650
+    ],
+    "text_cpu_workers": 16,
+    "loss_threshold_arithmetic": "hard masks FP64 subtraction of recorded FP32 logs; TIS FP32 difference/exp with[-20,20]guard andcap2",
+    "known_restore_limit": "live inference RNG/KV and asynchronous completion order are not restored bitwise"
+  },
+  "publication_provenance": {
+    "original_protocol_sha256": "95e8442035fe5605fe093fa065c10a26be3943e2aa304785b5c43500f1a65b6c",
+    "sampling_erratum_sha256": "b75cdba2cf3031df7d81c90be205dd83f400116f1905e18719256fa3ae298daf",
+    "transformation": "Select scientific fields; omit private host/resource-operation metadata; retain incorrect original sampling statement and place audited realized primary seed protocol in effective sampling_seed_protocol. This is documentation only, not a runtime modification."
+  }
+}

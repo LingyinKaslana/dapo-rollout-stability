@@ -522,3 +522,9 @@
 [聚合数据与来源指纹](../data/evidence/S15.json) · [研究章节](../docs/training-stability.md)
 
 - 状态为本地采集快照，不宣称实时进度或已完成；不能把重跑651–662当新增历史。
+
+<!-- final-stability-progress:start -->
+## S16
+
+[同一600状态的八组稳定性干预](final-stability-600-650.md)按组更新，baseline/full TIS已完成50轮。八种方法各一条轨迹；当前完整入训观测与不完整全量rollout统计分开标注。见[聚合证据](../data/evidence/S16.json)。
+<!-- final-stability-progress:end -->

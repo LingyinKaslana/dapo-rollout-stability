@@ -81,3 +81,13 @@ python tools/render_investigation_figures.py
 完整训练状态、权重和逐题回答不放入这个仓库，因此当前交付包含研究报告、聚合证据、图表重绘与两个实际使用的检测/损失核心模块；完整训练复现包仍待整理。继续添加实验时，沿用[记录模板](experiments/TEMPLATE.md)与[维护约定](CONTRIBUTING.md)。
 
 相关论文及与本项目的区别见[相关工作](docs/related-work.md)。仓库沿用 `dapo-training-progress` 的地址，项目入口现已覆盖整个研究过程。
+
+<!-- final-stability-progress:start -->
+## 新增：600→650八组稳定性实验（逐组更新）
+
+**训练已完成2/8组：baseline、full TIS；次要评测3/9终点。** 全量rollout文本统计尚未完成。Full TIS将这条轨迹的最大裁剪前梯度从142.31降到0.915；固定128题面板正确率为63.28%，baseline为66.99%，差值区间跨零，尚无明确解题收益。其余方法逐组完成后追加。
+
+[逐组实验与曲线](experiments/final-stability-600-650.md) · [报告更新](reports/rl-length-gradient-investigation.md#84-同一600状态的八组对照首批两组已完成) · [数据状态](data/final-stability-600-650/manifest.json) · [损失与检测实现](reference/stability/README.md)
+
+运行 `python tools/check_final_stability_progress.py` 可核对当前已完成部分；严格的八组最终验收仍未通过、也未宣称通过。原45个研究单元保留，本轮新增S16一个研究单元，八种方法各一条轨迹。
+<!-- final-stability-progress:end -->

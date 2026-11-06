@@ -15,3 +15,9 @@
 | [Base 长度与重复标签](base-length-repetition.png) | 一万题单次生成的描述关联，AI 辅助标签，S06 |
 
 每幅图同时提供同名 SVG，便于缩放。重复标签经过抽样复核发现边界误判，因此图中比例不能称为人工确认的总体循环率。
+
+<!-- final-stability-progress:start -->
+## 八组对照（逐组更新）
+
+当前曲线随[实验数据](../data/final-stability-600-650/manifest.json)发布，在training/figures与secondary目录中，未完成快照明确标注partial。可用tools中的两套聚合CSV重绘脚本复核，不需要模型或原始回答。
+<!-- final-stability-progress:end -->

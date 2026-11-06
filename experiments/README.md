@@ -67,3 +67,11 @@
 ## 历史进度
 
 [原有实验目录](history-index.md)保留原快照。旧快照的当时运行状态不作为今天状态；研究章节按后来核对的证据更新。
+
+<!-- final-stability-progress:start -->
+## 新增研究单元
+
+| 编号 | 实验与问题 | 状态 | 当前限定 |
+|---|---|---|---|
+| [S16](evidence.md#s16) | [同一600状态的八组稳定性干预](final-stability-600-650.md) | 逐组更新：2/8训练完成 | baseline/full TIS各50轮；次要终点3/9，全量rollout统计待补，未形成八组排名。 |
+<!-- final-stability-progress:end -->

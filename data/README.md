@@ -11,3 +11,9 @@
 - [source-summary.json](source-summary.json)：附加来源与范围说明。
 
 不同 run 的轮次不能拼成同一条训练轨迹。来源文件名及 SHA256 用于核对外部归档；本目录没有权重、原题、原回答或逐题标识。指标口径见[说明](../docs/measurement-guide.md)。
+
+<!-- final-stability-progress:start -->
+## 最后一批八组对照
+
+[final-stability-600-650](final-stability-600-650/manifest.json)按已完成组增量发布。当前2/8训练完成、次要评测3/9；全量rollout文本统计待补。训练原始聚合CSV保留SHA，图为标有partial的CSV重绘；发布清单记录摘要的可审计转换。
+<!-- final-stability-progress:end -->

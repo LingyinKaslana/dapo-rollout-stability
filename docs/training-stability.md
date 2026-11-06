@@ -111,3 +111,9 @@ TIS 在这里按 token 使用截断的重要性权重（上限 2）调节旧 rol
 ![Base长度与重复标签](../figures/base-length-repetition.png)
 
 已有AI辅助标签的描述统计，盲审发现边界误判，非人工总体循环率。
+
+<!-- final-stability-progress:start -->
+## 600→650逐组对照更新
+
+[新的八组实验](../experiments/final-stability-600-650.md)当前完成baseline/full TIS两组。两组都从同一完整600恢复；full TIS最大梯度0.915，对照142.31，但固定128题次要面板的正确率差区间仍跨零。每组完成后更新，全部方法与全量rollout统计齐全后再做总分析。
+<!-- final-stability-progress:end -->

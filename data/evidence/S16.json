@@ -1,0 +1,144 @@
+{
+  "id": "S16",
+  "title": "同一600状态的八组稳定性干预",
+  "status": "in_progress",
+  "status_label": "逐组更新；2/8训练完成",
+  "chapter": "training-stability",
+  "finding": "baseline/full TIS各完成50轮；full TIS压低梯度，未显示明确解题收益；其它方法与全量rollout统计待补。",
+  "limitations": [
+    "单在线轨迹；七重比较未校正；当前只有2/8训练结果与3/9次要评测。",
+    "全量rollout文本统计未完成，缺失不是零；本快照不能代表八组最终结论。"
+  ],
+  "source_fingerprints": [
+    {
+      "artifact_name": "optimizer_updates.csv",
+      "sha256": "bee999c4ff4b5b1664523fd1ca9119f2681eb05fc40a541f760bf5e257e13307"
+    },
+    {
+      "artifact_name": "secondary/endpoint_metrics.csv",
+      "sha256": "4526a46b1eb84d15650644990189ecace4c65112fcf639a998c5bf2ec55695bc"
+    }
+  ],
+  "results": {
+    "completed_training_arms": [
+      "baseline",
+      "full_tis"
+    ],
+    "actual_updates": 400,
+    "secondary_endpoints": [
+      "source600",
+      "baseline_650",
+      "full_tis_650"
+    ],
+    "pending_all_completed_rounds": {
+      "baseline": [
+        615,
+        616,
+        617,
+        618,
+        619,
+        620,
+        621,
+        622,
+        623,
+        624,
+        625,
+        626,
+        627,
+        628,
+        629,
+        630,
+        631,
+        632,
+        633,
+        634,
+        635,
+        636,
+        637,
+        638,
+        639,
+        640,
+        641,
+        642,
+        643,
+        644,
+        645,
+        646,
+        647,
+        648,
+        649,
+        650
+      ],
+      "full_tis": [
+        601,
+        602,
+        603,
+        604,
+        605,
+        606,
+        607,
+        608,
+        609,
+        610,
+        611,
+        612,
+        613,
+        614,
+        615,
+        616,
+        617,
+        618,
+        619,
+        620,
+        621,
+        622,
+        623,
+        624,
+        625,
+        626,
+        627,
+        628,
+        629,
+        630,
+        631,
+        632,
+        633,
+        634,
+        635,
+        636,
+        637,
+        638,
+        639,
+        640,
+        641,
+        642,
+        643,
+        644,
+        645,
+        646,
+        647,
+        648,
+        649,
+        650
+      ]
+    },
+    "comparison": {
+      "baseline": {
+        "valid_tokens": 66078485,
+        "Adam_L2_mean_per_update": 0.017046546024217537,
+        "d_tail_fraction": 0.12226775477676281,
+        "d_tail_conditional_mean": 2.535026889892841,
+        "d_RMS": 1.1420817602063844
+      },
+      "full_tis": {
+        "valid_tokens": 46783649,
+        "Adam_L2_mean_per_update": 0.01216130990860827,
+        "d_tail_fraction": 0.0002585946213815002,
+        "d_tail_conditional_mean": 0.6679519730960191,
+        "d_RMS": 0.07939657387915908
+      }
+    }
+  },
+  "public_data": "data/final-stability-600-650",
+  "snapshot_utc": "2026-11-06 02:29 UTC"
+}

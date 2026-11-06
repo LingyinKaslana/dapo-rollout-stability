@@ -1,0 +1,2014 @@
+{
+  "complete": false,
+  "available_endpoints": [
+    "source600",
+    "baseline_650",
+    "full_tis_650"
+  ],
+  "missing_endpoints": [
+    "negative_tis_650",
+    "abs_gap_mask_650",
+    "negative_down_mask_650",
+    "repeat_negative_down_mask_650",
+    "negative_mass_650",
+    "sync_fresh_650"
+  ],
+  "natural_metrics": [
+    {
+      "endpoint": "source600",
+      "step": 600,
+      "questions": 128,
+      "responses": 512,
+      "samples_per_question": 4,
+      "accuracy": 0.693359375,
+      "unknown": 0.005859375,
+      "strict_repetition": 0.0,
+      "normalized_text_cycle128_any": 0.0,
+      "normalized_text_cycle128_alphabetic": 0.0,
+      "normalized_text_cycle128_numeric": 0.0,
+      "normalized_text_cycle128_other": 0.0,
+      "repeat_strict_union_any": 0.0,
+      "noisy_repeat_primary_any": 0.025390625,
+      "noisy_repeat_strict_any": 0.0,
+      "gibberish_candidate": 0.005859375,
+      "response_hit_token_cap": 0.0078125,
+      "first_word_alright": 0.84375,
+      "first_word_to": 0.126953125,
+      "tokens": 1961.318359375,
+      "log_PPL_q": 1.639901787488925,
+      "q_ge_0999_fraction": 0.06916593308378507
+    },
+    {
+      "endpoint": "baseline_650",
+      "step": 650,
+      "questions": 128,
+      "responses": 512,
+      "samples_per_question": 4,
+      "accuracy": 0.669921875,
+      "unknown": 0.001953125,
+      "strict_repetition": 0.0,
+      "normalized_text_cycle128_any": 0.001953125,
+      "normalized_text_cycle128_alphabetic": 0.001953125,
+      "normalized_text_cycle128_numeric": 0.0,
+      "normalized_text_cycle128_other": 0.0,
+      "repeat_strict_union_any": 0.001953125,
+      "noisy_repeat_primary_any": 0.0546875,
+      "noisy_repeat_strict_any": 0.001953125,
+      "gibberish_candidate": 0.060546875,
+      "response_hit_token_cap": 0.017578125,
+      "first_word_alright": 0.19140625,
+      "first_word_to": 0.68359375,
+      "tokens": 1335.47265625,
+      "log_PPL_q": 1.1091364889163178,
+      "q_ge_0999_fraction": 0.18968541829760502
+    },
+    {
+      "endpoint": "full_tis_650",
+      "step": 650,
+      "questions": 128,
+      "responses": 512,
+      "samples_per_question": 4,
+      "accuracy": 0.6328125,
+      "unknown": 0.00390625,
+      "strict_repetition": 0.0,
+      "normalized_text_cycle128_any": 0.0,
+      "normalized_text_cycle128_alphabetic": 0.0,
+      "normalized_text_cycle128_numeric": 0.0,
+      "normalized_text_cycle128_other": 0.0,
+      "repeat_strict_union_any": 0.0,
+      "noisy_repeat_primary_any": 0.01171875,
+      "noisy_repeat_strict_any": 0.0,
+      "gibberish_candidate": 0.005859375,
+      "response_hit_token_cap": 0.001953125,
+      "first_word_alright": 0.078125,
+      "first_word_to": 0.8203125,
+      "tokens": 1355.888671875,
+      "log_PPL_q": 1.7579966891098833,
+      "q_ge_0999_fraction": 0.041850384727284834
+    }
+  ],
+  "prompt_only_probabilities": [
+    {
+      "endpoint": "source600",
+      "step": 600,
+      "questions": 128,
+      "backend": "HF BF16 flash_attention_2",
+      "P_Alright": 0.8333807409508154,
+      "P_To": 0.12724750634197335,
+      "P_Let": 0.02049204518004899
+    },
+    {
+      "endpoint": "baseline_650",
+      "step": 650,
+      "questions": 128,
+      "backend": "HF BF16 flash_attention_2",
+      "P_Alright": 0.17345220152697038,
+      "P_To": 0.6925581930554472,
+      "P_Let": 0.01852149072874454
+    },
+    {
+      "endpoint": "full_tis_650",
+      "step": 650,
+      "questions": 128,
+      "backend": "HF BF16 flash_attention_2",
+      "P_Alright": 0.06747855444293549,
+      "P_To": 0.8296881703427061,
+      "P_Let": 0.03784326300956309
+    }
+  ],
+  "available_cohort_endpoints": [
+    "source600",
+    "baseline_650",
+    "full_tis_650"
+  ],
+  "missing_cohort_endpoints": [
+    "negative_tis_650",
+    "abs_gap_mask_650",
+    "negative_down_mask_650",
+    "repeat_negative_down_mask_650",
+    "negative_mass_650",
+    "sync_fresh_650"
+  ],
+  "paired_natural_contrasts": [
+    {
+      "reference": "source600",
+      "endpoint": "baseline_650",
+      "metric": "accuracy",
+      "mean_difference": -0.0234375,
+      "ci95_low": -0.060546875,
+      "ci95_high": 0.013671875,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "baseline_650",
+      "metric": "unknown",
+      "mean_difference": -0.00390625,
+      "ci95_low": -0.01171875,
+      "ci95_high": 0.00390625,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "baseline_650",
+      "metric": "strict_repetition",
+      "mean_difference": 0.0,
+      "ci95_low": 0.0,
+      "ci95_high": 0.0,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "baseline_650",
+      "metric": "normalized_text_cycle128_any",
+      "mean_difference": 0.001953125,
+      "ci95_low": 0.0,
+      "ci95_high": 0.005859375,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "baseline_650",
+      "metric": "normalized_text_cycle128_alphabetic",
+      "mean_difference": 0.001953125,
+      "ci95_low": 0.0,
+      "ci95_high": 0.005859375,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "baseline_650",
+      "metric": "normalized_text_cycle128_numeric",
+      "mean_difference": 0.0,
+      "ci95_low": 0.0,
+      "ci95_high": 0.0,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "baseline_650",
+      "metric": "normalized_text_cycle128_other",
+      "mean_difference": 0.0,
+      "ci95_low": 0.0,
+      "ci95_high": 0.0,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "baseline_650",
+      "metric": "repeat_strict_union_any",
+      "mean_difference": 0.001953125,
+      "ci95_low": 0.0,
+      "ci95_high": 0.005859375,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "baseline_650",
+      "metric": "noisy_repeat_primary_any",
+      "mean_difference": 0.029296875,
+      "ci95_low": 0.009765625,
+      "ci95_high": 0.052734375,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "baseline_650",
+      "metric": "noisy_repeat_strict_any",
+      "mean_difference": 0.001953125,
+      "ci95_low": 0.0,
+      "ci95_high": 0.005859375,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "baseline_650",
+      "metric": "gibberish_candidate",
+      "mean_difference": 0.0546875,
+      "ci95_low": 0.03125,
+      "ci95_high": 0.080078125,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "baseline_650",
+      "metric": "response_hit_token_cap",
+      "mean_difference": 0.009765625,
+      "ci95_low": -0.001953125,
+      "ci95_high": 0.0234375,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "baseline_650",
+      "metric": "first_word_alright",
+      "mean_difference": -0.65234375,
+      "ci95_low": -0.701171875,
+      "ci95_high": -0.603515625,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "baseline_650",
+      "metric": "first_word_to",
+      "mean_difference": 0.556640625,
+      "ci95_low": 0.50390625,
+      "ci95_high": 0.611328125,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "baseline_650",
+      "metric": "tokens",
+      "mean_difference": -625.845703125,
+      "ci95_low": -783.71806640625,
+      "ci95_high": -470.385986328125,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "baseline_650",
+      "metric": "log_PPL_q",
+      "mean_difference": -0.5307652985726072,
+      "ci95_low": -0.6030167445886387,
+      "ci95_high": -0.4566565615807877,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "baseline_650",
+      "metric": "q_ge_0999_fraction",
+      "mean_difference": 0.12051948521381994,
+      "ci95_low": 0.1085316153621428,
+      "ci95_high": 0.13311440983474682,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "full_tis_650",
+      "metric": "accuracy",
+      "mean_difference": -0.060546875,
+      "ci95_low": -0.09765625,
+      "ci95_high": -0.0234375,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "full_tis_650",
+      "metric": "unknown",
+      "mean_difference": -0.001953125,
+      "ci95_low": -0.009765625,
+      "ci95_high": 0.005859375,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "full_tis_650",
+      "metric": "strict_repetition",
+      "mean_difference": 0.0,
+      "ci95_low": 0.0,
+      "ci95_high": 0.0,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "full_tis_650",
+      "metric": "normalized_text_cycle128_any",
+      "mean_difference": 0.0,
+      "ci95_low": 0.0,
+      "ci95_high": 0.0,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "full_tis_650",
+      "metric": "normalized_text_cycle128_alphabetic",
+      "mean_difference": 0.0,
+      "ci95_low": 0.0,
+      "ci95_high": 0.0,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "full_tis_650",
+      "metric": "normalized_text_cycle128_numeric",
+      "mean_difference": 0.0,
+      "ci95_low": 0.0,
+      "ci95_high": 0.0,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "full_tis_650",
+      "metric": "normalized_text_cycle128_other",
+      "mean_difference": 0.0,
+      "ci95_low": 0.0,
+      "ci95_high": 0.0,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "full_tis_650",
+      "metric": "repeat_strict_union_any",
+      "mean_difference": 0.0,
+      "ci95_low": 0.0,
+      "ci95_high": 0.0,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "full_tis_650",
+      "metric": "noisy_repeat_primary_any",
+      "mean_difference": -0.013671875,
+      "ci95_low": -0.02734375,
+      "ci95_high": -0.001953125,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "full_tis_650",
+      "metric": "noisy_repeat_strict_any",
+      "mean_difference": 0.0,
+      "ci95_low": 0.0,
+      "ci95_high": 0.0,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "full_tis_650",
+      "metric": "gibberish_candidate",
+      "mean_difference": 0.0,
+      "ci95_low": -0.009765625,
+      "ci95_high": 0.009765625,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "full_tis_650",
+      "metric": "response_hit_token_cap",
+      "mean_difference": -0.005859375,
+      "ci95_low": -0.017578125,
+      "ci95_high": 0.001953125,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "full_tis_650",
+      "metric": "first_word_alright",
+      "mean_difference": -0.765625,
+      "ci95_low": -0.8125,
+      "ci95_high": -0.716796875,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "full_tis_650",
+      "metric": "first_word_to",
+      "mean_difference": 0.693359375,
+      "ci95_low": 0.64453125,
+      "ci95_high": 0.7421875,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "full_tis_650",
+      "metric": "tokens",
+      "mean_difference": -605.4296875,
+      "ci95_low": -752.810107421875,
+      "ci95_high": -466.14208984375017,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "full_tis_650",
+      "metric": "log_PPL_q",
+      "mean_difference": 0.11809490162095837,
+      "ci95_low": 0.056343207422407234,
+      "ci95_high": 0.18061973009381616,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "full_tis_650",
+      "metric": "q_ge_0999_fraction",
+      "mean_difference": -0.027315548356500245,
+      "ci95_low": -0.03195020005279164,
+      "ci95_high": -0.02292495608925017,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "baseline_650",
+      "endpoint": "full_tis_650",
+      "metric": "accuracy",
+      "mean_difference": -0.037109375,
+      "ci95_low": -0.080078125,
+      "ci95_high": 0.005859375,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "baseline_650",
+      "endpoint": "full_tis_650",
+      "metric": "unknown",
+      "mean_difference": 0.001953125,
+      "ci95_low": -0.00390625,
+      "ci95_high": 0.009765625,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "baseline_650",
+      "endpoint": "full_tis_650",
+      "metric": "strict_repetition",
+      "mean_difference": 0.0,
+      "ci95_low": 0.0,
+      "ci95_high": 0.0,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "baseline_650",
+      "endpoint": "full_tis_650",
+      "metric": "normalized_text_cycle128_any",
+      "mean_difference": -0.001953125,
+      "ci95_low": -0.005859375,
+      "ci95_high": 0.0,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "baseline_650",
+      "endpoint": "full_tis_650",
+      "metric": "normalized_text_cycle128_alphabetic",
+      "mean_difference": -0.001953125,
+      "ci95_low": -0.005859375,
+      "ci95_high": 0.0,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "baseline_650",
+      "endpoint": "full_tis_650",
+      "metric": "normalized_text_cycle128_numeric",
+      "mean_difference": 0.0,
+      "ci95_low": 0.0,
+      "ci95_high": 0.0,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "baseline_650",
+      "endpoint": "full_tis_650",
+      "metric": "normalized_text_cycle128_other",
+      "mean_difference": 0.0,
+      "ci95_low": 0.0,
+      "ci95_high": 0.0,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "baseline_650",
+      "endpoint": "full_tis_650",
+      "metric": "repeat_strict_union_any",
+      "mean_difference": -0.001953125,
+      "ci95_low": -0.005859375,
+      "ci95_high": 0.0,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "baseline_650",
+      "endpoint": "full_tis_650",
+      "metric": "noisy_repeat_primary_any",
+      "mean_difference": -0.04296875,
+      "ci95_low": -0.068359375,
+      "ci95_high": -0.01953125,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "baseline_650",
+      "endpoint": "full_tis_650",
+      "metric": "noisy_repeat_strict_any",
+      "mean_difference": -0.001953125,
+      "ci95_low": -0.005859375,
+      "ci95_high": 0.0,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "baseline_650",
+      "endpoint": "full_tis_650",
+      "metric": "gibberish_candidate",
+      "mean_difference": -0.0546875,
+      "ci95_low": -0.080078125,
+      "ci95_high": -0.033203125,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "baseline_650",
+      "endpoint": "full_tis_650",
+      "metric": "response_hit_token_cap",
+      "mean_difference": -0.015625,
+      "ci95_low": -0.02734375,
+      "ci95_high": -0.00390625,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "baseline_650",
+      "endpoint": "full_tis_650",
+      "metric": "first_word_alright",
+      "mean_difference": -0.11328125,
+      "ci95_low": -0.14453125,
+      "ci95_high": -0.083984375,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "baseline_650",
+      "endpoint": "full_tis_650",
+      "metric": "first_word_to",
+      "mean_difference": 0.13671875,
+      "ci95_low": 0.095703125,
+      "ci95_high": 0.177734375,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "baseline_650",
+      "endpoint": "full_tis_650",
+      "metric": "tokens",
+      "mean_difference": 20.416015625,
+      "ci95_low": -105.207666015625,
+      "ci95_high": 139.57270507812498,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "baseline_650",
+      "endpoint": "full_tis_650",
+      "metric": "log_PPL_q",
+      "mean_difference": 0.6488602001935656,
+      "ci95_low": 0.5708871228689987,
+      "ci95_high": 0.722908653992164,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "baseline_650",
+      "endpoint": "full_tis_650",
+      "metric": "q_ge_0999_fraction",
+      "mean_difference": -0.14783503357032018,
+      "ci95_low": -0.16318446438064818,
+      "ci95_high": -0.1329863216226832,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    }
+  ],
+  "paired_prompt_probability_contrasts": [
+    {
+      "reference": "source600",
+      "endpoint": "baseline_650",
+      "target_token": "Alright",
+      "mean_probability_difference": -0.659928539423845,
+      "ci95_low": -0.6967439416104468,
+      "ci95_high": -0.622346560197002,
+      "questions": 128,
+      "backend": "HF BF16 flash_attention_2",
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "baseline_650",
+      "target_token": "To",
+      "mean_probability_difference": 0.5653106867134738,
+      "ci95_low": 0.5255904041358803,
+      "ci95_high": 0.6043139594022137,
+      "questions": 128,
+      "backend": "HF BF16 flash_attention_2",
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "baseline_650",
+      "target_token": "Let",
+      "mean_probability_difference": -0.0019705544513044515,
+      "ci95_low": -0.00768336565238883,
+      "ci95_high": 0.0036324209460587968,
+      "questions": 128,
+      "backend": "HF BF16 flash_attention_2",
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "full_tis_650",
+      "target_token": "Alright",
+      "mean_probability_difference": -0.7659021865078799,
+      "ci95_low": -0.8010131068911803,
+      "ci95_high": -0.7284074723170445,
+      "questions": 128,
+      "backend": "HF BF16 flash_attention_2",
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "full_tis_650",
+      "target_token": "To",
+      "mean_probability_difference": 0.7024406640007328,
+      "ci95_low": 0.6674182238553954,
+      "ci95_high": 0.7354839515798404,
+      "questions": 128,
+      "backend": "HF BF16 flash_attention_2",
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "full_tis_650",
+      "target_token": "Let",
+      "mean_probability_difference": 0.0173512178295141,
+      "ci95_low": 0.011144891795666467,
+      "ci95_high": 0.023615352767390616,
+      "questions": 128,
+      "backend": "HF BF16 flash_attention_2",
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "baseline_650",
+      "endpoint": "full_tis_650",
+      "target_token": "Alright",
+      "mean_probability_difference": -0.1059736470840349,
+      "ci95_low": -0.13104403255227268,
+      "ci95_high": -0.08258410715851046,
+      "questions": 128,
+      "backend": "HF BF16 flash_attention_2",
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "baseline_650",
+      "endpoint": "full_tis_650",
+      "target_token": "To",
+      "mean_probability_difference": 0.13712997728725895,
+      "ci95_low": 0.10792090158793144,
+      "ci95_high": 0.16613521059625783,
+      "questions": 128,
+      "backend": "HF BF16 flash_attention_2",
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "baseline_650",
+      "endpoint": "full_tis_650",
+      "target_token": "Let",
+      "mean_probability_difference": 0.01932177228081855,
+      "ci95_low": 0.01479035877964634,
+      "ci95_high": 0.024066388018945867,
+      "questions": 128,
+      "backend": "HF BF16 flash_attention_2",
+      "multiplicity_adjusted": false
+    }
+  ],
+  "bootstrap": {
+    "unit": "qid",
+    "questions": 128,
+    "equal_question_weights": true,
+    "samples_per_question": 4,
+    "draws": 10000,
+    "seed": 20261106
+  },
+  "baseline_treatment_comparisons": 1,
+  "unknown_grades_retained": true,
+  "small_cohorts_retained": true,
+  "cohort_analysis_descriptive": true,
+  "conditional_single_training_trajectory": true,
+  "multiplicity_adjusted": false,
+  "analysis_environment": {
+    "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+    "packages": {
+      "numpy": "2.3.5",
+      "matplotlib": "3.11.0"
+    }
+  },
+  "shared_vllm_runtime_audit": {
+    "dtype_element_counts": {
+      "torch.bfloat16": 8190735360
+    },
+    "norm_weights": [
+      {
+        "name": "model.layers.0.self_attn.q_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.0.self_attn.k_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.0.input_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.0.post_attention_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.1.self_attn.q_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.1.self_attn.k_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.1.input_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.1.post_attention_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.2.self_attn.q_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.2.self_attn.k_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.2.input_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.2.post_attention_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.3.self_attn.q_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.3.self_attn.k_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.3.input_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.3.post_attention_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.4.self_attn.q_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.4.self_attn.k_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.4.input_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.4.post_attention_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.5.self_attn.q_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.5.self_attn.k_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.5.input_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.5.post_attention_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.6.self_attn.q_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.6.self_attn.k_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.6.input_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.6.post_attention_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.7.self_attn.q_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.7.self_attn.k_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.7.input_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.7.post_attention_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.8.self_attn.q_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.8.self_attn.k_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.8.input_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.8.post_attention_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.9.self_attn.q_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.9.self_attn.k_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.9.input_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.9.post_attention_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.10.self_attn.q_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.10.self_attn.k_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.10.input_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.10.post_attention_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.11.self_attn.q_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.11.self_attn.k_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.11.input_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.11.post_attention_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.12.self_attn.q_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.12.self_attn.k_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.12.input_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.12.post_attention_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.13.self_attn.q_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.13.self_attn.k_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.13.input_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.13.post_attention_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.14.self_attn.q_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.14.self_attn.k_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.14.input_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.14.post_attention_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.15.self_attn.q_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.15.self_attn.k_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.15.input_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.15.post_attention_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.16.self_attn.q_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.16.self_attn.k_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.16.input_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.16.post_attention_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.17.self_attn.q_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.17.self_attn.k_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.17.input_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.17.post_attention_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.18.self_attn.q_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.18.self_attn.k_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.18.input_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.18.post_attention_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.19.self_attn.q_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.19.self_attn.k_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.19.input_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.19.post_attention_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.20.self_attn.q_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.20.self_attn.k_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.20.input_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.20.post_attention_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.21.self_attn.q_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.21.self_attn.k_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.21.input_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.21.post_attention_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.22.self_attn.q_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.22.self_attn.k_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.22.input_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.22.post_attention_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.23.self_attn.q_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.23.self_attn.k_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.23.input_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.23.post_attention_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.24.self_attn.q_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.24.self_attn.k_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.24.input_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.24.post_attention_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.25.self_attn.q_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.25.self_attn.k_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.25.input_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.25.post_attention_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.26.self_attn.q_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.26.self_attn.k_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.26.input_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.26.post_attention_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.27.self_attn.q_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.27.self_attn.k_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.27.input_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.27.post_attention_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.28.self_attn.q_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.28.self_attn.k_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.28.input_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.28.post_attention_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.29.self_attn.q_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.29.self_attn.k_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.29.input_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.29.post_attention_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.30.self_attn.q_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.30.self_attn.k_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.30.input_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.30.post_attention_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.31.self_attn.q_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.31.self_attn.k_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.31.input_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.31.post_attention_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.32.self_attn.q_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.32.self_attn.k_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.32.input_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.32.post_attention_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.33.self_attn.q_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.33.self_attn.k_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.33.input_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.33.post_attention_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.34.self_attn.q_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.34.self_attn.k_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.34.input_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.34.post_attention_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.35.self_attn.q_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.35.self_attn.k_norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 128
+      },
+      {
+        "name": "model.layers.35.input_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.layers.35.post_attention_layernorm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      },
+      {
+        "name": "model.norm.weight",
+        "dtype": "torch.bfloat16",
+        "numel": 4096
+      }
+    ],
+    "attention": [
+      {
+        "name": "model.layers.0.self_attn.attn",
+        "implementation": "vllm.v1.attention.backends.flashinfer.FlashInferImpl",
+        "flags": {
+          "need_to_return_lse_for_decode": false,
+          "cache_dtype": "auto",
+          "kv_cache_dtype": "auto",
+          "supports_xqa_or_trtllm_gen_decode": false
+        }
+      },
+      {
+        "name": "model.layers.1.self_attn.attn",
+        "implementation": "vllm.v1.attention.backends.flashinfer.FlashInferImpl",
+        "flags": {
+          "need_to_return_lse_for_decode": false,
+          "cache_dtype": "auto",
+          "kv_cache_dtype": "auto",
+          "supports_xqa_or_trtllm_gen_decode": false
+        }
+      },
+      {
+        "name": "model.layers.2.self_attn.attn",
+        "implementation": "vllm.v1.attention.backends.flashinfer.FlashInferImpl",
+        "flags": {
+          "need_to_return_lse_for_decode": false,
+          "cache_dtype": "auto",
+          "kv_cache_dtype": "auto",
+          "supports_xqa_or_trtllm_gen_decode": false
+        }
+      },
+      {
+        "name": "model.layers.3.self_attn.attn",
+        "implementation": "vllm.v1.attention.backends.flashinfer.FlashInferImpl",
+        "flags": {
+          "need_to_return_lse_for_decode": false,
+          "cache_dtype": "auto",
+          "kv_cache_dtype": "auto",
+          "supports_xqa_or_trtllm_gen_decode": false
+        }
+      },
+      {
+        "name": "model.layers.4.self_attn.attn",
+        "implementation": "vllm.v1.attention.backends.flashinfer.FlashInferImpl",
+        "flags": {
+          "need_to_return_lse_for_decode": false,
+          "cache_dtype": "auto",
+          "kv_cache_dtype": "auto",
+          "supports_xqa_or_trtllm_gen_decode": false
+        }
+      },
+      {
+        "name": "model.layers.5.self_attn.attn",
+        "implementation": "vllm.v1.attention.backends.flashinfer.FlashInferImpl",
+        "flags": {
+          "need_to_return_lse_for_decode": false,
+          "cache_dtype": "auto",
+          "kv_cache_dtype": "auto",
+          "supports_xqa_or_trtllm_gen_decode": false
+        }
+      },
+      {
+        "name": "model.layers.6.self_attn.attn",
+        "implementation": "vllm.v1.attention.backends.flashinfer.FlashInferImpl",
+        "flags": {
+          "need_to_return_lse_for_decode": false,
+          "cache_dtype": "auto",
+          "kv_cache_dtype": "auto",
+          "supports_xqa_or_trtllm_gen_decode": false
+        }
+      },
+      {
+        "name": "model.layers.7.self_attn.attn",
+        "implementation": "vllm.v1.attention.backends.flashinfer.FlashInferImpl",
+        "flags": {
+          "need_to_return_lse_for_decode": false,
+          "cache_dtype": "auto",
+          "kv_cache_dtype": "auto",
+          "supports_xqa_or_trtllm_gen_decode": false
+        }
+      },
+      {
+        "name": "model.layers.8.self_attn.attn",
+        "implementation": "vllm.v1.attention.backends.flashinfer.FlashInferImpl",
+        "flags": {
+          "need_to_return_lse_for_decode": false,
+          "cache_dtype": "auto",
+          "kv_cache_dtype": "auto",
+          "supports_xqa_or_trtllm_gen_decode": false
+        }
+      },
+      {
+        "name": "model.layers.9.self_attn.attn",
+        "implementation": "vllm.v1.attention.backends.flashinfer.FlashInferImpl",
+        "flags": {
+          "need_to_return_lse_for_decode": false,
+          "cache_dtype": "auto",
+          "kv_cache_dtype": "auto",
+          "supports_xqa_or_trtllm_gen_decode": false
+        }
+      },
+      {
+        "name": "model.layers.10.self_attn.attn",
+        "implementation": "vllm.v1.attention.backends.flashinfer.FlashInferImpl",
+        "flags": {
+          "need_to_return_lse_for_decode": false,
+          "cache_dtype": "auto",
+          "kv_cache_dtype": "auto",
+          "supports_xqa_or_trtllm_gen_decode": false
+        }
+      },
+      {
+        "name": "model.layers.11.self_attn.attn",
+        "implementation": "vllm.v1.attention.backends.flashinfer.FlashInferImpl",
+        "flags": {
+          "need_to_return_lse_for_decode": false,
+          "cache_dtype": "auto",
+          "kv_cache_dtype": "auto",
+          "supports_xqa_or_trtllm_gen_decode": false
+        }
+      },
+      {
+        "name": "model.layers.12.self_attn.attn",
+        "implementation": "vllm.v1.attention.backends.flashinfer.FlashInferImpl",
+        "flags": {
+          "need_to_return_lse_for_decode": false,
+          "cache_dtype": "auto",
+          "kv_cache_dtype": "auto",
+          "supports_xqa_or_trtllm_gen_decode": false
+        }
+      },
+      {
+        "name": "model.layers.13.self_attn.attn",
+        "implementation": "vllm.v1.attention.backends.flashinfer.FlashInferImpl",
+        "flags": {
+          "need_to_return_lse_for_decode": false,
+          "cache_dtype": "auto",
+          "kv_cache_dtype": "auto",
+          "supports_xqa_or_trtllm_gen_decode": false
+        }
+      },
+      {
+        "name": "model.layers.14.self_attn.attn",
+        "implementation": "vllm.v1.attention.backends.flashinfer.FlashInferImpl",
+        "flags": {
+          "need_to_return_lse_for_decode": false,
+          "cache_dtype": "auto",
+          "kv_cache_dtype": "auto",
+          "supports_xqa_or_trtllm_gen_decode": false
+        }
+      },
+      {
+        "name": "model.layers.15.self_attn.attn",
+        "implementation": "vllm.v1.attention.backends.flashinfer.FlashInferImpl",
+        "flags": {
+          "need_to_return_lse_for_decode": false,
+          "cache_dtype": "auto",
+          "kv_cache_dtype": "auto",
+          "supports_xqa_or_trtllm_gen_decode": false
+        }
+      },
+      {
+        "name": "model.layers.16.self_attn.attn",
+        "implementation": "vllm.v1.attention.backends.flashinfer.FlashInferImpl",
+        "flags": {
+          "need_to_return_lse_for_decode": false,
+          "cache_dtype": "auto",
+          "kv_cache_dtype": "auto",
+          "supports_xqa_or_trtllm_gen_decode": false
+        }
+      },
+      {
+        "name": "model.layers.17.self_attn.attn",
+        "implementation": "vllm.v1.attention.backends.flashinfer.FlashInferImpl",
+        "flags": {
+          "need_to_return_lse_for_decode": false,
+          "cache_dtype": "auto",
+          "kv_cache_dtype": "auto",
+          "supports_xqa_or_trtllm_gen_decode": false
+        }
+      },
+      {
+        "name": "model.layers.18.self_attn.attn",
+        "implementation": "vllm.v1.attention.backends.flashinfer.FlashInferImpl",
+        "flags": {
+          "need_to_return_lse_for_decode": false,
+          "cache_dtype": "auto",
+          "kv_cache_dtype": "auto",
+          "supports_xqa_or_trtllm_gen_decode": false
+        }
+      },
+      {
+        "name": "model.layers.19.self_attn.attn",
+        "implementation": "vllm.v1.attention.backends.flashinfer.FlashInferImpl",
+        "flags": {
+          "need_to_return_lse_for_decode": false,
+          "cache_dtype": "auto",
+          "kv_cache_dtype": "auto",
+          "supports_xqa_or_trtllm_gen_decode": false
+        }
+      },
+      {
+        "name": "model.layers.20.self_attn.attn",
+        "implementation": "vllm.v1.attention.backends.flashinfer.FlashInferImpl",
+        "flags": {
+          "need_to_return_lse_for_decode": false,
+          "cache_dtype": "auto",
+          "kv_cache_dtype": "auto",
+          "supports_xqa_or_trtllm_gen_decode": false
+        }
+      },
+      {
+        "name": "model.layers.21.self_attn.attn",
+        "implementation": "vllm.v1.attention.backends.flashinfer.FlashInferImpl",
+        "flags": {
+          "need_to_return_lse_for_decode": false,
+          "cache_dtype": "auto",
+          "kv_cache_dtype": "auto",
+          "supports_xqa_or_trtllm_gen_decode": false
+        }
+      },
+      {
+        "name": "model.layers.22.self_attn.attn",
+        "implementation": "vllm.v1.attention.backends.flashinfer.FlashInferImpl",
+        "flags": {
+          "need_to_return_lse_for_decode": false,
+          "cache_dtype": "auto",
+          "kv_cache_dtype": "auto",
+          "supports_xqa_or_trtllm_gen_decode": false
+        }
+      },
+      {
+        "name": "model.layers.23.self_attn.attn",
+        "implementation": "vllm.v1.attention.backends.flashinfer.FlashInferImpl",
+        "flags": {
+          "need_to_return_lse_for_decode": false,
+          "cache_dtype": "auto",
+          "kv_cache_dtype": "auto",
+          "supports_xqa_or_trtllm_gen_decode": false
+        }
+      },
+      {
+        "name": "model.layers.24.self_attn.attn",
+        "implementation": "vllm.v1.attention.backends.flashinfer.FlashInferImpl",
+        "flags": {
+          "need_to_return_lse_for_decode": false,
+          "cache_dtype": "auto",
+          "kv_cache_dtype": "auto",
+          "supports_xqa_or_trtllm_gen_decode": false
+        }
+      },
+      {
+        "name": "model.layers.25.self_attn.attn",
+        "implementation": "vllm.v1.attention.backends.flashinfer.FlashInferImpl",
+        "flags": {
+          "need_to_return_lse_for_decode": false,
+          "cache_dtype": "auto",
+          "kv_cache_dtype": "auto",
+          "supports_xqa_or_trtllm_gen_decode": false
+        }
+      },
+      {
+        "name": "model.layers.26.self_attn.attn",
+        "implementation": "vllm.v1.attention.backends.flashinfer.FlashInferImpl",
+        "flags": {
+          "need_to_return_lse_for_decode": false,
+          "cache_dtype": "auto",
+          "kv_cache_dtype": "auto",
+          "supports_xqa_or_trtllm_gen_decode": false
+        }
+      },
+      {
+        "name": "model.layers.27.self_attn.attn",
+        "implementation": "vllm.v1.attention.backends.flashinfer.FlashInferImpl",
+        "flags": {
+          "need_to_return_lse_for_decode": false,
+          "cache_dtype": "auto",
+          "kv_cache_dtype": "auto",
+          "supports_xqa_or_trtllm_gen_decode": false
+        }
+      },
+      {
+        "name": "model.layers.28.self_attn.attn",
+        "implementation": "vllm.v1.attention.backends.flashinfer.FlashInferImpl",
+        "flags": {
+          "need_to_return_lse_for_decode": false,
+          "cache_dtype": "auto",
+          "kv_cache_dtype": "auto",
+          "supports_xqa_or_trtllm_gen_decode": false
+        }
+      },
+      {
+        "name": "model.layers.29.self_attn.attn",
+        "implementation": "vllm.v1.attention.backends.flashinfer.FlashInferImpl",
+        "flags": {
+          "need_to_return_lse_for_decode": false,
+          "cache_dtype": "auto",
+          "kv_cache_dtype": "auto",
+          "supports_xqa_or_trtllm_gen_decode": false
+        }
+      },
+      {
+        "name": "model.layers.30.self_attn.attn",
+        "implementation": "vllm.v1.attention.backends.flashinfer.FlashInferImpl",
+        "flags": {
+          "need_to_return_lse_for_decode": false,
+          "cache_dtype": "auto",
+          "kv_cache_dtype": "auto",
+          "supports_xqa_or_trtllm_gen_decode": false
+        }
+      },
+      {
+        "name": "model.layers.31.self_attn.attn",
+        "implementation": "vllm.v1.attention.backends.flashinfer.FlashInferImpl",
+        "flags": {
+          "need_to_return_lse_for_decode": false,
+          "cache_dtype": "auto",
+          "kv_cache_dtype": "auto",
+          "supports_xqa_or_trtllm_gen_decode": false
+        }
+      },
+      {
+        "name": "model.layers.32.self_attn.attn",
+        "implementation": "vllm.v1.attention.backends.flashinfer.FlashInferImpl",
+        "flags": {
+          "need_to_return_lse_for_decode": false,
+          "cache_dtype": "auto",
+          "kv_cache_dtype": "auto",
+          "supports_xqa_or_trtllm_gen_decode": false
+        }
+      },
+      {
+        "name": "model.layers.33.self_attn.attn",
+        "implementation": "vllm.v1.attention.backends.flashinfer.FlashInferImpl",
+        "flags": {
+          "need_to_return_lse_for_decode": false,
+          "cache_dtype": "auto",
+          "kv_cache_dtype": "auto",
+          "supports_xqa_or_trtllm_gen_decode": false
+        }
+      },
+      {
+        "name": "model.layers.34.self_attn.attn",
+        "implementation": "vllm.v1.attention.backends.flashinfer.FlashInferImpl",
+        "flags": {
+          "need_to_return_lse_for_decode": false,
+          "cache_dtype": "auto",
+          "kv_cache_dtype": "auto",
+          "supports_xqa_or_trtllm_gen_decode": false
+        }
+      },
+      {
+        "name": "model.layers.35.self_attn.attn",
+        "implementation": "vllm.v1.attention.backends.flashinfer.FlashInferImpl",
+        "flags": {
+          "need_to_return_lse_for_decode": false,
+          "cache_dtype": "auto",
+          "kv_cache_dtype": "auto",
+          "supports_xqa_or_trtllm_gen_decode": false
+        }
+      }
+    ],
+    "runner_class": "vllm.v1.worker.gpu_model_runner.GPUModelRunner",
+    "sampler_logprobs_mode": "processed_logprobs",
+    "torch_version": "2.13.0+cu130",
+    "cuda_build": "13.0",
+    "GPU": "NVIDIA GB300"
+  },
+  "panel_cases_sha256": "408b1d118eae44e5084f4d6b29fb64e77381af9e25f32c69ae6de7cf93ab58d3",
+  "jobs_sha256": "e4ba8f4ea2e157d1b12e3d2bffab2e664bb1940bf0215c630a2e6d3e196dce6c",
+  "source_sha256": {
+    "control/source600_COMPLETE.json": "0d5df4b4783c27ad0dcdf4db1a184029d2f4e75699d5a103274792d1e808963a",
+    "control/dependencies/source600_completed.json": "94b478d244440686ac85980821209d077f601940615b4ac6f5e744da6a9c6995",
+    "assessments/source600/summary.json": "ba99eb2f189ef13ca9899e6a95fcf66c5eda2eff9212b13a49d953d6b8eb97c4",
+    "assessments/source600/per_question.json": "72662289368bde0d5ce426abdb923dcf5c7660bd1382b1634fc42028af88ab1c",
+    "assessments/source600/per_response.json.gz": "ade47b73bf2cf0fd9049fd0a4bb648b4fd3dd6f5bc5d7ff0f1932424b4958d4f",
+    "first_token/source600.json": "82243fbf9253b580b4f1a4226ee02d7e1c3816c6cad0066347156a785c06e2bf",
+    "generations/source600/worker_00/COMPLETE.json": "78aab526a4f6a462f5adb5c40125d9fdf40c87e585f49ec4b2b6202a6b797e57",
+    "generations/source600/worker_00/metadata.json": "4a308d469fb0516048a65209d2e18f06b639b47f000acebfd7d9483c6f66bdaf",
+    "generations/source600/worker_00/live_runtime_audit.json": "976c1c7f4611213675364f5236705a09f3606c56571da2a3e44ab9640f308ab4",
+    "models/source600/ENDPOINT_READY.json": "91680640f1ef1c87f673a46f05f386b5dc462c5a2b726f5772330193d2863cbe",
+    "cohort_breakdowns/source600.json": "4e7244c8425b17e9ee56e6414a323b2dde353786b0009244300ae13d758905ce",
+    "control/baseline_650_COMPLETE.json": "0d09ae368f325ca5b3f8451f72103a5b00c56a233212250a8808f94889ed6617",
+    "control/dependencies/baseline_650_completed.json": "01d0e3a181916a993ce70fb1898b1bec59b740654379d4c72e8866e447a180b3",
+    "assessments/baseline_650/summary.json": "4f042a92ca5ba78775ef136a64af23ac204116a24e2db877ac19149e1b70d581",
+    "assessments/baseline_650/per_question.json": "ceeba500951f75b168c23d2870d678a3b7e95c89dd0657a09a9a65b8c21f2bb9",
+    "assessments/baseline_650/per_response.json.gz": "0e62812761ef9b270f9e2e3ca6eadbe793b1d4c1814f3edee96c17b978daf1ed",
+    "first_token/baseline_650.json": "378cb5c09cb116703d1684424d23259340f51d0fba9b928980daeff842f02f43",
+    "generations/baseline_650/worker_00/COMPLETE.json": "2690014be4d2f18afebd7360dc43d7e78fa7b3fee26a54037579ce090a8be156",
+    "generations/baseline_650/worker_00/metadata.json": "d207c864fcf69f3f0bf1d14375867a75800fd6ea0b12ab52b2ced62dd109e01b",
+    "generations/baseline_650/worker_00/live_runtime_audit.json": "976c1c7f4611213675364f5236705a09f3606c56571da2a3e44ab9640f308ab4",
+    "models/baseline_650/ENDPOINT_READY.json": "c045e7660a8f6dd97580dbc8b3422453deb405d91b993482ced1095ea71a920c",
+    "cohort_breakdowns/baseline_650.json": "70014886d9ad99d6e4cbf7c9785f2c6600d154e59c59f97591b083ef6d6d3157",
+    "control/full_tis_650_COMPLETE.json": "12e7e1e0a6a556a1bd4102280a9d18a0609034b5701c3b17e6d2e36f5a0b1e0e",
+    "control/dependencies/full_tis_650_completed.json": "4ee86588e10c29902a16d4b21c99566aac6f799fe5b9baa543e93da1ab6300e8",
+    "assessments/full_tis_650/summary.json": "bc29fc9195033e0cb670c63122b652e4d2bf8fbfc5e117ed53dcc19662716256",
+    "assessments/full_tis_650/per_question.json": "151e664db92dcf96956d5eed5d41baba5bb7a9a6c6167b2e5faf98c366658985",
+    "assessments/full_tis_650/per_response.json.gz": "f2b85d8bda4b4ec8de7564f232c24f0ac1a14edc5dd40969e5ae4e9f4b97e3f6",
+    "first_token/full_tis_650.json": "f838fd1978c954dda484f6b37afd08d40cfd0bad2f5affe66cc5d9f2c8580739",
+    "generations/full_tis_650/worker_00/COMPLETE.json": "5e3eb5703691108461eb53e2bc854edb498d10fb3b802e70ad83657b91503dc5",
+    "generations/full_tis_650/worker_00/metadata.json": "c22bff16cdecb4c35921999a156cc7ad422f52c864bd925582894ed662df957d",
+    "generations/full_tis_650/worker_00/live_runtime_audit.json": "976c1c7f4611213675364f5236705a09f3606c56571da2a3e44ab9640f308ab4",
+    "models/full_tis_650/ENDPOINT_READY.json": "bcf080b07575c5cdc40fb8cb14e4133c72f32316937fde23ed5942ee082225e5",
+    "cohort_breakdowns/full_tis_650.json": "cdec34e9294b128fe667a29e68559774c74af6428b1e2e0cc2418a30b99ebed6"
+  },
+  "code_sha256": "d90a89db967f8e4f59bac8a4d2557d18fb1e73e33b7014bcdd47db8f0beb3caf",
+  "limitations": [
+    "Seven unadjusted treatment-vs-baseline comparisons; no confirmatory winner or training-seed uncertainty claim.",
+    "Question bootstrap preserves four responses per question and endpoint pairing; does not resample training.",
+    "Unknown grades retained with their original native accuracy, not dropped.",
+    "All cohorts reported, including very small groups; cohort tables are supplementary descriptions.",
+    "Primary64 is all DeepMath, secondary128 mixes DeepMath,Math500 and competition problems; do not pool their point estimates.",
+    "HF prompt-only token probabilities are separate from vLLM first-word frequencies and sampled chosen-logq."
+  ],
+  "updated_unix": 1793929516.2631397
+}

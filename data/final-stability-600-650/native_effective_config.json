@@ -1,0 +1,624 @@
+{
+  "schema": "native-effective-config-v1",
+  "status": "verified_baseline_configuration_and_readonly_source_audit",
+  "contains_experimental_outcomes": false,
+  "scientific_training_modified": false,
+  "scope": "Successful baseline600-to650 setup. These are baseline settings retained by design for the seven interventions; completed-arm configuration equality still requires final all-arm audit. Secondary endpoint sampling is specified separately.",
+  "highlights": {
+    "actual_experiment_dual_clip_c": 10.0,
+    "synthetic_reference_test_dual_clip_c": 3.0,
+    "synthetic_value_is_not_experimental_setting": true,
+    "base_score_values": [
+      1.0,
+      -1.0
+    ],
+    "GRPO_standard_deviation": "sample, correction=1",
+    "PPO_ratio_denominator": "current-round recomputed training-actor p0, not historical rollout q"
+  },
+  "provenance": {
+    "actual_config_artifact": "baseline/resume_config.yaml",
+    "actual_config_sha256": "c7738ff951850ec44c0277693614d21bd5c4ff1c4dbc14d4cc0b94073de2f345",
+    "actual_generation_config_artifact": "base_chat_generation/generation_config.json",
+    "actual_generation_config_sha256": "291b681c99d96bce52862665a6f54ab319bc8d879cca688a5b2007872290f4aa",
+    "source_catalog": {
+      "native_core": {
+        "artifact": "verl/trainer/ppo/core_algos.py",
+        "sha256": "369b614f239f237a04a38a40b1877cd6fd14aa7bd5f9ff4fe4d7758b682a6948",
+        "symbols": [
+          {
+            "name": "compute_grpo_outcome_advantage",
+            "line_start": 268,
+            "line_end": 331
+          },
+          {
+            "name": "agg_loss",
+            "line_start": 1140,
+            "line_end": 1206
+          },
+          {
+            "name": "compute_policy_loss_vanilla",
+            "line_start": 1286,
+            "line_end": 1376
+          }
+        ]
+      },
+      "native_trainer": {
+        "artifact": "verl/trainer/ppo/ray_trainer.py",
+        "sha256": "eb41f99ccc66976eab14ebe35aa1aa5b7318e02469240ef1569ac4c884c94312",
+        "symbols": [
+          {
+            "name": "compute_response_mask",
+            "line_start": 120,
+            "line_end": 135
+          },
+          {
+            "name": "compute_advantage",
+            "line_start": 187,
+            "line_end": 282
+          },
+          {
+            "name": "_compute_old_log_prob",
+            "line_start": 1290,
+            "line_end": 1325
+          },
+          {
+            "name": "_update_actor",
+            "line_start": 1327,
+            "line_end": 1376
+          }
+        ]
+      },
+      "native_dapo_trainer": {
+        "artifact": "recipe/dapo/dapo_ray_trainer.py",
+        "sha256": "e4f23a312ff65825818a7ca849d837ec63e144b76dcc2cfe05cde952615716fc",
+        "symbols": [
+          {
+            "name": "compute_kl_related_metrics",
+            "line_start": 50,
+            "line_end": 79
+          },
+          {
+            "name": "fit",
+            "line_start": 81,
+            "line_end": 444
+          }
+        ]
+      },
+      "actual_april_runtime": {
+        "artifact": "baseline/frozen_code/setup2_formal_april_v4.py",
+        "sha256": "bbe548664d5e31c143af1c2aa25b69d0411c52b50147f2186d8a5fca262b239b",
+        "symbols": [
+          {
+            "name": "_april_accept",
+            "line_start": 516,
+            "line_end": 588
+          }
+        ]
+      },
+      "april_core_state": {
+        "artifact": "frozen_launch/april_state.py",
+        "sha256": "3f60bf924618ccc7a9ac16568343377a9d3e57c87060d96224bff94e8b920fe7",
+        "symbols": [
+          {
+            "name": "complete_slot",
+            "line_start": 215,
+            "line_end": 250
+          }
+        ]
+      },
+      "april_fit_adapter": {
+        "artifact": "frozen_launch/setup2_formal_fit_v4.py",
+        "sha256": "c80977dcbdaa5f30805cbeadfd7dafe52b9d5e10a0d0c77c13ffd4c366cd17e2",
+        "symbols": []
+      },
+      "online_trainer": {
+        "artifact": "baseline/frozen_code/online_trainer.py",
+        "sha256": "1255179f7c3de84d81b25160d1eaf84c04802504d7c814a4103280137ce24e0f",
+        "symbols": [
+          {
+            "name": "_update_actor",
+            "line_start": 134,
+            "line_end": 181
+          }
+        ]
+      },
+      "online_worker": {
+        "artifact": "baseline/frozen_code/online_worker.py",
+        "sha256": "24ed6c051998d2ae623c33953eadfc8237ebd63784fa6c7110c075201dd3fea2",
+        "symbols": [],
+        "audited_line_ranges": [
+          [
+            111,
+            152
+          ]
+        ]
+      },
+      "reward_callback": {
+        "artifact": "frozen_launch/rewardcode/setup2_typed_training_reward_v2.py",
+        "sha256": "7903e750e212aa61fc943d9cf0b362d026ec256b8698ae4b3206abe1bfa50463",
+        "symbols": [
+          {
+            "name": "async_compute_score",
+            "line_start": 28,
+            "line_end": 31
+          }
+        ]
+      },
+      "reward_manager_observer": {
+        "artifact": "frozen_launch/rewardcode/observed_dapo_reward.py",
+        "sha256": "f4a6f0f44fd2081939516bcf230cb7ef8c2d945ffe241d0dc6c8544a98222879",
+        "symbols": [
+          {
+            "name": "run_single",
+            "line_start": 6,
+            "line_end": 21
+          }
+        ]
+      },
+      "actual_reward_manager": {
+        "artifact": "verl/experimental/reward_loop/reward_manager/dapo.py",
+        "sha256": "6fdc9ce3bc2ac956fe111ef5600f175c4c4c161dce1ea836c1c0385b6080feed",
+        "symbols": [
+          {
+            "name": "run_single",
+            "line_start": 52,
+            "line_end": 119
+          }
+        ]
+      },
+      "grader_v7": {
+        "artifact": "frozen_launch/rewardcode/setup2_math_reward_v3.py",
+        "sha256": "4d82ecbd71111ad3573d5f2a1023cf4c9a52ec38828a6b77ff91cad9e76029e7",
+        "symbols": [
+          {
+            "name": "_decorate",
+            "line_start": 139,
+            "line_end": 153
+          },
+          {
+            "name": "compute_score",
+            "line_start": 165,
+            "line_end": 170
+          },
+          {
+            "name": "async_compute_score",
+            "line_start": 173,
+            "line_end": 179
+          }
+        ]
+      },
+      "grader_v6": {
+        "artifact": "frozen_launch/rewardcode/setup2_math_reward_v2.py",
+        "sha256": "cdf90f406c261a2092b0549481c3bf437478ef0c60c27e8572daa55aebd56f9f",
+        "symbols": [
+          {
+            "name": "_decorate",
+            "line_start": 100,
+            "line_end": 102
+          },
+          {
+            "name": "compute_score",
+            "line_start": 143,
+            "line_end": 148
+          },
+          {
+            "name": "async_compute_score",
+            "line_start": 151,
+            "line_end": 159
+          }
+        ]
+      },
+      "grader_base": {
+        "artifact": "frozen_launch/rewardcode/math_reward.py",
+        "sha256": "0014a2fe11ae82dc2dc24ce75bd216cd093228608e2634b60697439e9407200b",
+        "symbols": [
+          {
+            "name": "compute_score",
+            "line_start": 542,
+            "line_end": 549
+          },
+          {
+            "name": "async_compute_score",
+            "line_start": 552,
+            "line_end": 581
+          }
+        ]
+      },
+      "rollout_correction": {
+        "artifact": "verl/trainer/ppo/rollout_corr_helper.py",
+        "sha256": "763158342551bc4077805a8a009d959a7a2043c4d43b772fe6045f4a40932f3e",
+        "symbols": [
+          {
+            "name": "compute_rollout_correction_and_rejection_mask",
+            "line_start": 786,
+            "line_end": 901
+          },
+          {
+            "name": "compute_rollout_correction_and_add_to_batch",
+            "line_start": 1013,
+            "line_end": 1067
+          }
+        ]
+      },
+      "vllm_server": {
+        "artifact": "verl/workers/rollout/vllm_rollout/vllm_async_server.py",
+        "sha256": "dc2f40b2ada8100dfcfdd64e2197944979be3fb707234c54071d519c7d69eb8c",
+        "symbols": [
+          {
+            "name": "generate",
+            "line_start": 572,
+            "line_end": 832
+          },
+          {
+            "name": "_preprocess_sampling_params",
+            "line_start": 1452,
+            "line_end": 1457
+          },
+          {
+            "name": "_get_override_generation_config",
+            "line_start": 1381,
+            "line_end": 1391
+          }
+        ]
+      }
+    },
+    "optimizer_and_template_audit_sha256": "2113cb13fd056e9cb99a3e50758dcd51f415f6a00c128ce9702314d1dc9ac5e1",
+    "native_config_fields_audit_sha256": "ea5995973a7704ef39cca37bc662d7dc744e22b1762d5c6a69ee175378b01c3a",
+    "source_bundle_manifest_sha256": "cea7503d9ac979bd0b926d522b4a5dd8d3c82934156c92a6305441b5c4d2c790"
+  },
+  "training_geometry": {
+    "group_size": 8,
+    "accepted_groups_per_round": 64,
+    "accepted_response_uses_per_round": 512,
+    "native_ppo_minibatch_config": 16,
+    "native_minibatch_config_unit": "prompt-group-equivalent count; native _update_actor multiplies this by rollout.n",
+    "global_optimizer_minibatch_response_uses": 128,
+    "response_uses_per_rank_per_optimizer_minibatch": 16,
+    "data_parallel_ranks": 8,
+    "optimizer_updates_per_round": 4,
+    "ppo_epochs": 1,
+    "shuffle_actor_minibatches": false,
+    "balance_batch_by_valid_tokens": true,
+    "group_boundary_note": "DP token balancing may split original groups across optimization minibatches; advantages are computed by original UID before the four disjoint128-response updates.",
+    "generation_input_batch_groups": 112,
+    "APRIL_pending_window_groups": 256,
+    "APRIL_window_accounting": "pending",
+    "APRIL_mode": "eight",
+    "pilot_discard_enabled": false,
+    "source_step": 600,
+    "target_step": 650,
+    "checkpoint_interval_rounds": 10,
+    "primary_validation_interval_rounds": 10
+  },
+  "objective": {
+    "policy_loss_mode": "vanilla",
+    "ratio_formula": "r_it = exp(clamp(log p_theta_it - log p0_it, -20, 20))",
+    "ratio_clip_lower": 0.8,
+    "ratio_clip_upper": 1.28,
+    "clip_ratio_low": 0.2,
+    "clip_ratio_high": 0.28,
+    "dual_clip_c": 10.0,
+    "native_loss": "Apply the original sign-sensitive PPO max and negative-advantage dual-clip min with c=10, then any study multiplier, then the original token-mean aggregation.",
+    "loss_agg_mode": "token-mean",
+    "physical_denominator": "Original valid response-token count in the global128-response optimizer minibatch; unchanged by study multipliers. Native DP scaling remains in place.",
+    "advantage_estimator": "grpo",
+    "group_score": "R_i=sum_t token_level_rewards_it, including the original soft-overlong reward",
+    "advantage_formula": "A_i=(R_i-mean_group(R))/(std_group_sample(R)+1e-6), broadcast over the response mask",
+    "advantage_std_correction": 1,
+    "advantage_epsilon": 1e-06,
+    "norm_adv_by_std_in_grpo": true,
+    "native_torch_version": "2.13.0+cu130",
+    "std_evidence": {
+      "doc_signature": "std(input, dim=None, *, correction=1, keepdim=False, out=None) -> Tensor",
+      "synthetic_CPU_std_of_0_1": 0.7071067690849304,
+      "CUDA_initialized": false,
+      "default_epsilon_used_by_GRPO_caller": true,
+      "sources": [
+        "native_core:compute_grpo_outcome_advantage",
+        "native_trainer:compute_advantage"
+      ]
+    },
+    "configured_gamma": 1.0,
+    "configured_lambda": 1.0,
+    "gamma_lambda_used_in_this_outcome_GRPO_branch": false,
+    "entropy_loss_coefficient": 0.0,
+    "actor_KL_loss_enabled": false,
+    "actor_KL_coefficient": 0.0,
+    "reward_KL_enabled": false,
+    "reward_KL_coefficient": 0.0,
+    "baseline_rollout_IS": null,
+    "baseline_rollout_RS": null,
+    "baseline_native_rollout_is_weights_slot": null,
+    "ratio_provenance_chain": [
+      {
+        "source": "native_dapo_trainer",
+        "lines": [
+          50,
+          79,
+          310,
+          311
+        ],
+        "fact": "Before actor update, recompute old_log_probs via current actor forward and union them into the accepted batch."
+      },
+      {
+        "source": "native_trainer",
+        "lines": [
+          1290,
+          1325
+        ],
+        "fact": "_compute_old_log_prob returns the actor log_probs as old_log_probs."
+      },
+      {
+        "source": "online_trainer",
+        "lines": [
+          144,
+          176
+        ],
+        "fact": "Preserve/hash the original old_log_probs and use old_log_probs minus historical rollout_log_probs only to prepare fixed intervention weights; original fields remain unchanged across update."
+      },
+      {
+        "source": "online_worker",
+        "lines": [
+          122,
+          152
+        ],
+        "fact": "Assert native callback old_log_prob equals the matching packed original old_log_probs; identity arms retain None IS slot."
+      },
+      {
+        "source": "native_core",
+        "lines": [
+          1286,
+          1376
+        ],
+        "fact": "Native ratio uses log_prob-old_log_prob; historical q is not its denominator."
+      }
+    ],
+    "intervention_gap_definition": "s0_it=log p0_it-log q_it; methods1-5 use this separately from the native PPO ratio. q is the recorded probability at each actual historical generation segment."
+  },
+  "optimizer": {
+    "source_step": 600,
+    "all_eight_rank_metadata_identical": true,
+    "parameter_groups": [
+      {
+        "lr": 5e-07,
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "weight_decay": 0.01,
+        "amsgrad": false,
+        "maximize": false,
+        "foreach": null,
+        "capturable": false,
+        "differentiable": false,
+        "fused": null,
+        "decoupled_weight_decay": true,
+        "initial_lr": 5e-07
+      }
+    ],
+    "lr_scheduler_state": {
+      "base_lrs": [
+        5e-07
+      ],
+      "last_epoch": 600,
+      "_step_count": 601,
+      "_is_initial": false,
+      "_get_lr_called_within_step": false,
+      "_last_lr": [
+        5e-07
+      ],
+      "lr_lambdas": [
+        null
+      ]
+    },
+    "original_full_joint_copy_receipt_sha256": "6db656e405fadb71cdac631acf494b059bae1d8a1a3775737e477c4e8d147e5f",
+    "verified_source_file_sha256": [
+      {
+        "rank": 0,
+        "optimizer": "bc6237bb715d2225d951bb4608d5fb47b6306cd393f3f2dedbe4e13a02fbe0e8",
+        "extra": "23835da177421ffffaf7c26bda0ad738a2d1c5cb578f81e6808e9d1c97e85866"
+      },
+      {
+        "rank": 1,
+        "optimizer": "02e245642254756fced40d729fe045a35b01fa50bd283afcf213d4094f82b622",
+        "extra": "9ea14e203f1fe8c55a97e06dc6f977f0d9da2888ec36b04e5658384ab1e9943f"
+      },
+      {
+        "rank": 2,
+        "optimizer": "db13c336301edbbe74c271a9b875534fde60f681457b40fcd14066e2a4534b9c",
+        "extra": "7b0baaca92d905602297b1cc9fcf0e37eca3de476787573c3184eaa3edfc0a08"
+      },
+      {
+        "rank": 3,
+        "optimizer": "c8f2c04be6ac7844fbf7046ca709af78c3d480ce4a0cbc37ad52ae9601a16b43",
+        "extra": "b91f7de64f351a2d5aeaef09fdede466671288333d83ab25324f86c04d9b72b1"
+      },
+      {
+        "rank": 4,
+        "optimizer": "3cd8c7dbe24e3a4355e5d8a5636443f77368e39a063b8a3c625eb3a413e88c1a",
+        "extra": "60557fcd7534933b5bf056bb41bbcf8ef782f5463aa78de32b44be208a3e62b9"
+      },
+      {
+        "rank": 5,
+        "optimizer": "c6bb53dd9e3e704d5b34f2b2c618ab87c1e92f5772f31b405a55ddc0a08e410e",
+        "extra": "53bcf6748f751c2e9a21df4ff749a95b3d47085c0fa1240a14d0b4d8f3a07e82"
+      },
+      {
+        "rank": 6,
+        "optimizer": "cd65d081f89a72b9d22fe8e2ff00eb0d6658c098f11a502d36640abacc91ea33",
+        "extra": "000d72df785176643aeecd1ddada30cf994be86e1f4ed86b37ddacdb836c71f1"
+      },
+      {
+        "rank": 7,
+        "optimizer": "3f686fd9a8708cabb8fb658759bac253a18ac159826ea5c5eb6f5c1a62a6da9b",
+        "extra": "b7fdbb09db6cc5996a5a9ccde9cda7ea43da329aa6ffc3f0c9def50b63355950"
+      }
+    ],
+    "name": "AdamW",
+    "implementation": "torch.optim",
+    "configured_learning_rate": 5e-07,
+    "configured_scheduler_type": "constant",
+    "configured_warmup_scheduler_steps": 10,
+    "configured_warmup_ratio": 0.0,
+    "configured_optimizer_total_training_steps": -1,
+    "configured_trainer_target_step": 650,
+    "epsilon_source": "Saved original600 optimizer param_groups; eps is absent from saved YAML and is not guessed from library defaults.",
+    "warmup_restart_on_resume": false,
+    "warmup_restart_evidence": "Full scheduler state restored at last_epoch600, already beyond the configured10 warmup steps; no new scheduler start is substituted."
+  },
+  "reward_and_filter": {
+    "base_score": {
+      "correct": 1.0,
+      "incorrect": -1.0,
+      "unknown_grade": -1.0,
+      "unknown_preserved_as_separate_diagnostic": true,
+      "acc_definition": "float(correct is True)",
+      "sources": [
+        "grader_base:compute_score lines542-549",
+        "grader_v6:async_compute_score lines151-159",
+        "grader_v7:async_compute_score lines173-179",
+        "reward_callback:async_compute_score lines28-31"
+      ]
+    },
+    "soft_overlong": {
+      "enabled": true,
+      "maximum_response_tokens": 8192,
+      "buffer_tokens": 2048,
+      "penalty_factor": 1.0,
+      "length_threshold": 6144,
+      "length_definition": "L = attention_mask over the response region summed across the complete returned response; valid original token positions, including any retained continuation prefix. Not decoded characters and not only the newest segment.",
+      "formula": "length_penalty(L)=min(-(L-6144)/2048,0); R_i=base_score_i+length_penalty(L)",
+      "score_at_cap": {
+        "length": 8192,
+        "length_penalty": -1.0,
+        "correct_total_reward": 0.0,
+        "incorrect_or_unknown_total_reward": -2.0
+      },
+      "unknown_grade_exempted": false,
+      "truncated_or_cap_response_exempted": false,
+      "branch_condition": "After a scorer result returns, the manager applies the length formula whenever the configured overlong buffer is enabled. It does not branch on unknown or finish_reason.",
+      "source": "actual_reward_manager:run_single lines52-119; reward_manager_observer only appends diagnostics"
+    },
+    "group_filter": {
+      "configured_metric": "acc",
+      "actual_keep_rule": "Complete G8 with all acc entries binary; keep iff min(acc)!=max(acc).",
+      "all_acc_zero_groups_filtered": true,
+      "all_acc_one_groups_filtered": true,
+      "filter_uses_final_length_penalized_reward_variance": false,
+      "unknown_acc": 0.0,
+      "sources": [
+        "actual_april_runtime:_april_accept lines516-588",
+        "april_core_state:complete_slot lines215-250"
+      ],
+      "note": "Homogeneous acc groups are discarded even if their lengths and final rewards differ. Accepted advantages depend on final reward, so correctness is distinct from advantage sign."
+    },
+    "baseline_loss_mask": {
+      "definition": "response_mask=attention_mask[:, -response_width:]",
+      "additional_overlong_or_cap_loss_mask": false,
+      "rollout_rejection_sampling_enabled": false,
+      "capped_responses_can_train_if_acc_group_is_mixed": true,
+      "sources": [
+        "native_trainer:compute_response_mask lines120-135",
+        "native_dapo_trainer:compute_kl_related_metrics lines50-79",
+        "rollout_correction lines852-877: IS=None and RS=None leave the cloned response mask unchanged",
+        "online_worker lines127-152: original mask and physical denominator preserved"
+      ],
+      "scope": "This describes the native baseline path; study masking methods alter detached loss multipliers and retain this original mask/context."
+    }
+  },
+  "rollout": {
+    "temperature": 1.0,
+    "top_p": 1.0,
+    "top_k": -1,
+    "do_sample": true,
+    "group_size": 8,
+    "max_response_tokens": 8192,
+    "max_prompt_tokens": 2048,
+    "max_model_len": 10240,
+    "ignore_eos": false,
+    "generation_config_eos_token_ids": [
+      151643,
+      151645
+    ],
+    "generation_config_bos_token_id": 151643,
+    "repetition_penalty": 1.0,
+    "repetition_penalty_source": "native vLLM _get_override_generation_config lines1381-1391 supplies1.0; generate line644 also sets explicit1.0 when not overridden, and the saved config has no other repetition penalty.",
+    "frequency_penalty": null,
+    "presence_penalty": null,
+    "unverified_penalty_note": "No explicit frequency/presence penalty in the saved config or generation-config file; constructor defaults were not used to fill unverified effective fields.",
+    "stored_generation_config_do_sample": false,
+    "stored_generation_config_note": "The ancillary generation-config file saysdo_sample=false, while explicit active rollout/validation request settings use temperature1/top_p1/top_k-1 and do_sample=true; the file alone is not the effective sampler.",
+    "seed": 20261031,
+    "full_determinism": false,
+    "per_request_seed_note": "Current primary native collection/evaluation does not promise matched per-question seed draws. Secondary endpoint jobs have their separate explicit-seed protocol.",
+    "logprobs_mode": "processed_logprobs",
+    "tensor_parallel_size": 1,
+    "max_num_seqs": 64,
+    "max_num_batched_tokens": 6144,
+    "enable_prefix_caching": true,
+    "enable_chunked_prefill": true,
+    "enforce_eager": false,
+    "attention_backend": "FLASHINFER",
+    "use_trtllm_attention": false,
+    "historical_inherited_q_note": "These settings describe the current run, not a claim that every inherited pre600 q segment used the same historical backend.",
+    "primary_training_per_request_seed_value": null,
+    "primary_training_per_request_seed_status": "No effective per-request seed value is filled by this excerpt; full_determinism is false. The separate primary-validation sampling audit records no matched per-question request seeds."
+  },
+  "primary_validation_sampling": {
+    "questions": 64,
+    "samples_per_question": 8,
+    "temperature": 1.0,
+    "top_p": 1.0,
+    "top_k": -1,
+    "do_sample": true,
+    "max_response_tokens": 8192,
+    "panel_cases_file_sha256": "b8dd1ba0c98c270d35173fe2eda168ee0f10e358a73944479c10117fdaec618b",
+    "dev64_parquet_sha256": "0e715b80c2f338483a8250005f0548557d68e2fcc7c7f2c8ae8b15ebc47294da"
+  },
+  "data_and_precision": {
+    "maximum_prompt_length": 2048,
+    "maximum_response_length": 8192,
+    "filter_overlong_prompts": false,
+    "prompt_truncation_policy": "error",
+    "training_data_shuffle": true,
+    "training_data_seed": 20261031,
+    "validation_shuffle": false,
+    "dynamic_actor_batching": true,
+    "actor_max_token_len_per_gpu": 12288,
+    "configured_actor_compute_dtype": "bfloat16",
+    "configured_parameter_model_dtype": "fp32",
+    "gradient_norm_clip": 1.0,
+    "gradient_checkpointing_enabled": true,
+    "remove_padding": true
+  },
+  "prompt_template": {
+    "native_model_and_detector_assets_resolve_to_same_directory": true,
+    "tokenizer_json_sha256": "c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539",
+    "tokenizer_config_json_sha256": "3c04ed3ca964ea2f6b2b5faf0dc4d31aec1cb1e8b4bcf63f402d295046b422b5",
+    "chat_template_utf8_sha256": "87a2728cb8dc9fe424d624542f6060ec05a1d285ebbec578bb078900e33396b5",
+    "apply_chat_template_kwargs": {
+      "enable_thinking": true
+    },
+    "synthetic_placeholder_CPU_render": {
+      "contains_think_open": false,
+      "contains_think_close": false,
+      "ends_assistant_role_header": true,
+      "rendered_utf8_sha256": "eab29c8227969ecf345151e09a8df5d52ad65ca88b19dd475c0a7fa4a550082d",
+      "generated_model_tokens": 0
+    },
+    "interpretation": "The training prompt template with enable_thinking=true ends at the assistant role header; this synthetic render does not prepend an opening think tag. The model may emit tags as generated content.",
+    "native_model_detector_identity_audit_sha256": "e7dd8ace57e5e07f5a9515efc24b38a5183492b16a890f91a8c062de6c8c0710"
+  },
+  "unresolved_fields": {
+    "effective_frequency_penalty": null,
+    "effective_presence_penalty": null,
+    "effective_compiled_optimizer_foreach_or_fused_dispatch": null,
+    "note": "Null is retained where the effective runtime value/dispatch was not explicitly verified. Restored param_group foreach/fused are themselves null and are not interpreted as disabled."
+  },
+  "review_notes": [
+    "Actual dual_clip=10; synthetic unit-test c=3 exercises branches and is not the experiment value.",
+    "No original questions, answers, token arrays, machine addresses, credentials or absolute filesystem paths are included.",
+    "This metadata extraction does not report unfinished training outcomes or assert that all eight trajectories are complete."
+  ]
+}
