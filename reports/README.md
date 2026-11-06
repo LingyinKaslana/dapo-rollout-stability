@@ -11,5 +11,5 @@
 <!-- final-stability-progress:end -->
 
 <!-- seventh-native-notice:start -->
-原生训练已有7/8组完成，Sync fresh尚未完成；第五至第七组次要评测与全部候选分析仍待补。见[第七组长度加权及七组训练曲线](rl-length-gradient-investigation.md#seventh-native-supplement)。前四组完整比较快照和五个次要端点保持原范围。
+原生训练已有7/8组完成，Sync fresh尚未完成；第五组全候选已作有限CPU报表补充；第五至第七组次要评测及第六、第七组全候选仍待补。见[第七组长度加权及七组训练曲线](rl-length-gradient-investigation.md#seventh-native-supplement)。前四组完整比较快照和五个次要端点保持原范围。
 <!-- seventh-native-notice:end -->
