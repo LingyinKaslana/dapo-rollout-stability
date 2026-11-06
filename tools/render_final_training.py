@@ -175,7 +175,9 @@ def render(source, output, allow_partial=False):
     for table, population in (('accepted_training', 'Accepted training'),
                               ('all_completed_rollout', 'New all-completed rollout'),
                               ('primary_validation', 'Primary validation: 64 questions x 8')):
-        fig, axes = plt.subplots(3, 2, figsize=(13, 11), sharex=True)
+        accepted = table == 'accepted_training'
+        fig, axes = plt.subplots(4 if accepted else 3, 2,
+                                 figsize=(13, 14.5 if accepted else 11), sharex=True)
         for ax, key, title in zip(axes.flat,
                 ('accuracy', 'mean_length', 'normalized_text_cycle128_any',
                  'response_hit_token_cap', 'first_word_alright', 'gibberish_candidate'),
@@ -183,6 +185,13 @@ def render(source, output, allow_partial=False):
                  '8192-token cap fraction', 'First visible word Alright (frequency)',
                  'Mechanical garble candidate fraction')):
             lines(ax, tables[table], key, title)
+        if accepted:
+            # These are already pooled across valid training tokens and B1-B4.
+            # Plot mean NLL = log PPL directly; never average per-token PPL.
+            lines(axes[3, 0], rounds, 'actor_p_log_PPL_nats',
+                  'Actor p: token-weighted log PPL (nats)\nMean NLL of actual training tokens')
+            lines(axes[3, 1], rounds, 'historical_q_log_PPL_nats',
+                  'Saved rollout q: token-weighted log PPL (nats)\nMean NLL of the same accepted tokens')
         axes[0, 0].legend(fontsize=8)
         fig.suptitle(population)
         stem = 'primary_validation_64x8' if table == 'primary_validation' else table

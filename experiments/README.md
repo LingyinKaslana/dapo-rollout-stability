@@ -71,7 +71,7 @@
 <!-- final-stability-progress:start -->
 ## 新增研究单元
 
-| 编号 | 实验与问题 | 状态 | 当前限定 |
-|---|---|---|---|
-| [S16](evidence.md#s16) | [同一600状态的八组稳定性干预](final-stability-600-650.md) | 逐组更新：3/8训练完成 | baseline/full TIS/negative TIS各50轮；次要终点4/9，只有full TIS候选文本全量齐全；未形成八组排名。 |
+| 编号 | 实验 | 状态 |
+|---|---|---|
+| [S16](evidence.md#s16) | [同一600状态的八组稳定性干预](final-stability-600-650.md) | 3/8组训练、4/9个次要评测端点；候选文本覆盖见记录，尚非最终结论。 |
 <!-- final-stability-progress:end -->

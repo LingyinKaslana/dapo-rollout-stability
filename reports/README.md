@@ -7,5 +7,5 @@
 <!-- final-stability-progress:start -->
 ## 按组补充的稳定性实验
 
-[报告第8.4节](rl-length-gradient-investigation.md#final-stability-600-650)与[实验记录](../experiments/final-stability-600-650.md)同步更新；当前3/8组训练、4/9次要评测纳入，候选文本统计进度单独披露。
+[本次冻结快照](rl-length-gradient-investigation.md#final-stability-600-650)纳入3/8组训练、4/9个次要评测端点。全量候选文本覆盖：0 Baseline 50/50轮；1 Full TIS 50/50轮；2 Negative TIS 3/50轮。缺失不填零，单轨迹结果与未校正区间不等于最终方法排名。
 <!-- final-stability-progress:end -->

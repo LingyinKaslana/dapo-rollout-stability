@@ -1,0 +1,158 @@
+{
+  "complete": true,
+  "arm": "baseline",
+  "study_rounds": [
+    601,
+    650
+  ],
+  "population": "newly_completed_training_rollout_candidates",
+  "not_heldout_or_fixed_checkpoint_accuracy": true,
+  "candidate_responses": 53168,
+  "candidate_groups": 6646,
+  "candidate_tokens": 124475962,
+  "candidate_correct": 30460,
+  "candidate_accuracy": 0.5729009930785435,
+  "length_mean": 2341.1819515498046,
+  "length_median": 1269.0,
+  "candidate_counts": {
+    "strict_repetition": 2809,
+    "normalized_text_cycle128_any": 5750,
+    "normalized_text_cycle128_alphabetic": 5627,
+    "normalized_text_cycle128_numeric": 16,
+    "normalized_text_cycle128_other": 212,
+    "exact_confirmed_repeat_any": 4822,
+    "noisy_repeat_primary_any": 7266,
+    "noisy_repeat_strict_any": 5102,
+    "repeat_strict_union_any": 5187,
+    "gibberish_candidate": 6546,
+    "response_hit_token_cap": 7357,
+    "first_word_alright": 26730,
+    "first_word_to": 22482,
+    "has_think_tag_prefix": 0
+  },
+  "candidate_fractions": {
+    "strict_repetition": 0.05283253084562143,
+    "normalized_text_cycle128_any": 0.10814775804995486,
+    "normalized_text_cycle128_alphabetic": 0.10583433644297321,
+    "normalized_text_cycle128_numeric": 0.0003009328919650918,
+    "normalized_text_cycle128_other": 0.003987360818537466,
+    "exact_confirmed_repeat_any": 0.09069365031597953,
+    "noisy_repeat_primary_any": 0.1366611495636473,
+    "noisy_repeat_strict_any": 0.09595997592536865,
+    "repeat_strict_union_any": 0.09755868191393319,
+    "gibberish_candidate": 0.12311916942521818,
+    "response_hit_token_cap": 0.13837270538669877,
+    "first_word_alright": 0.5027460126391815,
+    "first_word_to": 0.4228483298224496,
+    "has_think_tag_prefix": 0.0
+  },
+  "group_class_counts": {
+    "all_wrong": 1407,
+    "all_correct": 2054,
+    "mixed": 3185
+  },
+  "group_correct_histogram": {
+    "0": 1407,
+    "1": 442,
+    "2": 368,
+    "3": 337,
+    "4": 379,
+    "5": 393,
+    "6": 504,
+    "7": 762,
+    "8": 2054
+  },
+  "rollout_q": {
+    "token_count": 124475962,
+    "token_coverage_fraction": 1.0,
+    "missing_response_count": 0,
+    "mean_NLL_nats_log_PPL": 2.2120586958843362,
+    "PPL_exp_pooled_mean_NLL": 9.134502211369991,
+    "NLL_RMS_nats": 3.9171169532549106,
+    "NLL_L2_nats": 43702.80215480331,
+    "sampled_q_confidence_counts": {
+      "q_ge_0_9_tokens": 54084427,
+      "q_ge_0_999_tokens": 30273000,
+      "q_ge_0_99_tokens": 41523090,
+      "q_ge_0_9999_tokens": 15741868
+    },
+    "sampled_q_confidence_fractions": {
+      "q_ge_0_9_tokens": 0.4344969593406316,
+      "q_ge_0_999_tokens": 0.2432035833553148,
+      "q_ge_0_99_tokens": 0.33358320219288606,
+      "q_ge_0_9999_tokens": 0.12646512424623801
+    },
+    "actor_p_measured": false,
+    "actor_minus_rollout_d_measured": false,
+    "definition": "Original saved rollout conditional q of observed tokens, pooled by tokens; generated response population mixes steps/policy versions."
+  },
+  "generation": {
+    "cross_weight_responses": 16862,
+    "cross_weight_response_fraction": 0.3171456515197111,
+    "mean_generation_segments": 1.369000150466446,
+    "token_weighted_policy_age_at_completion": 0.8480745463128053
+  },
+  "all_candidates_independently_assessed": true,
+  "cached_rows": 0,
+  "CPU_wall_seconds": 21696.45990360994,
+  "CPU_wall_seconds_scope": "Final whole-assessment invocation, including waits and reuse of already committed steps. Original602 benchmark was reused, not redetected; individual step CPU_seconds remain unchanged.",
+  "empty_completion_steps": [
+    601,
+    603,
+    605,
+    614,
+    616,
+    618,
+    620,
+    631,
+    633,
+    637,
+    639
+  ],
+  "accepted_population_accounting": {
+    "accepted_uses": 25600,
+    "matched_new_completions": 24984,
+    "matched_all42_pure_fields_equal": true,
+    "pure_field_equalities": 1049328,
+    "mismatch_identities": 0,
+    "inherited_ready_at600": {
+      "source_ready_groups": 77,
+      "source_ready_responses": 616,
+      "unmatched_exactly_source600_ready_multiset": true,
+      "source_ready_consumed_in_training_steps": {
+        "601": 512,
+        "602": 104
+      },
+      "unmatched_beyond_source_ready": 0,
+      "source_ready_missing_from_unmatched": 0,
+      "source_ready_also_in_new_completions": 0,
+      "source_step": 600,
+      "source_data_sha256": "c5773bd57f32d0b831d728612eb70ecd1dc7acebea7486414bcca2015e44a073",
+      "source_ready_private_proof_sha256": "fbe08e9d9ab134995c8b9bd4fe5053320b93bfa37a6969bf0a7dec10a53428dc",
+      "baseline_lineage_proof_sha256": "48aa6bf33e51791b0b21e5eca08f7db7a9d19a590a38e7f299a0ea50b7ede090",
+      "direct_original_ID_proof": true,
+      "scope": "Original source600 ready-ID proof is reused; baseline raw gzip and original token IDs are independently reverified. Other new completions may still inherit partial prefixes."
+    },
+    "newly_completed_not_trained_in601_650": {
+      "all_wrong": 11256,
+      "all_correct": 16432,
+      "mixed": 496
+    },
+    "completed_mixed_groups_not_trained_in_window": 62,
+    "untrained_whole_groups": 3523,
+    "untrained_groups_all_exactly8": true
+  },
+  "comparison_scope": "Group UID plus original prompt/response int64LE byte SHA, retaining multiplicities. Matched rows agree on all42 pure detector statistics and available mask counts, not full token-mask vectors. No qid-only matches.",
+  "observed_first_word_is_not_model_probability": true,
+  "cycle_and_garble_are_mechanical_candidates_not_semantic_verdicts": true,
+  "closing_audit_recomputed_detector": false,
+  "GPU_actions": 0,
+  "source_receipt_sha256": {
+    "all_completed_population_summary.json": "2d8ad7543b879679552b8be631fb3f7fa291245e24550d0d36f0d9d93fa1fbc7",
+    "accepted_completed_identity_join.json": "dac5ffbb14db1b1440519911fab8d7fe7a35352260b3ebc5e62a5985edcc5492",
+    "BASELINE_READY_LINEAGE.json": "48aa6bf33e51791b0b21e5eca08f7db7a9d19a590a38e7f299a0ea50b7ede090",
+    "CPU_TRANSITION_INDEPENDENT_REVIEW.json": "245fbc660575f4e22efd7841a463c3d3a0a3cec71907aaf0220d2ce1e225875d"
+  },
+  "assessment_complete_sha256": "51de53624cf30e54b3adef4102746e32c00b3c64308d1a925be0d867983dfb8d",
+  "unix": 1793945771.1466293
+}

@@ -15,5 +15,5 @@
 <!-- final-stability-progress:start -->
 ## 最后一批八组对照
 
-[final-stability-600-650](final-stability-600-650/manifest.json)按已完成组增量发布。当前3/8训练完成、次要评测4/9；全量候选文本统计为baseline27/50、full TIS50/50、negative TIS0/50。训练聚合CSV保留原SHA，图为标有partial的CSV重绘；发布清单记录摘要转换。Full TIS的[候选来源对账](final-stability-600-650/full_tis_candidate_closure.json)单独列出，局部complete不代表八组研究完成。
+[本次冻结快照](final-stability-600-650/manifest.json)纳入3/8组训练、4/9个次要评测端点。全量候选文本覆盖：0 Baseline 50/50轮；1 Full TIS 50/50轮；2 Negative TIS 3/50轮。缺失不填零，单轨迹结果与未校正区间不等于最终方法排名。Baseline的[全量候选与来源对账](final-stability-600-650/baseline_candidate_closure.json)已补齐，full TIS对账继续保留。
 <!-- final-stability-progress:end -->
