@@ -2,9 +2,9 @@
   "id": "S16",
   "title": "同一600状态的八组稳定性干预",
   "status": "in_progress",
-  "status_label": "逐组更新；3/8训练完成",
+  "status_label": "逐组更新；4/8训练完成",
   "chapter": "training-stability",
-  "finding": "三组各完成50轮；本次补齐baseline53,168条候选，与full TIS的累计候选退化指标不同，但不是固定权重评测。Negative TIS候选仅601–603，单轨迹与未校正比较限制不变。",
+  "finding": "四组各完成50轮。两种TIS抑制大梯度；absolute-gap mask已按固定p0条件执行，仍有梯度峰值，当前准确率差区间跨零。前三组候选全量齐全，第四组仅601–607；单轨迹与未校正比较限制保留。",
   "limitations": [
     "单在线轨迹；七种比较未校正。",
     "候选文本未齐全，缺失不填零；两套评测面板分开。"
@@ -12,15 +12,27 @@
   "source_fingerprints": [
     {
       "artifact_name": "optimizer_updates.csv",
-      "sha256": "04c531ab1b05b8c2e4694797e82199916b9a1f964eead05c97fc9faf69f55dbe"
+      "sha256": "b5b03470084656612650429002b2d1e5840158e8317ba83006b69fb9f269f235"
     },
     {
       "artifact_name": "secondary/endpoint_metrics.csv",
-      "sha256": "b6ac91d76cc103d56f03472301bafbf23d327b4bcc3335a1f2c68df8444ca3fa"
+      "sha256": "520e8c342e26316f879936381185a972c2745f4e0298653de08f5d81f54db535"
     },
     {
       "artifact_name": "full_tis_candidate_closure.json",
       "sha256": "3ff1e0323010dd37e3205cb17e79ebe130e503d2a465e9534730da24bc49a275"
+    },
+    {
+      "artifact_name": "negative_tis_candidate_closure.json",
+      "sha256": "f37c8f82c2c79375fb660f675d66f32459f0ecb7660a3a51622b499351d79140"
+    },
+    {
+      "artifact_name": "abs_gap_mask_round628_anchor_current.json",
+      "sha256": "fb24590e3f68b23019fb657865d23b23d1004fc088b8f9148cc36f96ecba449e"
+    },
+    {
+      "artifact_name": "completed_four_arm_native_audit.json",
+      "sha256": "ce81d25b3052296d00158bdf902240b64283da1399ab9419ab7008b4b871dceb"
     },
     {
       "artifact_name": "baseline_candidate_closure.json",
@@ -31,23 +43,22 @@
     "completed_training_arms": [
       "baseline",
       "full_tis",
-      "negative_tis"
+      "negative_tis",
+      "abs_gap_mask"
     ],
-    "actual_updates": 600,
+    "actual_updates": 800,
     "secondary_endpoints": [
       "source600",
       "baseline_650",
       "full_tis_650",
-      "negative_tis_650"
+      "negative_tis_650",
+      "abs_gap_mask_650"
     ],
     "pending_all_completed_rounds": {
       "baseline": [],
       "full_tis": [],
-      "negative_tis": [
-        604,
-        605,
-        606,
-        607,
+      "negative_tis": [],
+      "abs_gap_mask": [
         608,
         609,
         610,
@@ -114,13 +125,25 @@
         "d_tail_fraction": 9.157231728201945e-05,
         "d_tail_conditional_mean": 0.6557501943799977,
         "d_RMS": 0.07415857633741624
+      },
+      "abs_gap_mask": {
+        "valid_tokens": 65340492,
+        "Adam_L2_mean_per_update": 0.01792929507240638,
+        "d_tail_fraction": 0.27862756221670326,
+        "d_tail_conditional_mean": 4.1059339754816095,
+        "d_RMS": 3.075288917443431
       }
     },
     "candidate_closure_files": {
       "baseline": "baseline_candidate_closure.json",
-      "full_tis": "full_tis_candidate_closure.json"
-    }
+      "full_tis": "full_tis_candidate_closure.json",
+      "negative_tis": "negative_tis_candidate_closure.json"
+    },
+    "additional_public_audits": [
+      "abs_gap_mask_round628_anchor_current.json",
+      "completed_four_arm_native_audit.json"
+    ]
   },
   "public_data": "data/final-stability-600-650",
-  "snapshot_utc": "2026-11-06 06:20 UTC"
+  "snapshot_utc": "2026-11-06 08:07 UTC"
 }

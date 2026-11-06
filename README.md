@@ -85,9 +85,9 @@ python tools/render_investigation_figures.py
 <!-- final-stability-progress:start -->
 ## 新增：600→650八组稳定性实验（逐组更新）
 
-**当前纳入3/8组训练、4/9个次要评测端点。** 每种方法各一条在线轨迹；全量候选文本统计尚有明确缺口。主要数值由冻结聚合CSV生成，方法解释见逐组记录；本快照不代表八组最终排名。
+**当前纳入4/8组训练、5/9个次要评测端点。** 每种方法各一条在线轨迹；全量候选文本统计尚有明确缺口。主要数值由冻结聚合CSV生成，方法解释见逐组记录；本快照不代表八组最终排名。
 
-本次补齐baseline的53,168条全量训练候选，循环候选5,750条、乱码候选6,546条、截断7,357条，并加入实际入训log PPL曲线。Baseline/full TIS候选统计均50/50轮，negative TIS仅保留本快照601–603轮。候选是各自在线路径累计结果，不当成固定checkpoint测试排名。
+本次新增Absolute-gap mask完整50轮：最大梯度254.57，7次超过100；16,345,831个屏蔽位置的实际直接loss系数为0已核验。次要面板为69.73%，相对baseline差值区间[−0.59,+6.25]个百分点，不能据此证明准确率改善。前三组候选统计已全量齐全，第四组本快照只保留601–607轮；报告加入628轮的有界核查。
 
 [逐组实验与曲线](experiments/final-stability-600-650.md) · [报告更新](reports/rl-length-gradient-investigation.md#final-stability-600-650) · [数据状态](data/final-stability-600-650/manifest.json) · [损失与检测实现](reference/stability/README.md)
 

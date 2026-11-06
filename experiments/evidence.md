@@ -526,5 +526,5 @@
 <!-- final-stability-progress:start -->
 ## S16
 
-[同一600状态的八组稳定性干预](final-stability-600-650.md)当前纳入3/8组训练、4/9个次要评测端点。完整入训观测与未齐全候选文本统计分列，见[聚合证据](../data/evidence/S16.json)。
+[同一600状态的八组稳定性干预](final-stability-600-650.md)当前纳入4/8组训练、5/9个次要评测端点。完整入训观测与未齐全候选文本统计分列，见[聚合证据](../data/evidence/S16.json)。
 <!-- final-stability-progress:end -->

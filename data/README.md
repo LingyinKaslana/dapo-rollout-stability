@@ -15,5 +15,5 @@
 <!-- final-stability-progress:start -->
 ## 最后一批八组对照
 
-[本次冻结快照](final-stability-600-650/manifest.json)纳入3/8组训练、4/9个次要评测端点。全量候选文本覆盖：0 Baseline 50/50轮；1 Full TIS 50/50轮；2 Negative TIS 3/50轮。缺失不填零，单轨迹结果与未校正区间不等于最终方法排名。Baseline的[全量候选与来源对账](final-stability-600-650/baseline_candidate_closure.json)已补齐，full TIS对账继续保留。
+[本次冻结快照](final-stability-600-650/manifest.json)纳入4/8组训练、5/9个次要评测端点。全量候选文本覆盖：0 Baseline 50/50轮；1 Full TIS 50/50轮；2 Negative TIS 50/50轮；3 Absolute-gap mask 7/50轮。缺失不填零，单轨迹结果与未校正区间不等于最终方法排名。 新增[Negative TIS候选对账](final-stability-600-650/negative_tis_candidate_closure.json)、[628轮固定筛选核查](final-stability-600-650/abs_gap_mask_round628_anchor_current.json)和[四组实际更新核验](final-stability-600-650/completed_four_arm_native_audit.json)；Baseline与Full TIS既有对账原样保留。
 <!-- final-stability-progress:end -->

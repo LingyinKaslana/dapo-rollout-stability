@@ -1,0 +1,172 @@
+{
+  "complete": true,
+  "arm": "negative_tis",
+  "study_rounds": [
+    601,
+    650
+  ],
+  "population": "newly_completed_training_rollout_candidates",
+  "not_heldout_or_fixed_checkpoint_accuracy": true,
+  "candidate_responses": 53760,
+  "candidate_groups": 6720,
+  "candidate_tokens": 108703918,
+  "candidate_correct": 32884,
+  "candidate_accuracy": 0.6116815476190476,
+  "length_mean": 2022.0222842261905,
+  "length_median": 1760.5,
+  "candidate_counts": {
+    "strict_repetition": 0,
+    "normalized_text_cycle128_any": 6,
+    "normalized_text_cycle128_alphabetic": 2,
+    "normalized_text_cycle128_numeric": 0,
+    "normalized_text_cycle128_other": 4,
+    "exact_confirmed_repeat_any": 2,
+    "noisy_repeat_primary_any": 1636,
+    "noisy_repeat_strict_any": 10,
+    "repeat_strict_union_any": 10,
+    "gibberish_candidate": 491,
+    "response_hit_token_cap": 222,
+    "first_word_alright": 38134,
+    "first_word_to": 10265,
+    "has_think_tag_prefix": 0
+  },
+  "candidate_fractions": {
+    "strict_repetition": 0.0,
+    "normalized_text_cycle128_any": 0.00011160714285714285,
+    "normalized_text_cycle128_alphabetic": 3.7202380952380956e-05,
+    "normalized_text_cycle128_numeric": 0.0,
+    "normalized_text_cycle128_other": 7.440476190476191e-05,
+    "exact_confirmed_repeat_any": 3.7202380952380956e-05,
+    "noisy_repeat_primary_any": 0.03043154761904762,
+    "noisy_repeat_strict_any": 0.00018601190476190475,
+    "repeat_strict_union_any": 0.00018601190476190475,
+    "gibberish_candidate": 0.009133184523809524,
+    "response_hit_token_cap": 0.004129464285714286,
+    "first_word_alright": 0.7093377976190476,
+    "first_word_to": 0.19094122023809523,
+    "has_think_tag_prefix": 0.0
+  },
+  "group_class_counts": {
+    "all_correct": 2373,
+    "all_wrong": 1211,
+    "mixed": 3136
+  },
+  "group_correct_histogram": {
+    "0": 1211,
+    "1": 435,
+    "2": 368,
+    "3": 346,
+    "4": 306,
+    "5": 393,
+    "6": 514,
+    "7": 774,
+    "8": 2373
+  },
+  "rollout_q": {
+    "token_count": 108703918,
+    "token_coverage_fraction": 1.0,
+    "missing_response_count": 0,
+    "mean_NLL_nats_log_PPL": 1.902797038826339,
+    "PPL_exp_pooled_mean_NLL": 6.704621326324984,
+    "NLL_RMS_nats": 2.948736636618887,
+    "NLL_L2_nats": 30743.873501147253,
+    "sampled_q_confidence_counts": {
+      "q_ge_0_99_tokens": 12169199,
+      "q_ge_0_999_tokens": 5526846,
+      "q_ge_0_9_tokens": 25052587,
+      "q_ge_0_9999_tokens": 2215496
+    },
+    "sampled_q_confidence_fractions": {
+      "q_ge_0_99_tokens": 0.11194811763822533,
+      "q_ge_0_999_tokens": 0.050843116804676715,
+      "q_ge_0_9_tokens": 0.23046627445387938,
+      "q_ge_0_9999_tokens": 0.020381013313613958
+    },
+    "actor_p_measured": false,
+    "actor_minus_rollout_d_measured": false,
+    "definition": "Original saved rollout conditional q of observed tokens, pooled by tokens; generated response population mixes steps/policy versions."
+  },
+  "generation": {
+    "cross_weight_responses": 12741,
+    "cross_weight_response_fraction": 0.23699776785714285,
+    "mean_generation_segments": 1.2375186011904762,
+    "token_weighted_policy_age_at_completion": 0.5576077579834795
+  },
+  "all_candidates_independently_assessed": true,
+  "cached_rows": 0,
+  "CPU_wall_seconds": 4068.03010946,
+  "CPU_wall_seconds_scope": "Entire v4 negativeTIS assessment invocation, including scheduling and IO. No accepted-statistics cache reuse; original per-step CPU_seconds are preserved.",
+  "empty_completion_steps": [
+    601,
+    603,
+    605,
+    607,
+    609,
+    611,
+    613,
+    615,
+    617,
+    619,
+    621,
+    623,
+    625,
+    627,
+    630,
+    632,
+    634,
+    636,
+    638,
+    640,
+    642,
+    644,
+    646,
+    648,
+    650
+  ],
+  "accepted_population_accounting": {
+    "accepted_uses": 25600,
+    "matched_new_completions": 24984,
+    "matched_all42_pure_fields_equal": true,
+    "pure_field_equalities": 1049328,
+    "mismatch_identities": 0,
+    "inherited_ready_at600": {
+      "source_ready_groups": 77,
+      "source_ready_responses": 616,
+      "unmatched_exactly_source600_ready_multiset": true,
+      "source_ready_consumed_in_training_steps": {
+        "601": 512,
+        "602": 104
+      },
+      "unmatched_beyond_source_ready": 0,
+      "source_ready_missing_from_unmatched": 0,
+      "source_ready_also_in_new_completions": 0,
+      "source_step": 600,
+      "source_data_sha256": "c5773bd57f32d0b831d728612eb70ecd1dc7acebea7486414bcca2015e44a073",
+      "source_ready_private_proof_sha256": "fbe08e9d9ab134995c8b9bd4fe5053320b93bfa37a6969bf0a7dec10a53428dc",
+      "negative_tis_lineage_proof_sha256": "2dcd0b380e6e7d77e09defba9a89b86d1e834b9a9c25c87fb2c455b6b232d731",
+      "direct_original_ID_proof": true,
+      "scope": "Original source600 ready-ID proof is reused; negative_tis raw gzip and original token IDs are independently reverified. Other new completions may still inherit partial prefixes."
+    },
+    "newly_completed_not_trained_in601_650": {
+      "all_correct": 18984,
+      "all_wrong": 9688,
+      "mixed": 104
+    },
+    "completed_mixed_groups_not_trained_in_window": 13,
+    "untrained_whole_groups": 3597,
+    "untrained_groups_all_exactly8": true
+  },
+  "comparison_scope": "Group UID plus original prompt/response int64LE byte SHA, retaining multiplicities. Matched rows agree on all42 pure detector statistics and available mask counts, not full token-mask vectors. No qid-only matches.",
+  "observed_first_word_is_not_model_probability": true,
+  "cycle_and_garble_are_mechanical_candidates_not_semantic_verdicts": true,
+  "closing_audit_recomputed_detector": false,
+  "GPU_actions": 0,
+  "source_receipt_sha256": {
+    "all_completed_population_summary.json": "6901ca9956744b1ba534f8ec8c35b1a38c1bcd122f38531e37b42d212b1ba7e0",
+    "accepted_completed_identity_join.json": "853bebe7bee66d7607a9a3202fcacb89bc0d5532e0ca2d5738bb408e8a956eb8",
+    "NEGATIVE_TIS_READY_LINEAGE.json": "2dcd0b380e6e7d77e09defba9a89b86d1e834b9a9c25c87fb2c455b6b232d731",
+    "CPU_TRANSITION_INDEPENDENT_REVIEW.json": "5f0a5fd29172ada8f4ad352ebda04fe47d9ce6d6be2818d416aff24de40d3006"
+  },
+  "assessment_complete_sha256": "95ab6962a8cc4c02a29d92452e3740eb244cb50a71646cc4df228009dfaeff51",
+  "unix": 1793949901.103144
+}
