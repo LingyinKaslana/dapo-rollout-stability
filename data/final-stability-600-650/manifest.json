@@ -455,7 +455,8 @@
     },
     {
       "file": "reports/rl-length-gradient-investigation.md",
-      "published_sha256": "00475cf4cdd5179baa8d7caedd2b3dfbf93e80adb95a21dcc0df08bbbd8be04b"
+      "published_sha256": "7fc0ddc6ddc1ad02535fa7cc280da1de8bffc01530c878884341fb54c3eec785",
+      "transformation": "Added accepted-training-only five-native-arm curve within the existing fifth native supplement; prior report text unchanged."
     },
     {
       "file": "tools/README.md",
@@ -486,9 +487,29 @@
       "file": "data/final-stability-600-650/negative_down_native_supplement.json",
       "original_sha256": "13a8865a186b84c3064068d1d31394d1841ad2759e6d1c06aaed1dda9884fae6",
       "published_sha256": "13a8865a186b84c3064068d1d31394d1841ad2759e6d1c06aaed1dda9884fae6"
+    },
+    {
+      "file": "data/final-stability-600-650/supplements/five_native_plot_points.csv",
+      "original_sha256": "410016f0f8ff5d5eb6cc82bbaf97edfa2ac5f57151086bd5471314eb3d68a342",
+      "published_sha256": "410016f0f8ff5d5eb6cc82bbaf97edfa2ac5f57151086bd5471314eb3d68a342"
+    },
+    {
+      "file": "data/final-stability-600-650/supplements/five_native_provenance.json",
+      "original_sha256": "c2fbc31703d940afb1546083ef87bf20c33974153f8e24681867519331467e69",
+      "published_sha256": "c2fbc31703d940afb1546083ef87bf20c33974153f8e24681867519331467e69"
+    },
+    {
+      "file": "data/final-stability-600-650/supplements/five_native_training.svg",
+      "original_sha256": "35ad2a791ced3d308483a981844c467d16779fdf64966c90a098280fac9c88d4",
+      "published_sha256": "35ad2a791ced3d308483a981844c467d16779fdf64966c90a098280fac9c88d4"
+    },
+    {
+      "file": "tools/render_five_native_training.py",
+      "original_sha256": "af1c19a3aa9d4916bb8af049112b3c22418e5bb6fd0fb79355a521091140ee98",
+      "published_sha256": "af1c19a3aa9d4916bb8af049112b3c22418e5bb6fd0fb79355a521091140ee98"
     }
   ],
-  "scope": "Four complete training arms and their complete50-round candidate populations; five fixed secondary endpoints reused unchanged. The planned eight-arm study remains incomplete. Includes unchanged prior closures/case audits and the new cached-abs population closure. Supplement: fifth native training/primary results only; its secondary endpoint and all-completed candidate assessment remain pending. Frozen comparison tables and their listed arm set remain unchanged.",
+  "scope": "Four complete training arms and their complete50-round candidate populations; five fixed secondary endpoints reused unchanged. The planned eight-arm study remains incomplete. Includes unchanged prior closures/case audits and the new cached-abs population closure. Supplement: fifth native training/primary results only; its secondary endpoint and all-completed candidate assessment remain pending. Frozen comparison tables and their listed arm set remain unchanged. Additional five-arm accepted-training-only curve supplement; canonical training/secondary comparison sets remain unchanged.",
   "supplements": [
     {
       "arm": "negative_down_mask",
@@ -497,6 +518,27 @@
       "secondary_endpoint_complete": false,
       "all_completed_candidate_assessment_complete": false,
       "not_in_frozen_comparison_tables": true
+    },
+    {
+      "kind": "five_native_training_curve",
+      "population": "accepted_training",
+      "arms": [
+        "baseline",
+        "full_tis",
+        "negative_tis",
+        "abs_gap_mask",
+        "negative_down_mask"
+      ],
+      "updates_per_arm": 200,
+      "rounds_per_arm": 50,
+      "secondary_comparison_expanded": false,
+      "private_BBB_allcandidate_statistics_used": false,
+      "files": [
+        "data/final-stability-600-650/supplements/five_native_plot_points.csv",
+        "data/final-stability-600-650/supplements/five_native_provenance.json",
+        "data/final-stability-600-650/supplements/five_native_training.svg",
+        "tools/render_five_native_training.py"
+      ]
     }
   ]
 }

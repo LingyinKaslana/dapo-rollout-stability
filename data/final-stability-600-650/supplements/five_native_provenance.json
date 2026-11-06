@@ -1,0 +1,220 @@
+{
+  "schema": "five-native-training-supplement-provenance-v1",
+  "release_kind": "native_training_supplement",
+  "population": "accepted_training",
+  "completed_native_arms": [
+    "baseline",
+    "full_tis",
+    "negative_tis",
+    "abs_gap_mask",
+    "negative_down_mask"
+  ],
+  "study_rounds": [
+    601,
+    650
+  ],
+  "scope_complete_for_these_five_native_curves": true,
+  "eight_arm_campaign_complete": false,
+  "canonical_four_arm_comparison_tables_changed": false,
+  "public_source_revision_at_extraction": "57cd165508312b97885bf333eca050d9349b5280",
+  "point_coordinates": {
+    "plotted_points": 3000,
+    "unique_optimizer_updates": 1000,
+    "unique_method_rounds": 250,
+    "updates_per_arm": 200,
+    "rounds_per_arm": 50,
+    "responses_per_round": 512,
+    "per_panel": {
+      "A": 1000,
+      "B": 1000,
+      "C": 250,
+      "D": 250,
+      "E": 250,
+      "F": 250
+    },
+    "update_x": "round + (inner - 1)/4, inner in1..4",
+    "round_x": "round",
+    "source_CSV_bytes_preserved": true
+  },
+  "panels": {
+    "A": {
+      "metric": "pre-clipping global parameter-gradient L2 norm",
+      "scope": "one scalar per native optimizer update, verified across8ranks then counted once",
+      "scale": "symlog, linear threshold1; every real peak retained"
+    },
+    "B": {
+      "metric": "mean d over tokens with d>0.5, else0",
+      "d": "abs(logp_current_actor - logq_saved_rollout)",
+      "scope": "per native update, all valid tokens including masked positions",
+      "units": "nats"
+    },
+    "C": {
+      "metric": "normalized_text_cycle128_any response fraction times100",
+      "scope": "per round,512 actual accepted responses",
+      "semantic_repetition_verdict": false
+    },
+    "D": {
+      "metric": "gibberish_candidate response fraction times100",
+      "scope": "per round,512 actual accepted responses",
+      "semantic_gibberish_verdict": false
+    },
+    "E": {
+      "metric": "mean response token length",
+      "scope": "per round, all512 accepted responses including capped responses"
+    },
+    "F": {
+      "metric": "historical rollout q log-PPL = pooled mean tokenNLL",
+      "scope": "per round, four update statistics combined by their valid-token denominators",
+      "units": "nats",
+      "not_mean_of_sequence_PPLs": true
+    }
+  },
+  "source_public_files_sha256": {
+    "data/final-stability-600-650/training/optimizer_updates.csv": "b5b03470084656612650429002b2d1e5840158e8317ba83006b69fb9f269f235",
+    "data/final-stability-600-650/training/training_rounds.csv": "2d2f0006c6a40ea2049c99f2d0e2fcdb6e2ed8a04d573bd65406b82d0c9c3c33",
+    "data/final-stability-600-650/training/accepted_training.csv": "b07ef07b4b21abf91f7355cd5840a2e41bc900af39a32a15ecd821c319492187"
+  },
+  "native_source_audit_references": [
+    {
+      "logical_role": "native_negative_down_optimizer_updates_export",
+      "sha256": "10ecdf8429fa1288bb74be33e3c84086fc4b94102f9fb7ff104567cb93027dc8",
+      "availability": "Audit hash reference; private raw logs/files are not included in this supplement."
+    },
+    {
+      "logical_role": "native_negative_down_round_aggregate_export",
+      "sha256": "dbb2c12d2943e1fc7454c0685b7f7e2feb0ab35e83bc2acfb3459f5332f619a0",
+      "availability": "Audit hash reference; private raw logs/files are not included in this supplement."
+    },
+    {
+      "logical_role": "native_negative_down_accepted_50_round_export",
+      "sha256": "c0c87b8db3691fa58534f42effa82eec1fa4897fa2fbe3aae5bf7162a92d95e7",
+      "availability": "Audit hash reference; private raw logs/files are not included in this supplement."
+    },
+    {
+      "logical_role": "native_accepted_source_extraction_receipt",
+      "sha256": "ebdb3a64f93ef257badddc866b0ff20730d8e3de790640945e484379955cbd58",
+      "availability": "Audit hash reference; private raw logs/files are not included in this supplement."
+    },
+    {
+      "logical_role": "complete_native_200_update_six_evaluation_audit",
+      "sha256": "f41de6aeaf04410109a297ceb95da02257345fa08010fe4cc12068a3e56a3d61",
+      "availability": "Audit hash reference; private raw logs/files are not included in this supplement."
+    },
+    {
+      "logical_role": "unchanged_optimizer_log_SHA_bridge_before_after_final_checkpoint",
+      "sha256": "85517bf9a0d7aa5089a927c9550469bf877e9fee0187ea746a6d61df28b6b840",
+      "availability": "Audit hash reference; private raw logs/files are not included in this supplement."
+    },
+    {
+      "logical_role": "native_sufficient_statistics_reduction",
+      "sha256": "05a7ccac9d25196f264f9bd44cf52201a71f0fe9b4343e02d00ba912cd8ce269",
+      "availability": "Audit hash reference; private raw logs/files are not included in this supplement."
+    }
+  ],
+  "negative_down_native_optimizer_log_sha256_by_rank": [
+    "ab7804fdbda541787e6045965f5a4fb0e2fddb25f36cc4314b186009e03f5067",
+    "2dd5fc02de2b0ead80190e63c92e898eb5260ccdacdeca3b922b56c650a2b167",
+    "dd1df7b5216f2643d72ca793f4ca23841add941c24ab6c4321e99b2878298d2c",
+    "098b3279fc1dd0ec86afb5b4627458a7689e8363cc14b81737c4e2eece4cb216",
+    "a01489fbdacbe582c2d1384699b16c245f5ff282c3a568df5ddb8356c3759476",
+    "67af1a2af2ade3d10d0c6d03acf9e30cf55e7724c6aa750c6652a85fd61ea34f",
+    "af4f996a132d5adc6368fcc23c439bc157c3b69e8d7da1abb5c4adc864387b4d",
+    "e5f92d9ac4b468897a35ab90358b0ed20dfde5295c99cde19e066903c3a619db"
+  ],
+  "negative_down_original_accepted_text_metrics_sha256_by_round": {
+    "601": "64b3cb0688161e2ab8491c2cc1ab14ff26e856ca783c698fc776a3b31f034b1a",
+    "602": "2be43d4b2abb30a7fab97472e895aaabdda7898927d61868e52c97448019d3fb",
+    "603": "6d9e1eb034f16b7e77b9bfb6862c2dbce64ae8357fab7cfaa05db713711aa6be",
+    "604": "cfaab8d329ec159ad1bc1fba6ff832c12a71149e1035e8d9f2a67b9e7ef153e7",
+    "605": "988f7f73ba874ec22e3df3ce4c2f5f1cd54ee0aa2c7c23ffadecb9df7e9b40c4",
+    "606": "50b3b584f4824839d15197e59b917fb7dbb26be4a12bcc0265997251afdca43c",
+    "607": "292425cdbfabbeb21869e5ddb856d040fc9944c7269b407133549627c5a38ce9",
+    "608": "9310acb0456ec346b25483fe6270412ca4ac2addb7d16842766702895a467d30",
+    "609": "f4276515ae76941e828dc2e8f4a2f173ae2878a0da401c57a8702ff4d039f634",
+    "610": "a2c37dd008575d8c188a3a79952517c9054a152ed7767c4c270294f66316ab92",
+    "611": "4e502abeeb3ed6fea25bc51bcb454b616eea7ffc2e4a214e009b5f9ed584cb9a",
+    "612": "1c9a8abcdb50e3ee4eabf0e7e641e287262d746c6bc4f72573c2131460d5baa4",
+    "613": "08ac2e783d4f0e555b478bff00d4e437a1095401cadb4d574510ae72d45e3d30",
+    "614": "18e4826b83dd1b3dd1188f1b0bc4a774f296ced82fb29def026b05d7dceed4e7",
+    "615": "78e0a42934fdff13a73e8c34b4e352870629e0bddb813c6dfd6501afe85e01b7",
+    "616": "69986244528c9ef625ea0df6041dc99045ab52e326614466d175b5f529b93dbc",
+    "617": "9debb805b49173db634305b66f66d3237441067854d36de2f4ad247b8d7384d8",
+    "618": "4bbba7cce98734745a6ba3f22f56c3428920b0c7ab0dd3c9ac9d86f542ee14b4",
+    "619": "fa67543bb6fd5026a4e74c65b88c87f367fc507569f06ab56a9d56df19caed6c",
+    "620": "b34684bd627bbb4c34ce086d5c5ab09dad7c6e7da6dd9eafa984cd62f9e85829",
+    "621": "829344cc089a88049649ff649acdcf4f8097b42042ec10ede21fb0c72fe7c43b",
+    "622": "e75715405fc38e95fe0550c95f815e584d57729b98750b1b5eafa6517ec570f0",
+    "623": "7cc6db286198ae818c6c5f3403431db1ed20f22f205ac7e455ea063478e70c94",
+    "624": "e537311417f63416864dcd651b6701e0dec64817c3d3e8fe002bad26dde93300",
+    "625": "825bb215d4ab8be930a01cd0cf67cdfa73af84a43f2f0845e155872048c3b263",
+    "626": "916c30b68a7ec0d271f29df43582db443ccd0fdea54ddc770e5bb278e1cd1e26",
+    "627": "d99c72f92d783fb74baa81f823b74e8417df1ac5a2c6dce444736c8b79aa41c9",
+    "628": "c12d5d49b80f332c857088785d87f13fd52348eb12a44f90e54b74d5991459b7",
+    "629": "d3285efd8d268383f4635dcdf56ee39ba89af816d6da5c14ed602bb7a89c6f33",
+    "630": "fde74df8a11e9b072f2f5dfb5907fe1ec10d0e42ec549c21b27bebafe469e08c",
+    "631": "8ded25f818e42049813387b9da2a8c32140b8cd489c67d93e24572149d6ecbc6",
+    "632": "b689b50de9394b399f2dd56bf3f197b8f5ebe52e1662572eb47dd4da4b31ca13",
+    "633": "035bc4af2eee20fe61f8dddfda2a39a2eaca3aed49fa0f6233dc3663cb5ac596",
+    "634": "e353f04019372efa8445893e9e96d5332a2d5fb2263af2d465dab3a045b19c6b",
+    "635": "51ff71925300096ac11f26ee2a98b91cf5bcee7121ba2a82d6bd640d04bbc5fc",
+    "636": "5526c34225ac2be65e17ce08b6643ddea10518d3d1f5ce3f43e33eabe197e822",
+    "637": "b87135ef3c05659c5912a369f2642c82df5365f68b967f6eb2ee51a0c099b72d",
+    "638": "d8b70c1c003e901ecb5b2afbf7daa0e23bd0d3a3ff223ecb874182a870587c42",
+    "639": "a2eca576374c5d346597c60b5b5e4e29ad683cc0d92356144b3ad4df19de3577",
+    "640": "efee3629ab21a3332c26b84bc85bd6e647a669270da4d794dfdd3a69085b30d8",
+    "641": "d12e49e712097eebca6b28b80427bd91f99c3aca45b65b23657ca4f13420caab",
+    "642": "9603daa21998d7332082cd9688289dc060068c87f24be891c48c5446fa8e3732",
+    "643": "fc63e1337e21b10da39dccfb1c763513324b4f1a3968335de4f2f6599f14bb52",
+    "644": "19d185ad56c23b6a776a9bcfdaea852cf81097c4668be8c70b50b28f534c67d7",
+    "645": "ba89cde9181915accd42cfe15fe0282d47976880ee1b3c9658d4522203463815",
+    "646": "3c5f3e51969b238fbb69a5d76b741d83c781ac326ed1c3d5c41dbac41f403a8b",
+    "647": "d4d0bca155be7506d69d12134a17499b96307a30abf273ea82e8850fb24f6d61",
+    "648": "cff3251c8a7a93ececfa24c2cb4c660a3039ea5ad15d74ccf9f6d4f823042228",
+    "649": "e872dcc523b106841538f159132a2f1476d0c4bbbf8da2a5c0255380e6c51f01",
+    "650": "ceb411b59e6b66a47c2a185812ef36482961f47ad55189550d7912d96a4560eb"
+  },
+  "source_extraction_and_validation": [
+    "First four trajectories read from hash-verified already-published native CSVs.",
+    "Fifth optimizer statistics bound to complete native audit by identical8-rank log hashes before and after checkpoint650/evaluation.",
+    "Fifth text points extracted from original native accepted-training text_metrics.json aggregates, each matched against the50 hashes in the complete native audit; no detector recomputation.",
+    "Exact5x200 update coordinates and5x50 round coordinates,8-rank flags,512 responses per round and token totals were checked.",
+    "Each round q-NLL reconstructed from the four token-weighted native update values; mean length independently equals validtokens/512.",
+    "The public long CSV preserves all original preview CSV bytes; standalone renderer checks all3000 coordinates, no duplicates/missing points and denominator labels."
+  ],
+  "excluded_populations": [
+    "all-completed rollout candidates",
+    "private BBB offline candidate assessments",
+    "primary or secondary evaluation responses"
+  ],
+  "limitations": [
+    "One online training trajectory per method; no multi-seed replication or inference of causal relationships from aligned curves.",
+    "Repetition and garble candidates are different nonexclusive mechanical detectors.",
+    "Conditional mismatch d is distinct from NLL/log-PPL; neither is a parameter-gradient decomposition.",
+    "This supplement does not complete the missing methods, canonical candidate comparison or secondary endpoints."
+  ],
+  "preparation_history": {
+    "event": "private_native_preview_generated_and_checked_before_publication",
+    "preview_receipt_sha256": "022aef40b211900bbc0cd6b6ef07c02077f659e452e0d9d7820d064951355e56",
+    "publication_performed_at_preview_stage": false,
+    "preview_png_sha256": "16fbe13805d9cd0434644df5c66f365db7c624a3795c68504c57dc85dcd17a95",
+    "portable_render_png_matched_preview_in_preparation": true,
+    "meaning": "Historical preparation evidence, not an assertion about subsequent publication state."
+  },
+  "caption_zh": "五组均从600继续至650。A/B为每次优化器更新（每组200点），C–F为每轮实际入训数据（每组50点、每轮512条）；q log-PPL是按token汇总的平均NLL。d比较当前训练p与保存的rollout q，统计包含已mask位置，超阈值集合为空时记0。梯度使用symlog且保留所有真实峰值。重复/乱码为不同机械候选指标。每方法仅一条训练轨迹，不含全rollout候选或secondary评测，不能据图推断多seed稳定性或因果关系。",
+  "public_files_sha256": {
+    "data/final-stability-600-650/supplements/five_native_plot_points.csv": "410016f0f8ff5d5eb6cc82bbaf97edfa2ac5f57151086bd5471314eb3d68a342",
+    "data/final-stability-600-650/supplements/five_native_training.svg": "35ad2a791ced3d308483a981844c467d16779fdf64966c90a098280fac9c88d4",
+    "tools/render_five_native_training.py": "af1c19a3aa9d4916bb8af049112b3c22418e5bb6fd0fb79355a521091140ee98"
+  },
+  "redraw_command": "python tools/render_five_native_training.py",
+  "redraw_outputs": [
+    "data/final-stability-600-650/supplements/five_native_training.svg",
+    "data/final-stability-600-650/supplements/five_native_training.png"
+  ],
+  "initial_release_png_included": false,
+  "source_release_manifest_at_extraction": {
+    "repository_revision": "57cd165508312b97885bf333eca050d9349b5280",
+    "sha256": "e5cc3979eb66cc8a51850afcacd590ca7e9fc26203cb48e261aef749a0c11a19",
+    "scope": "Historical release manifest used to verify extraction sources; the manifest changes when this supplement is later published."
+  }
+}
