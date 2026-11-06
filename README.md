@@ -93,3 +93,7 @@ python tools/render_investigation_figures.py
 
 运行 `python tools/check_final_stability_progress.py` 核对已完成部分。严格八组最终验收尚未通过；原45项研究单元与52项报告claims保留，S16继续逐组更新。
 <!-- final-stability-progress:end -->
+
+<!-- negative-down-native-notice:start -->
+第五组的50轮训练与六次主评测现已完成，次要评测和全量候选统计待补；见[Negative-down mask 独立补充](reports/rl-length-gradient-investigation.md#negative-down-native-supplement)。上面的四组完整比较快照保持原范围。
+<!-- negative-down-native-notice:end -->

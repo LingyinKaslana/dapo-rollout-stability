@@ -4,6 +4,10 @@
 
 本轮要回答两个问题：降低 token 失配的训练权重，能否持续减轻后续梯度异常；只处理重复位置，能否保留这种收益，同时少干扰正常解题。每组从原 full8 主线同一个完整第 600 轮状态出发，训练至第 650 轮，各 50 轮、200 次 Adam 更新。八组是八种方法各一条在线轨迹，不是八次重复实验。
 
+<!-- negative-down-native-notice:start -->
+第五组的50轮训练与六次主评测现已完成，次要评测和全量候选统计待补；见[Negative-down mask 独立补充](../reports/rl-length-gradient-investigation.md#negative-down-native-supplement)。上面的四组完整比较快照保持原范围。
+<!-- negative-down-native-notice:end -->
+
 ## 共同设置与干预
 
 模型为 Qwen3-8B-Base，每题 8 个回答，每轮收集 64 个按原准确率规则接受的组、512 个入训回答，再做四次各 128 个回答的全局更新。回答上限 8,192 token，学习率为 $5\times10^{-7}$，全局梯度裁剪阈值为 1。优化器是 AdamW，$\beta=(0.9,0.999)$、$\epsilon=10^{-8}$、weight decay 为 0.01；这些值从八个 rank 保存的 optimizer metadata 中核对。恢复 FP32 主参数、一二阶矩及第 2,400 次更新计数、scheduler 和已保存的随机状态；训练计算为 BF16。原始奖励、组优势、PPO clipping 与 dual clipping、有效 token 总分母和上下文均保留。
