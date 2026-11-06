@@ -1,0 +1,172 @@
+{
+  "complete": true,
+  "arm": "abs_gap_mask",
+  "study_rounds": [
+    601,
+    650
+  ],
+  "population": "newly_completed_training_rollout_candidates",
+  "not_heldout_or_fixed_checkpoint_accuracy": true,
+  "candidate_responses": 52192,
+  "candidate_groups": 6524,
+  "candidate_tokens": 119370002,
+  "candidate_correct": 29360,
+  "candidate_accuracy": 0.5625383200490497,
+  "length_mean": 2287.1321658491725,
+  "length_median": 1211.0,
+  "candidate_counts": {
+    "strict_repetition": 1535,
+    "normalized_text_cycle128_any": 2587,
+    "normalized_text_cycle128_alphabetic": 2511,
+    "normalized_text_cycle128_numeric": 0,
+    "normalized_text_cycle128_other": 84,
+    "exact_confirmed_repeat_any": 1811,
+    "noisy_repeat_primary_any": 4123,
+    "noisy_repeat_strict_any": 1941,
+    "repeat_strict_union_any": 2021,
+    "gibberish_candidate": 8521,
+    "response_hit_token_cap": 6983,
+    "first_word_alright": 19516,
+    "first_word_to": 26181,
+    "has_think_tag_prefix": 0
+  },
+  "candidate_fractions": {
+    "strict_repetition": 0.029410637645616185,
+    "normalized_text_cycle128_any": 0.04956698344573881,
+    "normalized_text_cycle128_alphabetic": 0.04811082158185163,
+    "normalized_text_cycle128_numeric": 0.0,
+    "normalized_text_cycle128_other": 0.001609442060085837,
+    "exact_confirmed_repeat_any": 0.03469880441446965,
+    "noisy_repeat_primary_any": 0.07899678111587982,
+    "noisy_repeat_strict_any": 0.03718960760269773,
+    "repeat_strict_union_any": 0.03872240956468424,
+    "gibberish_candidate": 0.1632625689760883,
+    "response_hit_token_cap": 0.1337944512568976,
+    "first_word_alright": 0.3739270386266094,
+    "first_word_to": 0.5016286020846107,
+    "has_think_tag_prefix": 0.0
+  },
+  "group_class_counts": {
+    "mixed": 3142,
+    "all_correct": 1951,
+    "all_wrong": 1431
+  },
+  "group_correct_histogram": {
+    "0": 1431,
+    "1": 448,
+    "2": 375,
+    "3": 348,
+    "4": 340,
+    "5": 387,
+    "6": 493,
+    "7": 751,
+    "8": 1951
+  },
+  "rollout_q": {
+    "token_count": 119370002,
+    "token_coverage_fraction": 1.0,
+    "missing_response_count": 0,
+    "mean_NLL_nats_log_PPL": 2.955138139065825,
+    "PPL_exp_pooled_mean_NLL": 19.204375411087835,
+    "NLL_RMS_nats": 4.589298280202175,
+    "NLL_L2_nats": 50141.103315537184,
+    "sampled_q_confidence_counts": {
+      "q_ge_0_9999_tokens": 9159240,
+      "q_ge_0_99_tokens": 25492545,
+      "q_ge_0_9_tokens": 37168724,
+      "q_ge_0_999_tokens": 16903892
+    },
+    "sampled_q_confidence_fractions": {
+      "q_ge_0_9999_tokens": 0.07672983033040412,
+      "q_ge_0_99_tokens": 0.2135590564872404,
+      "q_ge_0_9_tokens": 0.311374075372806,
+      "q_ge_0_999_tokens": 0.14160921267304663
+    },
+    "actor_p_measured": false,
+    "actor_minus_rollout_d_measured": false,
+    "definition": "Original saved rollout conditional q of observed tokens, pooled by tokens; generated response population mixes steps/policy versions."
+  },
+  "generation": {
+    "cross_weight_responses": 17084,
+    "cross_weight_response_fraction": 0.3273298589822195,
+    "mean_generation_segments": 1.3917458614347027,
+    "token_weighted_policy_age_at_completion": 0.8736415535956847
+  },
+  "all_candidates_independently_assessed": false,
+  "all_candidates_have_text_statistics": true,
+  "cached_rows": 24984,
+  "original_detector_miss_rows": 27208,
+  "cache_hit_values_are_independent_recomputations": false,
+  "miss_detector_values_independently_recomputed_in_closing_audit": false,
+  "cache_provenance": {
+    "namespace_sha256": "95af4250f8f460e66b38d434280c8e915fd458d76361300a33189d68fb43b830",
+    "cache_index_sha256": "43558fd2b22a55c9d89cd697cbc301bcbdc38dd4249e98f8359bc71c50efab42",
+    "aggregate_summary_sha256": "60fc4505623095c21a9ff778e3001df25fee356ec4c119d60f1cd19a243f69a8",
+    "cache_hit_rows": 24984,
+    "original_pool_miss_rows": 27208,
+    "cache_provenance_receipt_sha256": "faa92e9a27f95b9c8611099f1bb17e3dd5f90f0fbfdea9e674bbdb429faa68d5",
+    "current_raw_q_and_age_independently_verified": true,
+    "cache_hits_are_independent_recomputations": false
+  },
+  "CPU_wall_seconds": 7006.573831380927,
+  "CPU_wall_seconds_scope": "Entire v5 cached-statistics assessment invocation, including scheduling and IO. Hits reuse same-arm accepted pure fields; misses use the original frozen detector. Original per-step CPU_seconds are preserved, and this is not an optimized-throughput benchmark.",
+  "empty_completion_steps": [
+    601,
+    603,
+    605,
+    615,
+    617,
+    627,
+    631,
+    633,
+    648,
+    650
+  ],
+  "accepted_population_accounting": {
+    "accepted_uses": 25600,
+    "matched_new_completions": 24984,
+    "matched_all42_pure_fields_equal": true,
+    "pure_field_equalities": 1049328,
+    "mismatch_identities": 0,
+    "inherited_ready_at600": {
+      "source_ready_groups": 77,
+      "source_ready_responses": 616,
+      "unmatched_exactly_source600_ready_multiset": true,
+      "source_ready_consumed_in_training_steps": {
+        "601": 512,
+        "602": 104
+      },
+      "unmatched_beyond_source_ready": 0,
+      "source_ready_missing_from_unmatched": 0,
+      "source_ready_also_in_new_completions": 0,
+      "source_step": 600,
+      "source_data_sha256": "c5773bd57f32d0b831d728612eb70ecd1dc7acebea7486414bcca2015e44a073",
+      "source_ready_private_proof_sha256": "fbe08e9d9ab134995c8b9bd4fe5053320b93bfa37a6969bf0a7dec10a53428dc",
+      "abs_gap_mask_lineage_proof_sha256": "cfa6f3ae599c385188296ec203b10d3ad3f69936b2735b33c0240b1ebc9673a1",
+      "direct_original_ID_proof": true,
+      "scope": "Original source600 ready-ID proof is reused; abs_gap_mask raw gzip and original token IDs are independently reverified. Other new completions may still inherit partial prefixes."
+    },
+    "newly_completed_not_trained_in601_650": {
+      "all_correct": 15608,
+      "all_wrong": 11448,
+      "mixed": 152
+    },
+    "completed_mixed_groups_not_trained_in_window": 19,
+    "untrained_whole_groups": 3401,
+    "untrained_groups_all_exactly8": true
+  },
+  "comparison_scope": "Group UID plus original prompt/response int64LE byte SHA, retaining multiplicities. Matched rows agree on all42 pure detector statistics and available mask counts, not full token-mask vectors. For cached hits this verifies source identity and reuse, not a new independent detector computation. Miss detector values were not rerun in the closing audit. No qid-only matches.",
+  "observed_first_word_is_not_model_probability": true,
+  "cycle_and_garble_are_mechanical_candidates_not_semantic_verdicts": true,
+  "closing_audit_recomputed_detector": false,
+  "GPU_actions": 0,
+  "source_receipt_sha256": {
+    "all_completed_population_summary.json": "4e5429ea1a036296ad1d68eeecb50131f58c6153b3d63610cc322ebae5c33530",
+    "accepted_completed_identity_join.json": "42852ffe8c2519a6722ed799da81c9d7ba5451074f2c2da0911f1b256a5f01be",
+    "ABS_GAP_MASK_READY_LINEAGE.json": "cfa6f3ae599c385188296ec203b10d3ad3f69936b2735b33c0240b1ebc9673a1",
+    "COMPLETED_TRANSACTION_INDEPENDENT_REVIEW.json": "253168f3be6595ed0a6591f703c7a905fb8b7374832f61d4381d0a0dda696765",
+    "CACHED_PROVENANCE_AUDIT.json": "faa92e9a27f95b9c8611099f1bb17e3dd5f90f0fbfdea9e674bbdb429faa68d5"
+  },
+  "assessment_complete_sha256": "4f88e70cee4ce4375062cceea3379129b140ffb0223f4ecf633edb23397501e4",
+  "unix": 1793958876.859724
+}

@@ -4,10 +4,12 @@
   "status": "in_progress",
   "status_label": "逐组更新；4/8训练完成",
   "chapter": "training-stability",
-  "finding": "四组各完成50轮。两种TIS抑制大梯度；absolute-gap mask已按固定p0条件执行，仍有梯度峰值，当前准确率差区间跨零。前三组候选全量齐全，第四组仅601–607；单轨迹与未校正比较限制保留。",
+  "finding": "本次仅补齐第四组候选；已纳入四组的入训与候选均覆盖全50轮，800次更新、24次主评测及五个次要端点沿用既有结果。整个八组实验仍未完成，单轨迹与未校正比较限制保留。",
   "limitations": [
-    "单在线轨迹；七种比较未校正。",
-    "候选文本未齐全，缺失不填零；两套评测面板分开。"
+    "每种方法一条在线轨迹；七种比较未校正。",
+    "已纳入四组候选均为50/50轮，其余四组尚未纳入；整体八组仍未完成。",
+    "累计训练候选不是固定checkpoint配对评测；候选只保存q，没有actor p/d。",
+    "缓存命中是来源核验后的纯文本统计复用，不是独立重新检测。"
   ],
   "source_fingerprints": [
     {
@@ -37,6 +39,10 @@
     {
       "artifact_name": "baseline_candidate_closure.json",
       "sha256": "0d85bb56f931f65d7f4a127404b468b6d6994f1fbcb80f2bd55bcfc47bdb3408"
+    },
+    {
+      "artifact_name": "abs_gap_mask_candidate_closure.json",
+      "sha256": "26f9f19d69f8bc5e5d4a6a781d27ba2cc4ee5713316b2e785a8717fa0639e16a"
     }
   ],
   "results": {
@@ -58,51 +64,7 @@
       "baseline": [],
       "full_tis": [],
       "negative_tis": [],
-      "abs_gap_mask": [
-        608,
-        609,
-        610,
-        611,
-        612,
-        613,
-        614,
-        615,
-        616,
-        617,
-        618,
-        619,
-        620,
-        621,
-        622,
-        623,
-        624,
-        625,
-        626,
-        627,
-        628,
-        629,
-        630,
-        631,
-        632,
-        633,
-        634,
-        635,
-        636,
-        637,
-        638,
-        639,
-        640,
-        641,
-        642,
-        643,
-        644,
-        645,
-        646,
-        647,
-        648,
-        649,
-        650
-      ]
+      "abs_gap_mask": []
     },
     "comparison": {
       "baseline": {
@@ -137,7 +99,8 @@
     "candidate_closure_files": {
       "baseline": "baseline_candidate_closure.json",
       "full_tis": "full_tis_candidate_closure.json",
-      "negative_tis": "negative_tis_candidate_closure.json"
+      "negative_tis": "negative_tis_candidate_closure.json",
+      "abs_gap_mask": "abs_gap_mask_candidate_closure.json"
     },
     "additional_public_audits": [
       "abs_gap_mask_round628_anchor_current.json",
@@ -145,5 +108,5 @@
     ]
   },
   "public_data": "data/final-stability-600-650",
-  "snapshot_utc": "2026-11-06 08:07 UTC"
+  "snapshot_utc": "2026-11-06 10:01 UTC"
 }
