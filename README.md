@@ -85,9 +85,9 @@ python tools/render_investigation_figures.py
 <!-- final-stability-progress:start -->
 ## 新增：600→650八组稳定性实验（逐组更新）
 
-**训练已完成2/8组：baseline、full TIS；次要评测3/9终点。** 全量rollout文本统计尚未完成。Full TIS将这条轨迹的最大裁剪前梯度从142.31降到0.915；固定128题面板正确率为63.28%，baseline为66.99%，差值区间跨零，尚无明确解题收益。其余方法逐组完成后追加。
+**已纳入3/8组训练：baseline、full TIS、negative TIS；次要评测4/9终点。** 两种TIS均抑制了大梯度，negative TIS峰值1.114、200次更新仅一次超过1。它在固定128题面板比baseline高3.91个百分点，95%区间[+0.20,+7.62]；这是单训练轨迹、未校正多重比较的初步结果，开头模式与长度也不同，尚不能称稳定赢家。Full TIS全量55,448条候选已统计；baseline与negative TIS的候选文本统计仍有缺口。
 
-[逐组实验与曲线](experiments/final-stability-600-650.md) · [报告更新](reports/rl-length-gradient-investigation.md#84-同一600状态的八组对照首批两组已完成) · [数据状态](data/final-stability-600-650/manifest.json) · [损失与检测实现](reference/stability/README.md)
+[逐组实验与曲线](experiments/final-stability-600-650.md) · [报告更新](reports/rl-length-gradient-investigation.md#final-stability-600-650) · [数据状态](data/final-stability-600-650/manifest.json) · [损失与检测实现](reference/stability/README.md)
 
-运行 `python tools/check_final_stability_progress.py` 可核对当前已完成部分；严格的八组最终验收仍未通过、也未宣称通过。原45个研究单元保留，本轮新增S16一个研究单元，八种方法各一条轨迹。
+运行 `python tools/check_final_stability_progress.py` 核对已完成部分；严格八组最终验收仍未通过、也未宣称通过。原45个研究单元保留，本轮新增S16一个研究单元，八种方法各一条轨迹。
 <!-- final-stability-progress:end -->

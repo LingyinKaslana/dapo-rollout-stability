@@ -115,5 +115,5 @@ TIS 在这里按 token 使用截断的重要性权重（上限 2）调节旧 rol
 <!-- final-stability-progress:start -->
 ## 600→650逐组对照更新
 
-[新的八组实验](../experiments/final-stability-600-650.md)当前完成baseline/full TIS两组。两组都从同一完整600恢复；full TIS最大梯度0.915，对照142.31，但固定128题次要面板的正确率差区间仍跨零。每组完成后更新，全部方法与全量rollout统计齐全后再做总分析。
+[新的八组实验](../experiments/final-stability-600-650.md)当前纳入baseline、full TIS、negative TIS三组。两种TIS都抑制大梯度；negative TIS次要面板的初步正确率差为+3.91个百分点、区间[+0.20,+7.62]，但单轨迹、未校正多重比较与生成模式变化限制了结论。Full TIS的55,448条新完成候选已全量对账，其余候选文本统计尚有缺口。全部方法与统计齐全后再做总分析。
 <!-- final-stability-progress:end -->

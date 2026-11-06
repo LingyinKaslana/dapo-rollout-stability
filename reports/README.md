@@ -7,5 +7,5 @@
 <!-- final-stability-progress:start -->
 ## 按组补充的稳定性实验
 
-[报告第8.4节](rl-length-gradient-investigation.md#84-同一600状态的八组对照首批两组已完成)与[实验记录](../experiments/final-stability-600-650.md)同步更新；当前2/8组训练完成，统计进度单独披露。
+[报告第8.4节](rl-length-gradient-investigation.md#final-stability-600-650)与[实验记录](../experiments/final-stability-600-650.md)同步更新；当前3/8组训练、4/9次要评测纳入，候选文本统计进度单独披露。
 <!-- final-stability-progress:end -->

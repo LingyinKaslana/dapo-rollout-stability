@@ -2,7 +2,7 @@
 
 [最新稳定性聚合数据](investigation/README.md)。
 
-- [catalog.json](catalog.json)：45 个研究单元与状态。
+- [catalog.json](catalog.json)：原45个研究单元与新增S16，共46项及其状态。
 - [evidence](evidence)：逐项结果、限制和原始归档 SHA256。
 - [eight-validation.csv](eight-validation.csv)：full8 固定 1021 道 DeepMath × 4 的验证聚合。
 - [eight-training.csv](eight-training.csv)：同一原始 full8 run 的训练指标。
@@ -15,5 +15,5 @@
 <!-- final-stability-progress:start -->
 ## 最后一批八组对照
 
-[final-stability-600-650](final-stability-600-650/manifest.json)按已完成组增量发布。当前2/8训练完成、次要评测3/9；全量rollout文本统计待补。训练原始聚合CSV保留SHA，图为标有partial的CSV重绘；发布清单记录摘要的可审计转换。
+[final-stability-600-650](final-stability-600-650/manifest.json)按已完成组增量发布。当前3/8训练完成、次要评测4/9；全量候选文本统计为baseline27/50、full TIS50/50、negative TIS0/50。训练聚合CSV保留原SHA，图为标有partial的CSV重绘；发布清单记录摘要转换。Full TIS的[候选来源对账](final-stability-600-650/full_tis_candidate_closure.json)单独列出，局部complete不代表八组研究完成。
 <!-- final-stability-progress:end -->

@@ -3,10 +3,10 @@
   "available_endpoints": [
     "source600",
     "baseline_650",
-    "full_tis_650"
+    "full_tis_650",
+    "negative_tis_650"
   ],
   "missing_endpoints": [
-    "negative_tis_650",
     "abs_gap_mask_650",
     "negative_down_mask_650",
     "repeat_negative_down_mask_650",
@@ -85,6 +85,30 @@
       "tokens": 1355.888671875,
       "log_PPL_q": 1.7579966891098833,
       "q_ge_0999_fraction": 0.041850384727284834
+    },
+    {
+      "endpoint": "negative_tis_650",
+      "step": 650,
+      "questions": 128,
+      "responses": 512,
+      "samples_per_question": 4,
+      "accuracy": 0.708984375,
+      "unknown": 0.005859375,
+      "strict_repetition": 0.0,
+      "normalized_text_cycle128_any": 0.0,
+      "normalized_text_cycle128_alphabetic": 0.0,
+      "normalized_text_cycle128_numeric": 0.0,
+      "normalized_text_cycle128_other": 0.0,
+      "repeat_strict_union_any": 0.0,
+      "noisy_repeat_primary_any": 0.03515625,
+      "noisy_repeat_strict_any": 0.0,
+      "gibberish_candidate": 0.001953125,
+      "response_hit_token_cap": 0.001953125,
+      "first_word_alright": 0.349609375,
+      "first_word_to": 0.42578125,
+      "tokens": 1557.017578125,
+      "log_PPL_q": 1.3250196413974697,
+      "q_ge_0999_fraction": 0.09240985530781631
     }
   ],
   "prompt_only_probabilities": [
@@ -114,15 +138,24 @@
       "P_Alright": 0.06747855444293549,
       "P_To": 0.8296881703427061,
       "P_Let": 0.03784326300956309
+    },
+    {
+      "endpoint": "negative_tis_650",
+      "step": 650,
+      "questions": 128,
+      "backend": "HF BF16 flash_attention_2",
+      "P_Alright": 0.3624572690205241,
+      "P_To": 0.40866092253418174,
+      "P_Let": 0.07390834500620258
     }
   ],
   "available_cohort_endpoints": [
     "source600",
     "baseline_650",
-    "full_tis_650"
+    "full_tis_650",
+    "negative_tis_650"
   ],
   "missing_cohort_endpoints": [
-    "negative_tis_650",
     "abs_gap_mask_650",
     "negative_down_mask_650",
     "repeat_negative_down_mask_650",
@@ -539,6 +572,210 @@
       "multiplicity_adjusted": false
     },
     {
+      "reference": "source600",
+      "endpoint": "negative_tis_650",
+      "metric": "accuracy",
+      "mean_difference": 0.015625,
+      "ci95_low": -0.01953125,
+      "ci95_high": 0.05078125,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "negative_tis_650",
+      "metric": "unknown",
+      "mean_difference": 0.0,
+      "ci95_low": -0.009765625,
+      "ci95_high": 0.009765625,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "negative_tis_650",
+      "metric": "strict_repetition",
+      "mean_difference": 0.0,
+      "ci95_low": 0.0,
+      "ci95_high": 0.0,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "negative_tis_650",
+      "metric": "normalized_text_cycle128_any",
+      "mean_difference": 0.0,
+      "ci95_low": 0.0,
+      "ci95_high": 0.0,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "negative_tis_650",
+      "metric": "normalized_text_cycle128_alphabetic",
+      "mean_difference": 0.0,
+      "ci95_low": 0.0,
+      "ci95_high": 0.0,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "negative_tis_650",
+      "metric": "normalized_text_cycle128_numeric",
+      "mean_difference": 0.0,
+      "ci95_low": 0.0,
+      "ci95_high": 0.0,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "negative_tis_650",
+      "metric": "normalized_text_cycle128_other",
+      "mean_difference": 0.0,
+      "ci95_low": 0.0,
+      "ci95_high": 0.0,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "negative_tis_650",
+      "metric": "repeat_strict_union_any",
+      "mean_difference": 0.0,
+      "ci95_low": 0.0,
+      "ci95_high": 0.0,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "negative_tis_650",
+      "metric": "noisy_repeat_primary_any",
+      "mean_difference": 0.009765625,
+      "ci95_low": -0.0078125,
+      "ci95_high": 0.02734375,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "negative_tis_650",
+      "metric": "noisy_repeat_strict_any",
+      "mean_difference": 0.0,
+      "ci95_low": 0.0,
+      "ci95_high": 0.0,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "negative_tis_650",
+      "metric": "gibberish_candidate",
+      "mean_difference": -0.00390625,
+      "ci95_low": -0.01171875,
+      "ci95_high": 0.00390625,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "negative_tis_650",
+      "metric": "response_hit_token_cap",
+      "mean_difference": -0.005859375,
+      "ci95_low": -0.017578125,
+      "ci95_high": 0.001953125,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "negative_tis_650",
+      "metric": "first_word_alright",
+      "mean_difference": -0.494140625,
+      "ci95_low": -0.546875,
+      "ci95_high": -0.439453125,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "negative_tis_650",
+      "metric": "first_word_to",
+      "mean_difference": 0.298828125,
+      "ci95_low": 0.25390625,
+      "ci95_high": 0.345703125,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "negative_tis_650",
+      "metric": "tokens",
+      "mean_difference": -404.30078125,
+      "ci95_low": -525.67900390625,
+      "ci95_high": -288.525537109375,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "negative_tis_650",
+      "metric": "log_PPL_q",
+      "mean_difference": -0.3148821460914552,
+      "ci95_low": -0.3735665535033719,
+      "ci95_high": -0.2542680655485023,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "negative_tis_650",
+      "metric": "q_ge_0999_fraction",
+      "mean_difference": 0.02324392222403123,
+      "ci95_low": 0.01926610419961992,
+      "ci95_high": 0.027295912133284972,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
       "reference": "baseline_650",
       "endpoint": "full_tis_650",
       "metric": "accuracy",
@@ -741,6 +978,210 @@
       "samples_per_question": 4,
       "bootstrap_draws": 10000,
       "multiplicity_adjusted": false
+    },
+    {
+      "reference": "baseline_650",
+      "endpoint": "negative_tis_650",
+      "metric": "accuracy",
+      "mean_difference": 0.0390625,
+      "ci95_low": 0.001953125,
+      "ci95_high": 0.076171875,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "baseline_650",
+      "endpoint": "negative_tis_650",
+      "metric": "unknown",
+      "mean_difference": 0.00390625,
+      "ci95_low": -0.00390625,
+      "ci95_high": 0.01171875,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "baseline_650",
+      "endpoint": "negative_tis_650",
+      "metric": "strict_repetition",
+      "mean_difference": 0.0,
+      "ci95_low": 0.0,
+      "ci95_high": 0.0,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "baseline_650",
+      "endpoint": "negative_tis_650",
+      "metric": "normalized_text_cycle128_any",
+      "mean_difference": -0.001953125,
+      "ci95_low": -0.005859375,
+      "ci95_high": 0.0,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "baseline_650",
+      "endpoint": "negative_tis_650",
+      "metric": "normalized_text_cycle128_alphabetic",
+      "mean_difference": -0.001953125,
+      "ci95_low": -0.005859375,
+      "ci95_high": 0.0,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "baseline_650",
+      "endpoint": "negative_tis_650",
+      "metric": "normalized_text_cycle128_numeric",
+      "mean_difference": 0.0,
+      "ci95_low": 0.0,
+      "ci95_high": 0.0,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "baseline_650",
+      "endpoint": "negative_tis_650",
+      "metric": "normalized_text_cycle128_other",
+      "mean_difference": 0.0,
+      "ci95_low": 0.0,
+      "ci95_high": 0.0,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "baseline_650",
+      "endpoint": "negative_tis_650",
+      "metric": "repeat_strict_union_any",
+      "mean_difference": -0.001953125,
+      "ci95_low": -0.005859375,
+      "ci95_high": 0.0,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "baseline_650",
+      "endpoint": "negative_tis_650",
+      "metric": "noisy_repeat_primary_any",
+      "mean_difference": -0.01953125,
+      "ci95_low": -0.048828125,
+      "ci95_high": 0.005859375,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "baseline_650",
+      "endpoint": "negative_tis_650",
+      "metric": "noisy_repeat_strict_any",
+      "mean_difference": -0.001953125,
+      "ci95_low": -0.005859375,
+      "ci95_high": 0.0,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "baseline_650",
+      "endpoint": "negative_tis_650",
+      "metric": "gibberish_candidate",
+      "mean_difference": -0.05859375,
+      "ci95_low": -0.08203125,
+      "ci95_high": -0.037109375,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "baseline_650",
+      "endpoint": "negative_tis_650",
+      "metric": "response_hit_token_cap",
+      "mean_difference": -0.015625,
+      "ci95_low": -0.02734375,
+      "ci95_high": -0.00390625,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "baseline_650",
+      "endpoint": "negative_tis_650",
+      "metric": "first_word_alright",
+      "mean_difference": 0.158203125,
+      "ci95_low": 0.1171875,
+      "ci95_high": 0.201171875,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "baseline_650",
+      "endpoint": "negative_tis_650",
+      "metric": "first_word_to",
+      "mean_difference": -0.2578125,
+      "ci95_low": -0.302734375,
+      "ci95_high": -0.212890625,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "baseline_650",
+      "endpoint": "negative_tis_650",
+      "metric": "tokens",
+      "mean_difference": 221.544921875,
+      "ci95_low": 108.72060546875,
+      "ci95_high": 332.1513183593749,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "baseline_650",
+      "endpoint": "negative_tis_650",
+      "metric": "log_PPL_q",
+      "mean_difference": 0.21588315248115206,
+      "ci95_low": 0.1484560071149815,
+      "ci95_high": 0.28246672265396383,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "baseline_650",
+      "endpoint": "negative_tis_650",
+      "metric": "q_ge_0999_fraction",
+      "mean_difference": -0.0972755629897887,
+      "ci95_low": -0.10864242667699194,
+      "ci95_high": -0.08675679638758384,
+      "questions": 128,
+      "samples_per_question": 4,
+      "bootstrap_draws": 10000,
+      "multiplicity_adjusted": false
     }
   ],
   "paired_prompt_probability_contrasts": [
@@ -811,6 +1252,39 @@
       "multiplicity_adjusted": false
     },
     {
+      "reference": "source600",
+      "endpoint": "negative_tis_650",
+      "target_token": "Alright",
+      "mean_probability_difference": -0.47092347193029127,
+      "ci95_low": -0.5086309036399144,
+      "ci95_high": -0.43113798601898456,
+      "questions": 128,
+      "backend": "HF BF16 flash_attention_2",
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "negative_tis_650",
+      "target_token": "To",
+      "mean_probability_difference": 0.2814134161922084,
+      "ci95_low": 0.25340550705890336,
+      "ci95_high": 0.30979469804651666,
+      "questions": 128,
+      "backend": "HF BF16 flash_attention_2",
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "source600",
+      "endpoint": "negative_tis_650",
+      "target_token": "Let",
+      "mean_probability_difference": 0.05341629982615359,
+      "ci95_low": 0.04500888719099692,
+      "ci95_high": 0.06211497755178641,
+      "questions": 128,
+      "backend": "HF BF16 flash_attention_2",
+      "multiplicity_adjusted": false
+    },
+    {
       "reference": "baseline_650",
       "endpoint": "full_tis_650",
       "target_token": "Alright",
@@ -842,6 +1316,39 @@
       "questions": 128,
       "backend": "HF BF16 flash_attention_2",
       "multiplicity_adjusted": false
+    },
+    {
+      "reference": "baseline_650",
+      "endpoint": "negative_tis_650",
+      "target_token": "Alright",
+      "mean_probability_difference": 0.18900506749355372,
+      "ci95_low": 0.1568307073514575,
+      "ci95_high": 0.22242324146143913,
+      "questions": 128,
+      "backend": "HF BF16 flash_attention_2",
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "baseline_650",
+      "endpoint": "negative_tis_650",
+      "target_token": "To",
+      "mean_probability_difference": -0.28389727052126545,
+      "ci95_low": -0.31348495536512927,
+      "ci95_high": -0.25374997303479174,
+      "questions": 128,
+      "backend": "HF BF16 flash_attention_2",
+      "multiplicity_adjusted": false
+    },
+    {
+      "reference": "baseline_650",
+      "endpoint": "negative_tis_650",
+      "target_token": "Let",
+      "mean_probability_difference": 0.05538685427745804,
+      "ci95_low": 0.046440213684218176,
+      "ci95_high": 0.06450684464984988,
+      "questions": 128,
+      "backend": "HF BF16 flash_attention_2",
+      "multiplicity_adjusted": false
     }
   ],
   "bootstrap": {
@@ -852,7 +1359,7 @@
     "draws": 10000,
     "seed": 20261106
   },
-  "baseline_treatment_comparisons": 1,
+  "baseline_treatment_comparisons": 2,
   "unknown_grades_retained": true,
   "small_cohorts_retained": true,
   "cohort_analysis_descriptive": true,
@@ -1999,7 +2506,18 @@
     "generations/full_tis_650/worker_00/metadata.json": "c22bff16cdecb4c35921999a156cc7ad422f52c864bd925582894ed662df957d",
     "generations/full_tis_650/worker_00/live_runtime_audit.json": "976c1c7f4611213675364f5236705a09f3606c56571da2a3e44ab9640f308ab4",
     "models/full_tis_650/ENDPOINT_READY.json": "bcf080b07575c5cdc40fb8cb14e4133c72f32316937fde23ed5942ee082225e5",
-    "cohort_breakdowns/full_tis_650.json": "cdec34e9294b128fe667a29e68559774c74af6428b1e2e0cc2418a30b99ebed6"
+    "cohort_breakdowns/full_tis_650.json": "cdec34e9294b128fe667a29e68559774c74af6428b1e2e0cc2418a30b99ebed6",
+    "control/negative_tis_650_COMPLETE.json": "6cdb486e64f2af4b24b48cb228c945d8bc9983391b769d8db90345424e8ac069",
+    "control/dependencies/negative_tis_650_completed.json": "c104d366cf8cdfadd2eadd7f37a52cc20a956cef2f3445c56229c510a364cf5e",
+    "assessments/negative_tis_650/summary.json": "e55b6c527f5984f9a06e02754fbd4b7fe3213bc818947b3873394b2aa5363319",
+    "assessments/negative_tis_650/per_question.json": "eb93d029ed6ca04b0ca3fc33d16cb4c9257aa57d60b491f65d813ed11c1edcc5",
+    "assessments/negative_tis_650/per_response.json.gz": "b844292a9f3aed6d6637aac30b76608785454c6d3e3d81bf6c89dbc34e10914e",
+    "first_token/negative_tis_650.json": "ad442ff23de950b7c6a10f11c10660f120f585b91f193687344ed9f03f808c10",
+    "generations/negative_tis_650/worker_00/COMPLETE.json": "e3d727e3b8e7efda37164bd26a4df53dcade621aae0e8df148df463dfe404f80",
+    "generations/negative_tis_650/worker_00/metadata.json": "8740689268759c0dc7e3bf427e8562c3edeec795185262e29ae280440df656b3",
+    "generations/negative_tis_650/worker_00/live_runtime_audit.json": "976c1c7f4611213675364f5236705a09f3606c56571da2a3e44ab9640f308ab4",
+    "models/negative_tis_650/ENDPOINT_READY.json": "f89c1d8d813d71e6ccc0480e464ce35bb9654f6d5597ee3d5a20da736b806890",
+    "cohort_breakdowns/negative_tis_650.json": "0f5469fe14aada3b7bc50fded6419c042d3ea268a86eadf26c232a961381b837"
   },
   "code_sha256": "d90a89db967f8e4f59bac8a4d2557d18fb1e73e33b7014bcdd47db8f0beb3caf",
   "limitations": [
@@ -2010,5 +2528,5 @@
     "Primary64 is all DeepMath, secondary128 mixes DeepMath,Math500 and competition problems; do not pool their point estimates.",
     "HF prompt-only token probabilities are separate from vLLM first-word frequencies and sampled chosen-logq."
   ],
-  "updated_unix": 1793929516.2631397
+  "updated_unix": 1793936597.4566386
 }

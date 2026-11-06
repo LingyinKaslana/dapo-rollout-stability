@@ -109,7 +109,7 @@ def render(source, output, allow_partial=False):
                     [math.nan if v is None else v for v in y],
                     label=LABELS[arm], color=COLORS[arm],
                     lw=1.8 if arm == 'baseline' else 1.2,
-                    marker='o' if len(selected) <= 6 else None, markersize=3)
+                    marker='o', markersize=3 if len(selected) <= 6 else 2)
         if log:
             ax.set_yscale('symlog', linthresh=1.)
         if values and min(values) >= 0:

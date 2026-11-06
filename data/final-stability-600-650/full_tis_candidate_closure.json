@@ -1,0 +1,129 @@
+{
+  "complete": true,
+  "arm": "full_tis",
+  "study_rounds": [
+    601,
+    650
+  ],
+  "population": "newly_completed_training_rollout_candidates",
+  "not_heldout_or_fixed_checkpoint_accuracy": true,
+  "candidate_responses": 55448,
+  "candidate_groups": 6931,
+  "candidate_tokens": 94949943,
+  "candidate_correct": 32478,
+  "candidate_accuracy": 0.5857379887462126,
+  "length_mean": 1712.414207906507,
+  "length_median": 1571.0,
+  "candidate_counts": {
+    "strict_repetition": 0,
+    "normalized_text_cycle128_any": 4,
+    "normalized_text_cycle128_alphabetic": 0,
+    "normalized_text_cycle128_numeric": 0,
+    "normalized_text_cycle128_other": 4,
+    "exact_confirmed_repeat_any": 0,
+    "noisy_repeat_primary_any": 904,
+    "noisy_repeat_strict_any": 8,
+    "repeat_strict_union_any": 8,
+    "gibberish_candidate": 370,
+    "response_hit_token_cap": 82,
+    "first_word_alright": 22675,
+    "first_word_to": 25539,
+    "has_think_tag_prefix": 0
+  },
+  "candidate_fractions": {
+    "strict_repetition": 0.0,
+    "normalized_text_cycle128_any": 7.213966238638003e-05,
+    "normalized_text_cycle128_alphabetic": 0.0,
+    "normalized_text_cycle128_numeric": 0.0,
+    "normalized_text_cycle128_other": 7.213966238638003e-05,
+    "exact_confirmed_repeat_any": 0.0,
+    "noisy_repeat_primary_any": 0.01630356369932189,
+    "noisy_repeat_strict_any": 0.00014427932477276007,
+    "repeat_strict_union_any": 0.00014427932477276007,
+    "gibberish_candidate": 0.006672918770740153,
+    "response_hit_token_cap": 0.0014788630789207907,
+    "first_word_alright": 0.4089417111527918,
+    "first_word_to": 0.4605937094214399,
+    "has_think_tag_prefix": 0.0
+  },
+  "group_class_counts": {
+    "mixed": 3203,
+    "all_correct": 2335,
+    "all_wrong": 1393
+  },
+  "rollout_q": {
+    "token_count": 94949943,
+    "token_coverage_fraction": 1.0,
+    "missing_response_count": 0,
+    "mean_NLL_nats_log_PPL": 1.963040754155968,
+    "PPL_exp_pooled_mean_NLL": 7.1209472275752805,
+    "NLL_RMS_nats": 2.9940067827241883,
+    "NLL_L2_nats": 29174.279145194578,
+    "sampled_q_confidence_counts": {
+      "q_ge_0_99_tokens": 9260123,
+      "q_ge_0_999_tokens": 4179488,
+      "q_ge_0_9_tokens": 19798776,
+      "q_ge_0_9999_tokens": 1722228
+    },
+    "sampled_q_confidence_fractions": {
+      "q_ge_0_99_tokens": 0.09752636713009928,
+      "q_ge_0_999_tokens": 0.04401780420236798,
+      "q_ge_0_9_tokens": 0.20851803986864953,
+      "q_ge_0_9999_tokens": 0.01813827313198071
+    },
+    "actor_p_measured": false,
+    "actor_minus_rollout_d_measured": false,
+    "definition": "Original saved rollout conditional q of observed tokens, pooled by tokens; generated response population mixes steps/policy versions."
+  },
+  "generation": {
+    "cross_weight_responses": 12749,
+    "cross_weight_response_fraction": 0.22992713894098976,
+    "mean_generation_segments": 1.2303239070841148,
+    "token_weighted_policy_age_at_completion": 0.5077065712403851
+  },
+  "all_candidates_independently_assessed": true,
+  "cached_rows": 0,
+  "CPU_wall_seconds": 2907.3324596139137,
+  "accepted_population_accounting": {
+    "accepted_uses": 25600,
+    "matched_new_completions": 24984,
+    "matched_all42_pure_fields_equal": true,
+    "pure_field_equalities": 1049328,
+    "mismatch_identities": 0,
+    "inherited_ready_at600": {
+      "source_step": 600,
+      "source_ready_groups": 77,
+      "source_ready_responses": 616,
+      "source_data_sha256": "c5773bd57f32d0b831d728612eb70ecd1dc7acebea7486414bcca2015e44a073",
+      "unmatched_exactly_source600_ready_multiset": true,
+      "source_ready_consumed_in_training_steps": {
+        "601": 512,
+        "602": 104
+      },
+      "unmatched_beyond_source_ready": 0,
+      "source_ready_missing_from_unmatched": 0,
+      "source_ready_also_in_new_completions": 0,
+      "proof_sha256": "fbe08e9d9ab134995c8b9bd4fe5053320b93bfa37a6969bf0a7dec10a53428dc",
+      "direct_original_ID_proof": true,
+      "scope": "These616 were completed and ready at source600. Other matched new completions may still inherit partial prefixes; new completion does not mean every token is freshly generated."
+    },
+    "newly_completed_not_trained_in601_650": {
+      "all_correct": 18680,
+      "all_wrong": 11144,
+      "mixed": 640
+    },
+    "completed_mixed_groups_not_trained_in_window": 80
+  },
+  "comparison_scope": "Group UID plus both original token-ID byte SHA with multiplicity. All42 pure row statistics and available mask counts agree; this is not a full token-mask equality test. No qid-only matches.",
+  "observed_first_word_is_not_model_probability": true,
+  "cycle_and_garble_are_mechanical_candidates_not_semantic_verdicts": true,
+  "closing_audit_recomputed_detector": false,
+  "GPU_actions": 0,
+  "source_receipt_sha256": {
+    "all_completed_population_summary.json": "a00b471364f2f7298e70e5092b24fb0c0229608cb54bbbab4095851353cf0c34",
+    "accepted_completed_identity_join.json": "fb5ad746b62221b811718d87fcb0ce815df111065fef9aa37c86d96c52faf6ae",
+    "population_accounting_by_group_class.json": "9d01767e4c20f4ff9e42165249f0aad2ce62a45f686ac73a938624ffb45ced3e"
+  },
+  "source_ready_private_receipt_sha256": "fbe08e9d9ab134995c8b9bd4fe5053320b93bfa37a6969bf0a7dec10a53428dc",
+  "unix": 1793936532.6194122
+}

@@ -526,5 +526,5 @@
 <!-- final-stability-progress:start -->
 ## S16
 
-[同一600状态的八组稳定性干预](final-stability-600-650.md)按组更新，baseline/full TIS已完成50轮。八种方法各一条轨迹；当前完整入训观测与不完整全量rollout统计分开标注。见[聚合证据](../data/evidence/S16.json)。
+[同一600状态的八组稳定性干预](final-stability-600-650.md)按组更新，baseline/full TIS/negative TIS已完成50轮。八种方法各一条轨迹；完整入训观测与尚不齐全的候选文本统计分开标注。Full TIS的新完成候选已完成逐条来源对账。见[聚合证据](../data/evidence/S16.json)。
 <!-- final-stability-progress:end -->

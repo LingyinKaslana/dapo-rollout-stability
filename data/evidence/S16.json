@@ -2,49 +2,43 @@
   "id": "S16",
   "title": "同一600状态的八组稳定性干预",
   "status": "in_progress",
-  "status_label": "逐组更新；2/8训练完成",
+  "status_label": "逐组更新；3/8训练完成",
   "chapter": "training-stability",
-  "finding": "baseline/full TIS各完成50轮；full TIS压低梯度，未显示明确解题收益；其它方法与全量rollout统计待补。",
+  "finding": "三组各完成50轮；两种TIS压低梯度。Negative TIS次要面板初步改善，但仅单轨迹、七重比较未校正且生成模式不同。Full TIS候选全量完成，其余候选统计待补。",
   "limitations": [
-    "单在线轨迹；七重比较未校正；当前只有2/8训练结果与3/9次要评测。",
-    "全量rollout文本统计未完成，缺失不是零；本快照不能代表八组最终结论。"
+    "单在线轨迹；七重比较未校正；当前只有3/8训练结果与4/9次要评测。",
+    "baseline候选统计27/50轮，full TIS50/50，negative TIS0/50；缺失不是零。",
+    "新完成训练候选不是固定checkpoint测试集，未在候选人群测actor p或d。"
   ],
   "source_fingerprints": [
     {
       "artifact_name": "optimizer_updates.csv",
-      "sha256": "bee999c4ff4b5b1664523fd1ca9119f2681eb05fc40a541f760bf5e257e13307"
+      "sha256": "04c531ab1b05b8c2e4694797e82199916b9a1f964eead05c97fc9faf69f55dbe"
     },
     {
       "artifact_name": "secondary/endpoint_metrics.csv",
-      "sha256": "4526a46b1eb84d15650644990189ecace4c65112fcf639a998c5bf2ec55695bc"
+      "sha256": "b6ac91d76cc103d56f03472301bafbf23d327b4bcc3335a1f2c68df8444ca3fa"
+    },
+    {
+      "artifact_name": "full_tis_candidate_closure.json",
+      "sha256": "3ff1e0323010dd37e3205cb17e79ebe130e503d2a465e9534730da24bc49a275"
     }
   ],
   "results": {
     "completed_training_arms": [
       "baseline",
-      "full_tis"
+      "full_tis",
+      "negative_tis"
     ],
-    "actual_updates": 400,
+    "actual_updates": 600,
     "secondary_endpoints": [
       "source600",
       "baseline_650",
-      "full_tis_650"
+      "full_tis_650",
+      "negative_tis_650"
     ],
     "pending_all_completed_rounds": {
       "baseline": [
-        615,
-        616,
-        617,
-        618,
-        619,
-        620,
-        621,
-        622,
-        623,
-        624,
-        625,
-        626,
-        627,
         628,
         629,
         630,
@@ -69,7 +63,8 @@
         649,
         650
       ],
-      "full_tis": [
+      "full_tis": [],
+      "negative_tis": [
         601,
         602,
         603,
@@ -136,9 +131,16 @@
         "d_tail_fraction": 0.0002585946213815002,
         "d_tail_conditional_mean": 0.6679519730960191,
         "d_RMS": 0.07939657387915908
+      },
+      "negative_tis": {
+        "valid_tokens": 55355157,
+        "Adam_L2_mean_per_update": 0.010531588147430713,
+        "d_tail_fraction": 9.157231728201945e-05,
+        "d_tail_conditional_mean": 0.6557501943799977,
+        "d_RMS": 0.07415857633741624
       }
     }
   },
   "public_data": "data/final-stability-600-650",
-  "snapshot_utc": "2026-11-06 02:29 UTC"
+  "snapshot_utc": "2026-11-06 04:08 UTC"
 }
