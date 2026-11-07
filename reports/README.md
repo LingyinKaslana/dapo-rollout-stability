@@ -11,5 +11,5 @@
 <!-- final-stability-progress:end -->
 
 <!-- eighth-native-notice:start -->
-八组训练及主评测已完成，前七组候选统计已齐，第八组候选统计正在进行。见[八组同口径比较、训练与首词曲线](rl-length-gradient-investigation.md#eighth-native-supplement)。第五至第八组次要评测和剩余归档等待1x恢复；完整对照与既有五个次要端点保持原范围，本补充未宣布全部研究验收完成。
+八组训练、主评测及候选统计均已完成；后四组候选采用各自声明的有限CPU报表范围。见[八组同口径比较、训练与首词曲线](rl-length-gradient-investigation.md#eighth-native-supplement)。第五至第八组次要评测和剩余归档等待1x恢复；完整对照与既有五个次要端点保持原范围，本补充未宣布全部研究验收完成。
 <!-- eighth-native-notice:end -->
