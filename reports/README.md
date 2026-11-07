@@ -10,6 +10,6 @@
 [本次冻结快照](rl-length-gradient-investigation.md#final-stability-600-650)纳入4/8组训练、5/9个次要评测端点。全量候选文本覆盖：0 Baseline 50/50轮；1 Full TIS 50/50轮；2 Negative TIS 50/50轮；3 Absolute-gap mask 50/50轮。已纳入四组的候选均为全50轮；其余四组尚未纳入，整个八组实验仍未完成。单轨迹结果与未校正区间不等于最终方法排名。
 <!-- final-stability-progress:end -->
 
-<!-- seventh-native-notice:start -->
-原生训练已有7/8组完成，Sync fresh尚未完成；第五至第七组全候选已作有限CPU报表补充；第五至第七组次要评测仍待补。见[第七组长度加权及七组训练曲线](rl-length-gradient-investigation.md#seventh-native-supplement)。前四组完整比较快照和五个次要端点保持原范围。
-<!-- seventh-native-notice:end -->
+<!-- eighth-native-notice:start -->
+八组训练及主评测已完成，前七组候选统计已齐，第八组候选统计正在进行。见[八组同口径比较、训练与首词曲线](rl-length-gradient-investigation.md#eighth-native-supplement)。第五至第八组次要评测和剩余归档等待1x恢复；完整对照与既有五个次要端点保持原范围，本补充未宣布全部研究验收完成。
+<!-- eighth-native-notice:end -->

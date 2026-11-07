@@ -4,9 +4,9 @@
 
 本轮要回答两个问题：降低 token 失配的训练权重，能否持续减轻后续梯度异常；只处理重复位置，能否保留这种收益，同时少干扰正常解题。每组从原 full8 主线同一个完整第 600 轮状态出发，训练至第 650 轮，各 50 轮、200 次 Adam 更新。八组是八种方法各一条在线轨迹，不是八次重复实验。
 
-<!-- seventh-native-notice:start -->
-原生训练已有7/8组完成，Sync fresh尚未完成；第五至第七组全候选已作有限CPU报表补充；第五至第七组次要评测仍待补。见[第七组长度加权及七组训练曲线](../reports/rl-length-gradient-investigation.md#seventh-native-supplement)。前四组完整比较快照和五个次要端点保持原范围。
-<!-- seventh-native-notice:end -->
+<!-- eighth-native-notice:start -->
+八组训练及主评测已完成，前七组候选统计已齐，第八组候选统计正在进行。见[八组同口径比较、训练与首词曲线](../reports/rl-length-gradient-investigation.md#eighth-native-supplement)。第五至第八组次要评测和剩余归档等待1x恢复；完整对照与既有五个次要端点保持原范围，本补充未宣布全部研究验收完成。
+<!-- eighth-native-notice:end -->
 
 ## 共同设置与干预
 
