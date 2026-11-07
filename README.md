@@ -112,7 +112,7 @@ full8 在 350→400 轮：固定 1,021 题×4 的平均长度 **1422→2838 toke
 
 ### 3.4 八组干预对照（同一 600 状态）
 
-8 种方法 = baseline + 7 种干预；目前 7 组已训练、4 组完整分析。第五组53,528条和[第六组56,648条全候选](reports/rl-length-gradient-investigation.md#sixth-candidate-reporting-supplement)已作为有限CPU报表补充采纳；第五至第七组次要评测及第七组全候选仍待补。[七组训练曲线](reports/rl-length-gradient-investigation.md#seventh-native-supplement)保持原样。
+8 种方法 = baseline + 7 种干预；目前 7 组训练及主评测完成，7 组候选统计已齐，4 组补充评测完成；第 8 组仍在训练。第五组53,528条、第六组56,648条和[第七组56,464条全候选](reports/rl-length-gradient-investigation.md#seventh-candidate-reporting-supplement)已作为有限CPU报表补充采纳；第五至第七组次要评测仍待补。[七组训练曲线](reports/rl-length-gradient-investigation.md#seventh-native-supplement)保持原样。
 
 | # | 方法 | 干预机制 | 最大裁剪前梯度 | 平均梯度 | >10 次数 | d>0.5 | 650 主面板 | 次要面板 | 循环候选 | 乱码候选 |
 |---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|
@@ -122,10 +122,10 @@ full8 在 350→400 轮：固定 1,021 题×4 的平均长度 **1422→2838 toke
 | 3 | Absolute-gap mask | \|s0\|>0.5 置零 | 254.57 | 11.59 | 30 | 27.86% | 53.12% | 69.73% | **4.96%** | **16.33%** |
 | 4 | Negative-down mask | A<0 且 s0<−0.5 置零 | 9.29 | 1.75 | 0 | 12.23% | 52.15% | 待补 | 0.271% | 12.691% |
 | 5 | [Repeat-negative-down](reports/rl-length-gradient-investigation.md#sixth-native-supplement) | 方法 4 + 严格重复位置 | 1640.01 | 56.82 | 39 | 10.81% | 53.71% | 待补 | 3.778% | 4.978% |
-| 6 | [Negative mass](reports/rl-length-gradient-investigation.md#seventh-native-supplement) | 负优势按长度重分配，保留总量 | 34.01 | 1.77 | 6 | 4.01% | 53.32% | 待补 | 0* | 0* |
+| 6 | [Negative mass](reports/rl-length-gradient-investigation.md#seventh-native-supplement) | 负优势按长度重分配，保留负A绝对值×token总量 | 34.01 | 1.77 | 6 | 4.01% | 53.32% | 待补 | 4.596% | 1.523% |
 | 7 | Sync fresh | 重新采 G8、丢弃旧历史 | 未纳入 | — | — | — | — | — | — | — |
 
-\* 方法6的循环/乱码列是650主面板的条数（512条回答）；方法0–5是50轮新完成训练候选的比例。方法4–5为声明BBB环境的有限CPU报表补充；主面板条数与候选比例不能直接横比。
+方法0–6的循环/乱码列均为601–650轮新完成训练候选的比例；方法4–6为声明BBB环境的有限CPU报表补充。650主面板属于另一时点与人群，其0计数不代表整个训练窗口为0。
 
 **读表结论**：
 
